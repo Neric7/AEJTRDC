@@ -1,0 +1,346 @@
+.heroContainer {
+  background: #ffffff; /* Fond blanc */
+  padding: 40px 24px 50px; /* Padding réduit en haut et en bas */
+  position: relative;
+  overflow: hidden;
+  min-height: calc(100vh - 70px); /* Soustraire la hauteur du header */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Contenu principal */
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px; /* Gap réduit */
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+}
+
+/* Texte */
+.textColumn {
+  opacity: 0;
+  transform: translateX(-60px);
+  transition: all 0.8s ease;
+}
+
+.textColumn.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.title {
+  font-size: 2rem; /* Taille réduite */
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.2;
+  margin-bottom: 14px; /* Marge réduite */
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 2.2rem;
+  }
+}
+
+.highlightedText {
+  color: #f59e0b;
+}
+
+.description {
+  font-size: 0.95rem; /* Taille réduite */
+  color: #475569;
+  margin-bottom: 20px; /* Marge réduite */
+  line-height: 1.6;
+}
+
+/* Boutons */
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.primaryButton {
+  background-color: #1e293b;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px; /* Padding réduit */
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 0.95rem;
+}
+
+.primaryButton:hover {
+  background-color: #000;
+  transform: translateY(-3px);
+}
+
+.secondaryButton {
+  border: 2px solid #1e293b;
+  background: transparent;
+  color: #1e293b;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 20px; /* Padding réduit */
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 0.95rem;
+}
+
+.secondaryButton:hover {
+  background-color: #1e293b;
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+/* Image Column */
+.imageColumn {
+  opacity: 0;
+  transform: translateX(60px);
+  transition: all 0.8s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.imageColumn.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Image avec fond transparent */
+.africaImage {
+  margin-top: 20px; /* Marge réduite */
+  width: auto;
+  height: 300px; /* Hauteur réduite */
+  border-radius: 10px;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.15));
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .africaImage {
+    height: 320px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .africaImage {
+    height: 340px;
+  }
+}
+
+.africaImage:hover {
+  filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.2));
+  transform: scale(1.03);
+}
+
+/* Badge statistique */
+.statBadge {
+  position: absolute;
+  bottom: 10px; /* Position ajustée */
+  left: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 16px; /* Padding réduit */
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  min-width: 140px; /* Largeur réduite */
+}
+
+@media (min-width: 768px) {
+  .statBadge {
+    min-width: 160px;
+    padding: 14px 18px;
+    bottom: 15px;
+    left: 15px;
+  }
+}
+
+.statNumber {
+  font-size: 1.4rem; /* Taille réduite */
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .statNumber {
+    font-size: 1.6rem;
+  }
+}
+
+.statLabel {
+  font-size: 0.7rem; /* Taille réduite */
+  color: #475569;
+  margin-top: 5px;
+  text-align: center;
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .statLabel {
+    font-size: 0.75rem;
+    margin-top: 6px;
+  }
+}
+
+/* Cartes d'impact - TAILLE RÉDUITE */
+.impactGrid {
+  margin: 25px auto 0; /* Marge réduite */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px; /* Gap réduit */
+  opacity: 0;
+  transform: translateY(60px);
+  transition: all 0.8s ease;
+  max-width: 1100px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.impactGrid.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (min-width: 640px) {
+  .impactGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 0 15px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .impactGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    padding: 0 20px;
+    margin-top: 30px;
+  }
+}
+
+.impactCard {
+  background: #fff;
+  padding: 16px 12px; /* Padding réduit */
+  border-radius: 10px; /* Bordures réduites */
+  box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px; /* Hauteur réduite */
+}
+
+@media (min-width: 768px) {
+  .impactCard {
+    padding: 18px 14px;
+    min-height: 150px;
+  }
+}
+
+.impactCard:hover {
+  transform: translateY(-4px); /* Effet de hover réduit */
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.impactIcon {
+  font-size: 1.75rem; /* Taille d'icône réduite */
+  margin-bottom: 10px;
+  color: #f59e0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px; /* Largeur réduite */
+  height: 45px; /* Hauteur réduite */
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .impactIcon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 12px;
+  }
+}
+
+.impactCard:hover .impactIcon {
+  background: rgba(245, 158, 11, 0.2);
+  transform: scale(1.05);
+}
+
+.impactTitle {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem; /* Taille de police réduite */
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+  .impactTitle {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+}
+
+.impactDescription {
+  color: #475569;
+  font-size: 0.8rem; /* Taille de police réduite */
+  line-height: 1.4;
+  max-width: 180px; /* Largeur maximale réduite */
+}
+
+@media (min-width: 768px) {
+  .impactDescription {
+    font-size: 0.85rem;
+    max-width: 200px;
+  }
+}
+
+/* Ajustements pour mobile */
+@media (max-width: 640px) {
+  .heroContainer {
+    padding: 30px 16px 40px;
+    min-height: auto;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .africaImage {
+    height: 250px;
+    margin-top: 10px;
+  }
+}

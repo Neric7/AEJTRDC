@@ -1,0 +1,135 @@
+version: '3.8'
+
+services:
+  # Base de données MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: sitecongo_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sitecongo
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: sitecongo_user
+      MYSQL_PASSWORD: sitecongo_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - sitecongo_network
+
+  # Redis pour le cache
+  redis:
+    image: redis:7-alpine
+    container_name: sitecongo_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - sitecongo_network
+
+  # Backend Laravel
+  backend:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.backend
+    container_name: sitecongo_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=local
+      - DB_HOST=mysql
+      - DB_DATABASE=sitecongo
+      - DB_USERNAME=sitecongo_user
+      - DB_PASSWORD=sitecongo_password
+      - REDIS_HOST=redis
+    volumes:
+      - ../backend:/var/www/html
+      - backend_storage:/var/www/html/storage
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - sitecongo_network
+
+  # Frontend React
+  frontend:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.frontend
+    container_name: sitecongo_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api/v1
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - sitecongo_network
+
+  # Admin Dashboard
+  admin:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.admin
+    container_name: sitecongo_admin
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api/v1
+    volumes:
+      - ../admin:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - sitecongo_network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: sitecongo_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+      - admin
+    networks:
+      - sitecongo_network
+
+  # Mailpit pour les emails de développement
+  mailpit:
+    image: axllent/mailpit
+    container_name: sitecongo_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - sitecongo_network
+
+volumes:
+  mysql_data:
+  redis_data:
+  backend_storage:
+
+networks:
+  sitecongo_network:
+    driver: bridge
+
+

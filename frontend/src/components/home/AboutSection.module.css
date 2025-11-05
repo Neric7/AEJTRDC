@@ -1,0 +1,449 @@
+.aboutSection {
+  position: relative;
+  padding: 60px 20px; /* Réduit de 100px à 60px */
+  background: #FFFFFF;
+}
+
+.container {
+  max-width: 1200px; /* Réduit de 1400px à 1200px */
+  margin: 0 auto;
+  padding: 0 15px; /* Espacement à droite et à gauche */
+}
+
+/* En-tête de section */
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 50px; /* Réduit de 80px à 50px */
+  padding: 0 10px; /* Espacement interne */
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 16px; /* Réduit */
+  background: rgba(124, 179, 66, 0.1);
+  color: #7CB342;
+  font-weight: 600;
+  font-size: 13px; /* Réduit */
+  border-radius: 16px; /* Réduit */
+  margin-bottom: 12px; /* Réduit */
+}
+
+.sectionTitle {
+  font-size: 2rem; /* Réduit de 2.5rem */
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 12px; /* Réduit */
+  line-height: 1.2;
+}
+
+.sectionSubtitle {
+  font-size: 1rem; /* Réduit de 1.125rem */
+  color: #6b7280;
+  max-width: 500px; /* Réduit */
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* Grille principale avec image à gauche */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px; /* Réduit de 60px */
+  align-items: start;
+  padding: 0 10px; /* Espacement à droite et à gauche */
+}
+
+@media (min-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 50px; /* Réduit de 80px */
+  }
+}
+
+/* Colonne image */
+.imageContainer {
+  position: relative;
+  margin-top: 10%; /* Réduit de 20% */
+  overflow: hidden;
+}
+
+.aboutImage {
+  width: 100%;
+  height: 400px; /* Réduit de 500px */
+  object-fit: cover;
+  display: block;
+}
+
+.imageOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 25px 20px 20px; /* Réduit */
+}
+
+.overlayContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.overlayStat {
+  text-align: center;
+}
+
+.overlayNumber {
+  font-size: 1.5rem; /* Réduit de 2rem */
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.overlayLabel {
+  font-size: 0.8rem; /* Réduit */
+  opacity: 0.9;
+}
+
+/* Colonne contenu */
+.contentColumn {
+  padding-top: 10px; /* Réduit de 20px */
+}
+
+/* Système d'onglets */
+.tabsContainer {
+  width: 100%;
+  padding: 0 5px; /* Espacement interne */
+}
+
+.tabsList {
+  display: flex;
+  gap: 2px; /* Réduit de 4px */
+  margin-bottom: 30px; /* Réduit de 40px */
+  border-bottom: 2px solid #f3f4f6;
+  flex-wrap: wrap;
+}
+
+.tabButton {
+  padding: 10px 16px; /* Réduit */
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 13px; /* Réduit */
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 200ms ease;
+  white-space: nowrap;
+}
+
+.tabButton:hover {
+  color: #111827;
+}
+
+.tabActive {
+  color: #7CB342;
+  border-bottom-color: #7CB342;
+}
+
+.tabContent {
+  min-height: 400px; /* Réduit de 500px */
+  padding: 0 5px; /* Espacement interne */
+}
+
+/* Styles communs pour le contenu */
+.contentTitle {
+  font-size: 1.3rem; /* Réduit de 1.5rem */
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 20px; /* Réduit de 24px */
+}
+
+/* Historique - Timeline */
+.timeline {
+  position: relative;
+  padding-left: 30px; /* Réduit de 40px */
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px; /* Réduit de 15px */
+  top: 0;
+  bottom: 0;
+  width: 2px; /* Réduit de 3px */
+  background: linear-gradient(to bottom, #FDB913, #7CB342);
+}
+
+.timelineItem {
+  position: relative;
+  margin-bottom: 25px; /* Réduit de 32px */
+}
+
+.timelineYear {
+  position: absolute;
+  left: -30px; /* Réduit de 40px */
+  top: 0;
+  width: 28px; /* Réduit de 32px */
+  height: 28px; /* Réduit de 32px */
+  background: #7CB342;
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.7rem; /* Réduit */
+  z-index: 2;
+  box-shadow: 0 0 0 3px #FFFFFF; /* Réduit */
+}
+
+.timelineContent {
+  background: #f9fafb;
+  padding: 16px; /* Réduit de 20px */
+  border-radius: 10px; /* Réduit */
+  border-left: 3px solid #7CB342; /* Réduit de 4px */
+}
+
+.timelineContent h4 {
+  font-size: 1rem; /* Réduit de 1.125rem */
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px; /* Réduit */
+}
+
+.timelineContent p {
+  font-size: 0.9rem; /* Réduit */
+  color: #6b7280;
+  line-height: 1.5; /* Réduit */
+  margin: 0;
+}
+
+/* Mission & Vision */
+.missionGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px; /* Réduit de 24px */
+  margin-bottom: 25px; /* Réduit de 32px */
+}
+
+@media (min-width: 768px) {
+  .missionGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.missionCard {
+  background: #f9fafb;
+  padding: 20px; /* Réduit de 24px */
+  border-radius: 10px; /* Réduit */
+  border: 1px solid #f3f4f6; /* Réduit de 2px */
+}
+
+.cardIcon {
+  font-size: 2rem; /* Réduit de 2.5rem */
+  margin-bottom: 12px; /* Réduit */
+}
+
+.cardTitle {
+  font-size: 1rem; /* Réduit de 1.125rem */
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 10px; /* Réduit */
+}
+
+.cardText {
+  font-size: 0.9rem; /* Réduit */
+  color: #6b7280;
+  line-height: 1.5; /* Réduit */
+}
+
+.valuesSection {
+  margin-top: 25px; /* Réduit de 32px */
+}
+
+.valuesTitle {
+  font-size: 1rem; /* Réduit de 1.125rem */
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 12px; /* Réduit */
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px; /* Réduit de 16px */
+}
+
+@media (min-width: 640px) {
+  .valuesGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.valueItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 12px; /* Réduit de 16px */
+  background: #FFFFFF;
+  border: 1px solid #f3f4f6; /* Réduit de 2px */
+  border-radius: 10px; /* Réduit */
+  transition: all 200ms ease;
+}
+
+.valueItem:hover {
+  border-color: #7CB342;
+  transform: translateY(-1px); /* Réduit de 2px */
+}
+
+.valueIcon {
+  font-size: 1.5rem; /* Réduit de 2rem */
+  margin-bottom: 6px; /* Réduit */
+}
+
+.valueName {
+  font-size: 0.8rem; /* Réduit */
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Structure organisationnelle */
+.orgChart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px; /* Réduit de 20px */
+}
+
+.chartLevel {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.chartRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px; /* Réduit de 20px */
+  width: 100%;
+}
+
+.chartItem {
+  background: #f9fafb;
+  padding: 16px; /* Réduit de 20px */
+  border-radius: 10px; /* Réduit */
+  border: 1px solid #e5e7eb; /* Réduit de 2px */
+  text-align: center;
+}
+
+.chartTitle {
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px; /* Réduit */
+  font-size: 0.9rem; /* Ajouté */
+}
+
+.chartDescription {
+  font-size: 0.8rem; /* Réduit */
+  color: #6b7280;
+  line-height: 1.3; /* Réduit */
+}
+
+.chartConnector {
+  width: 2px;
+  height: 20px; /* Réduit de 30px */
+  background: #7CB342;
+}
+
+/* Partenaires */
+.partnersGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px; /* Réduit de 16px */
+}
+
+.partnerCard {
+  background: #f9fafb;
+  padding: 16px; /* Réduit de 20px */
+  border-radius: 10px; /* Réduit */
+  border: 1px solid #f3f4f6; /* Réduit de 2px */
+  transition: all 200ms ease;
+}
+
+.partnerCard:hover {
+  border-color: #7CB342;
+  transform: translateY(-1px); /* Réduit de 2px */
+}
+
+.partnerHeader {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  margin-bottom: 8px; /* Réduit */
+  gap: 10px; /* Réduit */
+}
+
+.partnerName {
+  font-size: 1rem; /* Réduit de 1.125rem */
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.partnerType {
+  background: #7CB342;
+  color: #FFFFFF;
+  padding: 3px 10px; /* Réduit */
+  border-radius: 16px; /* Réduit */
+  font-size: 0.7rem; /* Réduit */
+  font-weight: 600;
+}
+
+.partnerDescription {
+  font-size: 0.85rem; /* Réduit */
+  color: #6b7280;
+  line-height: 1.5; /* Réduit */
+  margin: 0;
+}
+
+/* Zones d'intervention */
+.mapContainer {
+  background: #f9fafb;
+  border-radius: 12px; /* Réduit */
+  padding: 30px; /* Réduit de 40px */
+  border: 2px dashed #d1d5db;
+}
+
+.mapPlaceholder {
+  text-align: center;
+}
+
+.mapIcon {
+  font-size: 3rem; /* Réduit de 4rem */
+  margin-bottom: 12px; /* Réduit */
+}
+
+.mapText {
+  font-size: 0.9rem; /* Réduit */
+  color: #6b7280;
+  margin-bottom: 20px; /* Réduit */
+}
+
+.provincesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* Réduit de 12px */
+  justify-content: center;
+}
+
+.provinceTag {
+  display: inline-block;
+  padding: 6px 12px; /* Réduit */
+  background: linear-gradient(135deg, #FDB913, #F59E0B);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.8rem; /* Réduit */
+  border-radius: 16px; /* Réduit */
+  box-shadow: 0 3px 8px rgba(253, 185, 19, 0.3); /* Réduit */
+}

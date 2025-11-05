@@ -1,0 +1,93 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - 'docker/Dockerfile.backend'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, dom, fileinfo, mysql, zip
+    
+    - name: Install Composer dependencies
+      run: composer install --no-dev --optimize-autoloader --no-scripts --no-progress --prefer-dist
+      working-directory: ./backend
+    
+    - name: Run database migrations
+      run: |
+        php artisan migrate --force
+        php artisan db:seed --class=ProductionSeeder
+      working-directory: ./backend
+      env:
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+    
+    - name: Cache configuration
+      run: |
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+      working-directory: ./backend
+    
+    - name: Deploy to production server
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.PRODUCTION_HOST }}
+        username: ${{ secrets.PRODUCTION_USERNAME }}
+        key: ${{ secrets.PRODUCTION_SSH_KEY }}
+        script: |
+          cd /var/www/sitecongo/backend
+          git pull origin main
+          composer install --no-dev --optimize-autoloader
+          php artisan migrate --force
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          sudo systemctl restart php8.1-fpm
+          sudo systemctl restart nginx
+    
+    - name: Health check
+      run: |
+        sleep 30
+        curl -f ${{ secrets.PRODUCTION_API_URL }}/api/v1/health || exit 1
+    
+    - name: Notify deployment
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      if: always()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

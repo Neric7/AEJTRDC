@@ -1,0 +1,203 @@
+/* CTASection.module.css */
+
+.ctaSection {
+    padding: 80px 24px;
+    background: linear-gradient(135deg, #7CB342 0%, #689F38 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .ctaSection::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .content {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+  
+  @media (max-width: 768px) {
+    .title {
+      font-size: 1.875rem;
+    }
+  }
+  
+  .description {
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.95);
+    max-width: 700px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 768px) {
+    .description {
+      font-size: 1rem;
+    }
+  }
+  
+  /* CTA Buttons */
+  .ctaButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .primaryButton,
+  .secondaryButton,
+  .tertiaryButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  
+  .primaryButton {
+    background: white;
+    color: #7CB342;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .primaryButton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    background: #f8f9fa;
+  }
+  
+  .secondaryButton {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border-color: white;
+    backdrop-filter: blur(10px);
+  }
+  
+  .secondaryButton:hover {
+    background: white;
+    color: #7CB342;
+    transform: translateY(-3px);
+  }
+  
+  .tertiaryButton {
+    background: transparent;
+    color: white;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .tertiaryButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+    transform: translateY(-3px);
+  }
+  
+  .buttonIcon {
+    flex-shrink: 0;
+  }
+  
+  @media (max-width: 640px) {
+    .ctaButtons {
+      flex-direction: column;
+      width: 100%;
+    }
+  
+    .primaryButton,
+    .secondaryButton,
+    .tertiaryButton {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  /* Stats Grid */
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    margin-top: 60px;
+  }
+  
+  @media (max-width: 768px) {
+    .statsGrid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .statsGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .statCard {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 30px 20px;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .statCard:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  .statNumber {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+  
+  @media (max-width: 768px) {
+    .statNumber {
+      font-size: 2rem;
+    }
+  }
+  
+  .statLabel {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  
+  @media (max-width: 768px) {
+    .statLabel {
+      font-size: 0.875rem;
+    }
+  }

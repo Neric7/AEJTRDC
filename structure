@@ -1,0 +1,328 @@
+SiteCongo/
+│
+├── frontend/                          (Existant - Application React)
+│   ├── node_modules/
+│   ├── public/
+│   │   ├── favicon.ico
+│   │   ├── robots.txt
+│   │   └── sitemap.xml
+│   │
+│   ├── src/
+│   │   ├── assets/
+│   │   │   ├── images/
+│   │   │   │   ├── logo/
+│   │   │   │   ├── carousel/
+│   │   │   │   ├── projects/
+│   │   │   │   ├── team/
+│   │   │   │   ├── partners/
+│   │   │   │   └── icons/
+│   │   │   └── documents/
+│   │   │       └── pdf/
+│   │   │
+│   │   ├── components/
+│   │   │   ├── common/
+│   │   │   │   ├── Header.jsx
+│   │   │   │   ├── Footer.jsx
+│   │   │   │   ├── Navigation.jsx
+│   │   │   │   ├── Button.jsx
+│   │   │   │   ├── Card.jsx
+│   │   │   │   ├── Modal.jsx
+│   │   │   │   └── Loader.jsx
+│   │   │   │
+│   │   │   ├── home/
+│   │   │   │   ├── HeroBanner.jsx
+│   │   │   │   ├── ImageCarousel.jsx
+│   │   │   │   ├── CTASection.jsx
+│   │   │   │   └── LatestNews.jsx
+│   │   │   │
+│   │   │   ├── about/
+│   │   │   │   ├── History.jsx
+│   │   │   │   ├── MissionVision.jsx
+│   │   │   │   ├── OrganizationChart.jsx
+│   │   │   │   └── InterventionMap.jsx
+│   │   │   │
+│   │   │   ├── projects/
+│   │   │   │   ├── ProjectCard.jsx
+│   │   │   │   ├── ProjectDetail.jsx
+│   │   │   │   ├── ProjectFilter.jsx
+│   │   │   │   └── TestimonySection.jsx
+│   │   │   │
+│   │   │   ├── partners/
+│   │   │   │   ├── PartnerGrid.jsx
+│   │   │   │   └── PartnerLogo.jsx
+│   │   │   │
+│   │   │   ├── transparency/
+│   │   │   │   ├── ReportsList.jsx
+│   │   │   │   ├── FinancialSummary.jsx
+│   │   │   │   └── PolicyDocuments.jsx
+│   │   │   │
+│   │   │   ├── news/
+│   │   │   │   ├── NewsGrid.jsx
+│   │   │   │   ├── NewsArticle.jsx
+│   │   │   │   └── PressReleases.jsx
+│   │   │   │
+│   │   │   ├── team/
+│   │   │   │   ├── TeamGrid.jsx
+│   │   │   │   └── MemberCard.jsx
+│   │   │   │
+│   │   │   ├── careers/
+│   │   │   │   ├── JobList.jsx
+│   │   │   │   ├── VolunteerForm.jsx
+│   │   │   │   └── ApplicationProcess.jsx
+│   │   │   │
+│   │   │   ├── donate/
+│   │   │   │   ├── DonationForm.jsx
+│   │   │   │   ├── PaymentMethods.jsx
+│   │   │   │   └── ImpactStories.jsx
+│   │   │   │
+│   │   │   ├── contact/
+│   │   │   │   ├── ContactForm.jsx
+│   │   │   │   ├── LocationMap.jsx
+│   │   │   │   └── SocialLinks.jsx
+│   │   │   │
+│   │   │   └── humanitarian/
+│   │   │       ├── EthicalCommitments.jsx
+│   │   │       ├── ViolationReport.jsx
+│   │   │       ├── HumanitarianAlerts.jsx
+│   │   │       └── AdvocacyTracking.jsx
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── AboutPage.jsx
+│   │   │   ├── ProjectsPage.jsx
+│   │   │   ├── PartnersPage.jsx
+│   │   │   ├── TransparencyPage.jsx
+│   │   │   ├── NewsPage.jsx
+│   │   │   ├── TeamPage.jsx
+│   │   │   ├── CareersPage.jsx
+│   │   │   ├── DonatePage.jsx
+│   │   │   ├── ContactPage.jsx
+│   │   │   ├── LegalPage.jsx
+│   │   │   ├── PrivacyPage.jsx
+│   │   │   └── HumanitarianSpacePage.jsx
+│   │   │
+│   │   ├── services/
+│   │   │   ├── api.js
+│   │   │   ├── paymentService.js
+│   │   │   ├── mapService.js
+│   │   │   └── emailService.js
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── validation.js
+│   │   │   ├── formatters.js
+│   │   │   ├── constants.js
+│   │   │   └── helpers.js
+│   │   │
+│   │   ├── hooks/
+│   │   │   ├── useForm.js
+│   │   │   ├── useApi.js
+│   │   │   └── useMediaQuery.js
+│   │   │
+│   │   ├── context/
+│   │   │   ├── LanguageContext.jsx
+│   │   │   └── ThemeContext.jsx
+│   │   │
+│   │   ├── styles/
+│   │   │   ├── index.css
+│   │   │   ├── tailwind.css
+│   │   │   └── variables.css
+│   │   │
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   ├── index.html
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── tailwind.config.js
+│   ├── vite.config.js
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── index.css
+│   └── README.md
+│
+├── backend/                           (Nouveau - API Laravel)
+│   ├── app/
+│   │   ├── Http/
+│   │   │   ├── Controllers/
+│   │   │   │   ├── API/
+│   │   │   │   │   ├── ProjectController.php
+│   │   │   │   │   ├── NewsController.php
+│   │   │   │   │   ├── TeamController.php
+│   │   │   │   │   ├── JobController.php
+│   │   │   │   │   ├── PartnerController.php
+│   │   │   │   │   ├── ReportController.php
+│   │   │   │   │   └── AlertController.php
+│   │   │   │   ├── ContactController.php
+│   │   │   │   ├── DonationController.php
+│   │   │   │   ├── VolunteerController.php
+│   │   │   │   └── PaymentController.php
+│   │   │   │
+│   │   │   ├── Middleware/
+│   │   │   │   ├── CheckAdmin.php
+│   │   │   │   ├── SanitizeInput.php
+│   │   │   │   └── RateLimiter.php
+│   │   │   │
+│   │   │   └── Requests/
+│   │   │       ├── ContactRequest.php
+│   │   │       ├── DonationRequest.php
+│   │   │       └── VolunteerRequest.php
+│   │   │
+│   │   ├── Models/
+│   │   │   ├── Project.php
+│   │   │   ├── News.php
+│   │   │   ├── TeamMember.php
+│   │   │   ├── Job.php
+│   │   │   ├── Partner.php
+│   │   │   ├── Report.php
+│   │   │   ├── Alert.php
+│   │   │   ├── Contact.php
+│   │   │   ├── Donation.php
+│   │   │   └── Volunteer.php
+│   │   │
+│   │   ├── Services/
+│   │   │   ├── PaymentService.php
+│   │   │   ├── EmailService.php
+│   │   │   ├── FileUploadService.php
+│   │   │   └── NotificationService.php
+│   │   │
+│   │   └── Repositories/
+│   │       ├── ProjectRepository.php
+│   │       ├── NewsRepository.php
+│   │       └── ReportRepository.php
+│   │
+│   ├── database/
+│   │   ├── migrations/
+│   │   │   ├── 2025_01_01_create_projects_table.php
+│   │   │   ├── 2025_01_02_create_news_table.php
+│   │   │   ├── 2025_01_03_create_team_members_table.php
+│   │   │   ├── 2025_01_04_create_jobs_table.php
+│   │   │   ├── 2025_01_05_create_partners_table.php
+│   │   │   ├── 2025_01_06_create_reports_table.php
+│   │   │   ├── 2025_01_07_create_alerts_table.php
+│   │   │   ├── 2025_01_08_create_contacts_table.php
+│   │   │   ├── 2025_01_09_create_donations_table.php
+│   │   │   └── 2025_01_10_create_volunteers_table.php
+│   │   │
+│   │   ├── seeders/
+│   │   │   ├── DatabaseSeeder.php
+│   │   │   ├── ProjectSeeder.php
+│   │   │   ├── NewsSeeder.php
+│   │   │   ├── TeamSeeder.php
+│   │   │   └── PartnerSeeder.php
+│   │   │
+│   │   └── factories/
+│   │       └── ProjectFactory.php
+│   │
+│   ├── routes/
+│   │   ├── api.php
+│   │   └── web.php
+│   │
+│   ├── config/
+│   │   ├── app.php
+│   │   ├── database.php
+│   │   ├── mail.php
+│   │   ├── payment.php
+│   │   └── services.php
+│   │
+│   ├── storage/
+│   │   ├── app/
+│   │   │   ├── public/
+│   │   │   │   ├── images/
+│   │   │   │   ├── documents/
+│   │   │   │   └── uploads/
+│   │   │   └── private/
+│   │   ├── logs/
+│   │   └── framework/
+│   │       ├── cache/
+│   │       ├── sessions/
+│   │       └── views/
+│   │
+│   ├── tests/
+│   │   ├── Unit/
+│   │   │   ├── ProjectTest.php
+│   │   │   ├── PaymentTest.php
+│   │   │   └── ValidationTest.php
+│   │   └── Feature/
+│   │       ├── ContactFormTest.php
+│   │       ├── DonationTest.php
+│   │       └── APITest.php
+│   │
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── composer.json
+│   ├── artisan
+│   └── README.md
+│
+├── admin/                             (Nouveau - Dashboard CMS)
+│   ├── public/
+│   │   └── index.html
+│   │
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── ContentEditor/
+│   │   │   │   ├── ProjectEditor.jsx
+│   │   │   │   ├── NewsEditor.jsx
+│   │   │   │   ├── JobEditor.jsx
+│   │   │   │   └── AlertEditor.jsx
+│   │   │   ├── MediaManager.jsx
+│   │   │   ├── ReportManager.jsx
+│   │   │   └── UserManager.jsx
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── DashboardPage.jsx
+│   │   │   ├── ContentPage.jsx
+│   │   │   └── SettingsPage.jsx
+│   │   │
+│   │   ├── services/
+│   │   │   └── adminApi.js
+│   │   │
+│   │   ├── styles/
+│   │   │   └── admin.css
+│   │   │
+│   │   └── App.jsx
+│   │
+│   ├── .env.example
+│   ├── package.json
+│   └── README.md
+│
+├── docs/                              (Nouveau - Documentation)
+│   ├── ARCHITECTURE.md
+│   ├── API_DOCUMENTATION.md
+│   ├── USER_GUIDE.md
+│   ├── DEPLOYMENT.md
+│   ├── SECURITY.md
+│   ├── CONTRIBUTING.md
+│   └── mockups/
+│       ├── homepage.png
+│       ├── about.png
+│       ├── projects.png
+│       └── wireframes.fig
+│
+├── scripts/                           (Nouveau - Scripts utilitaires)
+│   ├── deploy.sh
+│   ├── backup.sh
+│   ├── setup.sh
+│   └── seed-data.js
+│
+├── docker/                            (Nouveau - Conteneurisation)
+│   ├── Dockerfile.frontend
+│   ├── Dockerfile.backend
+│   ├── Dockerfile.admin
+│   ├── docker-compose.yml
+│   └── nginx.conf
+│
+├── .github/                           (Nouveau - CI/CD)
+│   └── workflows/
+│       ├── ci.yml
+│       ├── deploy-frontend.yml
+│       ├── deploy-backend.yml
+│       └── tests.yml
+│
+├── .gitignore
+├── README.md
+└── LICENSE

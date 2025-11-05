@@ -1,0 +1,222 @@
+/* ImageCarousel.module.css */
+
+.carouselSection {
+    padding: 60px 24px;
+    background: #f9fafb;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .sectionTitle {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e293b;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .carouselWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Slides Container */
+  .slidesContainer {
+    position: relative;
+    width: 100%;
+    height: 500px;
+  }
+  
+  @media (max-width: 768px) {
+    .slidesContainer {
+      height: 400px;
+    }
+  }
+  
+  .slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    pointer-events: none;
+  }
+  
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .imageWrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.6) 100%
+    );
+  }
+  
+  /* Slide Content */
+  .slideContent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px;
+    color: white;
+    z-index: 2;
+  }
+  
+  @media (max-width: 768px) {
+    .slideContent {
+      padding: 24px;
+    }
+  }
+  
+  .slideTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: white;
+  }
+  
+  @media (max-width: 768px) {
+    .slideTitle {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .slideDescription {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.95);
+    max-width: 600px;
+  }
+  
+  @media (max-width: 768px) {
+    .slideDescription {
+      font-size: 1rem;
+    }
+  }
+  
+  /* Navigation Buttons */
+  .navButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    color: #1e293b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .navButton:hover {
+    background: white;
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  .prevButton {
+    left: 20px;
+  }
+  
+  .nextButton {
+    right: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .navButton {
+      width: 40px;
+      height: 40px;
+    }
+  
+    .prevButton {
+      left: 12px;
+    }
+  
+    .nextButton {
+      right: 12px;
+    }
+  }
+  
+  /* Dots Indicator */
+  .dotsContainer {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+  }
+  
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+  }
+  
+  .dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
+  }
+  
+  .activeDot {
+    background: white;
+    width: 32px;
+    border-radius: 6px;
+  }
+  
+  @media (max-width: 768px) {
+    .dotsContainer {
+      bottom: 12px;
+    }
+  
+    .dot {
+      width: 10px;
+      height: 10px;
+    }
+  
+    .activeDot {
+      width: 24px;
+    }
+  }
