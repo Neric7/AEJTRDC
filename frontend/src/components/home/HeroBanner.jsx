@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Button from '../common/Button';
 import { IoRestaurant, IoLibrary, IoWater, IoMedical } from 'react-icons/io5';
 import styles from './HeroBanner.module.css';
 
@@ -30,8 +31,8 @@ export default function HeroBanner() {
               Toutes les cinq secondes, un enfant en Afrique souffre de malnutrition et de maladies évitables — vous pouvez aider à changer cela.
             </p>
             <div className={styles.buttonGroup}>
-              <button className={styles.primaryButton}>Faire un don</button>
-              <button className={styles.secondaryButton}>Découvrir →</button>
+              <Button className={styles.primaryButton}>Faire un don</Button>
+              <Button className={styles.secondaryButton}>Découvrir →</Button>
             </div>
           </div>
 

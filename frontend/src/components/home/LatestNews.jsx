@@ -1,88 +1,131 @@
-import styles from './LatestNews.module.css';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { fetchLatestNews } from '../../services/news';
+import Card from '../common/Card';
+import Button from '../common/Button';
 
-export default function LatestNews() {
-  const news = [
-    {
-      id: 1,
-      image: '/src/assets/images/news/news-1.webp',
-      category: 'Projet',
-      date: '15 Oct 2025',
-      title: 'Lancement du programme de formation professionnelle à Kinshasa',
-      excerpt: '50 jeunes bénéficient d\'une formation en menuiserie et couture pour leur insertion socio-économique.',
-      link: '/news/formation-kinshasa'
-    },
-    {
-      id: 2,
-      image: '/src/assets/images/news/news-2.jpeg',
-      category: 'Actualité',
-      date: '10 Oct 2025',
-      title: 'Campagne de sensibilisation sur les droits de l\'enfant',
-      excerpt: 'Plus de 200 familles sensibilisées dans les provinces du Nord-Kivu et Sud-Kivu.',
-      link: '/news/campagne-droits-enfant'
-    },
-    {
-      id: 3,
-      image: '/src/assets/images/news/news-3.jpg',
-      category: 'Événement',
-      date: '05 Oct 2025',
-      title: 'Journée mondiale de lutte contre le travail des enfants',
-      excerpt: 'AEJTRD organise une journée de plaidoyer avec ses partenaires locaux et internationaux.',
-      link: '/news/journee-mondiale'
-    }
-  ];
+export default function LatestNews({ limit = 3 }) {
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchLatestNews({ limit });
+        if (mounted) setNews(Array.isArray(data) ? data : []);
+      } catch (e) {
+        if (mounted) setError('Impossible de charger les actualités');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, [limit]);
+
+  if (loading) {
+    return (
+      <section className="py-16 bg-secondary-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-secondary-900">Dernières Actualités</h2>
+            <p className="text-secondary-600 mt-2">Restez informé de nos actions sur le terrain</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="animate-pulse" shadow="soft" radius="lg" padding="md">
+                <div className="bg-gray-300 h-48 w-full rounded-md mb-4"></div>
+                <div className="bg-gray-300 h-5 w-3/4 rounded mb-3"></div>
+                <div className="bg-gray-200 h-3 w-full rounded mb-2"></div>
+                <div className="bg-gray-200 h-3 w-5/6 rounded"></div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || news.length === 0) {
+    return null;
+  }
 
   return (
-    <section className={styles.newsSection}>
-      <div className={styles.container}>
-        {/* Header */}
-        <div className={styles.header}>
-          <div>
-            <h2 className={styles.sectionTitle}>Nos Dernières Actualités</h2>
-            <p className={styles.sectionSubtitle}>
-              Restez informé de nos actions et projets en cours
-            </p>
-          </div>
-          <a href="/news" className={styles.viewAllButton}>
-            Voir toutes les actualités
-            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
+    <section className="py-16 bg-secondary-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-secondary-900">Dernières Actualités</h2>
+          <p className="text-secondary-600 mt-2">Restez informé de nos actions sur le terrain</p>
         </div>
 
-        {/* News Grid */}
-        <div className={styles.newsGrid}>
-          {news.map((item) => (
-            <article key={item.id} className={styles.newsCard}>
-              <div className={styles.imageWrapper}>
-                <img 
-                  src={item.image} 
-                  alt={item.title}
-                  className={styles.newsImage}
-                />
-                <span className={styles.categoryBadge}>{item.category}</span>
-              </div>
-
-              <div className={styles.cardContent}>
-                <div className={styles.meta}>
-                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span className={styles.date}>{item.date}</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {news.map((article) => (
+            <Card
+              key={article.id}
+              className="h-full flex flex-col overflow-hidden"
+              shadow="soft"
+              radius="lg"
+              padding="none"
+              hover
+            >
+              {article.image && (
+                <div className="w-full h-48 overflow-hidden">
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
                 </div>
-
-                <h3 className={styles.newsTitle}>{item.title}</h3>
-                <p className={styles.newsExcerpt}>{item.excerpt}</p>
-
-                <a href={item.link} className={styles.readMoreLink}>
-                  Lire la suite
-                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
+              )}
+              
+              <div className="p-6 flex flex-col flex-1">
+                {article.tags && article.tags.length > 0 && (
+                  <div className="mb-2">
+                    <span className="inline-block px-2 py-1 text-xs bg-primary-100 text-primary-700 rounded-full">
+                      {article.tags[0]}
+                    </span>
+                  </div>
+                )}
+                
+                <h3 className="text-xl font-semibold text-secondary-900 mb-3 line-clamp-2">
+                  {article.title}
+                </h3>
+                
+                {article.published_at && (
+                  <div className="text-xs text-secondary-500 mb-3">
+                    <time dateTime={article.published_at}>
+                      {new Date(article.published_at).toLocaleDateString('fr-FR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </time>
+                  </div>
+                )}
+                
+                <p className="text-secondary-700 mb-4 flex-1 line-clamp-3">
+                  {article.excerpt || article.content?.slice(0, 150)}
+                </p>
+                
+                <Link to={`/news/${article.slug || article.id}`} className="mt-auto">
+                  <Button variant="outline" size="sm" fullWidth>
+                    Lire l'article
+                  </Button>
+                </Link>
               </div>
-            </article>
+            </Card>
           ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <Link to="/news">
+            <Button variant="primary" size="lg">
+              Voir toutes les actualités
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

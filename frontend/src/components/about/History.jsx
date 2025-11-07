@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '../common/Button';
 import styles from './History.module.css';
 
 export default function History() {
@@ -23,7 +24,7 @@ export default function History() {
               a été créé en 2006 et reconnue officiellement le 06 mai 2024 et affiliée au mouvement 
               africain des enfants et jeunes travailleurs, représentant les différents groupes de métier.
             </p>
-            <button className={styles.heroButton}>EN SAVOIR PLUS</button>
+            <Button className={styles.heroButton}>EN SAVOIR PLUS</Button>
             
             {/* Stats intégrées dans le hero */}
             <div className={styles.heroStats}>

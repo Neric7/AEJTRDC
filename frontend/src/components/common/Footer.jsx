@@ -1,4 +1,5 @@
 import styles from './Footer.module.css';
+import Button from './Button';
 import { CONTACT_INFO } from '../../data/contactData'; 
 
 const formatPhoneForWhatsApp = (phone) => {
@@ -119,11 +120,11 @@ export default function Footer() {
                   placeholder="Votre email" 
                   className={styles.newsletterInput}
                 />
-                <button className={styles.newsletterButton}>
+                <Button className={styles.newsletterButton}>
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                   </svg>
-                </button>
+                </Button>
               </div>
             </div>
           </div>

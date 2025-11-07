@@ -1,6 +1,7 @@
 
 // Values.jsx
 import React from 'react';
+import Button from '../common/Button';
 import styles from './Values.module.css';
 
 export default function Values() {
@@ -88,7 +89,7 @@ export default function Values() {
             <p className={styles.heroSubtitle}>
               Les principes fondamentaux qui guident notre action au quotidien
             </p><br />
-            <button className={styles.heroButton}>Découvrir nos valeurs</button>
+            <Button className={styles.heroButton}>Découvrir nos valeurs</Button>
 
             <div className={styles.heroStats}>
               <div className={styles.heroStatItem}>

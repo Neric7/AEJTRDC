@@ -8,10 +8,12 @@ import History from './components/about/History'
 import MissionVision from './components/about/MissionVision'
 import Values from './components/about/Values'
 import Objectives from './components/about/Objectives'
+import NewsArticle from './components/news/NewsArticle';
 
 // Pages
 import HomePage from './pages/HomePage'
 import ContactPage from './pages/ContactPage'
+import NewsPage from './pages/NewsPage';
 
 
 function App() {
@@ -30,6 +32,10 @@ function App() {
 
             {/* Page Contact */}
             <Route path="/contact" element={<ContactPage />} />
+
+            {/* Actualités */}
+            <Route path="/news" element={<NewsPage />} />
+            <Route path="/news/:slug" element={<NewsArticle />} />
 
             {/* Histoire */}
             <Route path="/history" element={<History />} />

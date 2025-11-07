@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Button from './Button';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.css';
 
@@ -127,9 +128,9 @@ export default function Header() {
 
           {/* Boutons CTA Desktop */}
           <div className={styles.actions}>
-            <button className={styles.primaryBtn}>
+            <Button className={styles.primaryBtn}>
               Faire un don
-            </button>
+            </Button>
           </div>
 
           {/* Menu Mobile Button */}
@@ -200,12 +201,12 @@ export default function Header() {
 
             {/* CTA Mobile */}
             <div className={styles.mobileCta}>
-              <button 
+              <Button 
                 className={styles.primaryBtn}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Faire un don
-              </button>
+              </Button>
             </div>
           </div>
         )}

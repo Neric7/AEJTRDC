@@ -1,5 +1,6 @@
 // Objectives.jsx
 import React, { useState } from 'react';
+import Button from '../common/Button';
 import styles from './Objectives.module.css';
 
 export default function Objectives() {
@@ -113,7 +114,7 @@ export default function Objectives() {
             <p className={styles.heroSubtitle}>
               Des objectifs clairs pour un impact durable sur les communautés
             </p><br />
-            <button className={styles.heroButton}>Voir notre feuille de route</button>
+            <Button className={styles.heroButton}>Voir notre feuille de route</Button>
 
             <div className={styles.heroStats}>
               <div className={styles.heroStatItem}>
@@ -237,9 +238,9 @@ export default function Objectives() {
               Chaque objectif représente un engagement envers un avenir meilleur pour les enfants et jeunes travailleurs de la RDC. 
               Rejoignez-nous dans cette mission transformatrice.
             </p>
-            <button className={styles.ctaButton}>
+            <Button className={styles.ctaButton}>
               Découvrez Comment Nous Aider
-            </button>
+            </Button>
           </div>
         </section>
       </main>

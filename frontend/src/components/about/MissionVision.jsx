@@ -1,5 +1,6 @@
 // MissionVision.jsx
 import React from 'react';
+import Button from '../common/Button';
 import styles from './MissionVision.module.css';
 
 export default function MissionVision() {
@@ -21,7 +22,7 @@ export default function MissionVision() {
             <p className={styles.heroSubtitle}>
               Notre engagement pour un avenir meilleur pour les enfants et jeunes travailleurs
             </p><br />
-            <button className={styles.heroButton}>Découvrir notre impact</button>
+            <Button className={styles.heroButton}>Découvrir notre impact</Button>
             
             {/* Hero Stats - Ajouté comme dans History */}
             <div className={styles.heroStats}>
