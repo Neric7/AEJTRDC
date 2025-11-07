@@ -22,7 +22,7 @@ export default function Footer() {
           <div className={styles.footerColumn}>
             <div className={styles.logoSection}>
               <div className={styles.logo}>
-                <img src="src/assets/images/logo/logo.png" alt="" />
+                <img src="/src/assets/images/logo/logo.png" alt="" />
                 <span className={styles.logoText}>AEJT-RDC</span>
               </div>
               <p className={styles.organizationDescription}>

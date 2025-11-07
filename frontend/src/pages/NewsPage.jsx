@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import NewsGrid from '../components/news/NewsGrid';
 import NewsArticle from '../components/news/NewsArticle';
@@ -6,6 +7,9 @@ import Loader from '../components/common/Loader';
 import styles from './NewsPage.module.css';
 
 export default function NewsPage() {
+  const { slug } = useParams(); // Récupérer le slug depuis l'URL
+  const navigate = useNavigate();
+  
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,9 +24,50 @@ export default function NewsPage() {
   const [selectedTag, setSelectedTag] = useState('');
   const [availableTags, setAvailableTags] = useState([]);
 
+  // Charger un article spécifique si un slug est présent dans l'URL
   useEffect(() => {
-    fetchNews();
+    if (slug) {
+      loadArticleBySlug(slug);
+    } else {
+      setSelectedArticle(null);
+      fetchNews();
+    }
+  }, [slug]);
+
+  // Charger les news quand on est sur la liste
+  useEffect(() => {
+    if (!slug) {
+      fetchNews();
+    }
   }, [pagination.page, search, selectedTag]);
+
+  const loadArticleBySlug = async (articleSlug) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      console.log('🔍 Loading article:', articleSlug);
+
+      // Essayer de charger par slug
+      const response = await api.get(`/news/${articleSlug}`);
+      
+      if (response && response.data) {
+        setSelectedArticle(response.data);
+      } else {
+        throw new Error('Article non trouvé');
+      }
+
+    } catch (err) {
+      console.error('💥 Error loading article:', err);
+      setError('Article non trouvé');
+      // Rediriger vers la liste après 2 secondes
+      setTimeout(() => {
+        navigate('/news');
+      }, 2000);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchNews = async () => {
     try {
@@ -52,6 +97,7 @@ export default function NewsPage() {
 
       console.log('📦 Response structure:', response);
 
+      // Gérer différents formats de réponse
       if (response.data && Array.isArray(response.data)) {
         setNews(response.data);
         if (response.pagination) {
@@ -68,8 +114,8 @@ export default function NewsPage() {
             ...response.data.pagination
           }));
         }
-      } else if (Array.isArray(response.data)) {
-        setNews(response.data);
+      } else if (Array.isArray(response)) {
+        setNews(response);
       } else {
         console.warn('Format de réponse inattendu:', response);
         setNews([]);
@@ -98,20 +144,14 @@ export default function NewsPage() {
     setAvailableTags([...tags].sort());
   };
 
-  const handleArticleSelect = async (articleId) => {
-    try {
-      setLoading(true);
-      const response = await api.get(`/news/${articleId}`);
-      setSelectedArticle(response.data);
-    } catch (err) {
-      setError('Erreur lors du chargement de l\'article');
-    } finally {
-      setLoading(false);
-    }
+  const handleArticleSelect = (articleSlugOrId) => {
+    // Naviguer vers l'URL de l'article
+    navigate(`/news/${articleSlugOrId}`);
   };
 
   const handleBackToList = () => {
-    setSelectedArticle(null);
+    // Retourner à la liste des actualités
+    navigate('/news');
   };
 
   const handleSearch = (e) => {
@@ -128,7 +168,8 @@ export default function NewsPage() {
     setPagination(prev => ({ ...prev, page: newPage }));
   };
 
-  if (selectedArticle) {
+  // Si un article est sélectionné
+  if (selectedArticle && selectedArticle.id) {
     return (
       <NewsArticle 
         article={selectedArticle}
@@ -189,10 +230,10 @@ export default function NewsPage() {
                 Vérifiez que l'API est accessible
               </p>
               <button
-                onClick={fetchNews}
+                onClick={() => slug ? navigate('/news') : fetchNews()}
                 className={styles.retryButton}
               >
-                Réessayer
+                {slug ? 'Retour à la liste' : 'Réessayer'}
               </button>
             </div>
           </div>

@@ -35,7 +35,7 @@ function App() {
 
             {/* Actualités */}
             <Route path="/news" element={<NewsPage />} />
-            <Route path="/news/:slug" element={<NewsArticle />} />
+            <Route path="/news/:slug" element={<NewsPage />} />
 
             {/* Histoire */}
             <Route path="/history" element={<History />} />

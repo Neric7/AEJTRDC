@@ -75,7 +75,7 @@ export default function Header() {
           {/* Logo/Brand : Maintenant cliquable et renvoie à la page d'accueil */}
           <a href="/index" className={styles.brandLink}> 
             <div className={styles.brand}>
-              <img src="src/assets/images/logo/logo.png" alt="" />
+              <img src="/src/assets/images/logo/logo.png" alt="" />
               <span className={styles.brandName}>AEJT-RDC</span>
             </div>
           </a>
