@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import styles from './NewsArticle.module.css';
 
 export default function NewsArticle({ article, onBack, onRelatedArticle }) {
   const [relatedArticles, setRelatedArticles] = useState([]);
@@ -18,34 +19,34 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className={styles.container}>
+      <div className={styles.wrapper}>
         
         {/* Bouton retour */}
         <button
           onClick={onBack}
-          className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition"
+          className={styles.backButton}
         >
-          ← Retour aux actualités
+          Retour aux actualités
         </button>
 
         {/* Article principal */}
-        <article className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <article className={styles.article}>
           {article.image && (
             <img 
               src={article.image} 
               alt={article.title}
-              className="w-full h-64 md:h-96 object-cover"
+              className={styles.heroImage}
             />
           )}
           
-          <div className="p-8">
+          <div className={styles.articleContent}>
             {/* Tags */}
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className={styles.tags}>
               {article.tags?.map(tag => (
                 <span 
                   key={tag}
-                  className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
+                  className={styles.tag}
                 >
                   {tag}
                 </span>
@@ -53,26 +54,36 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
             </div>
 
             {/* Titre */}
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h1 className={styles.title}>
               {article.title}
             </h1>
 
             {/* Métadonnées */}
-            <div className="flex flex-wrap gap-4 text-gray-600 mb-6">
-              <span>Par {article.author}</span>
-              <span>•</span>
-              <span>{new Date(article.published_at).toLocaleDateString('fr-FR')}</span>
-              <span>•</span>
-              <span>{article.views} vues</span>
+            <div className={styles.meta}>
+              <span className={`${styles.metaItem} ${styles.metaAuthor}`}>
+                Par {article.author}
+              </span>
+              <span className={styles.metaSeparator}>•</span>
+              <span className={styles.metaItem}>
+                {new Date(article.published_at).toLocaleDateString('fr-FR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </span>
+              <span className={styles.metaSeparator}>•</span>
+              <span className={`${styles.metaItem} ${styles.metaViews}`}>
+                {article.views} vues
+              </span>
             </div>
 
             {/* Extrait */}
-            <p className="text-xl text-gray-700 mb-8 leading-relaxed">
+            <p className={styles.excerpt}>
               {article.excerpt}
             </p>
 
             {/* Contenu */}
-            <div className="prose prose-lg max-w-none">
+            <div className={styles.body}>
               <div dangerouslySetInnerHTML={{ __html: article.content }} />
             </div>
           </div>
@@ -80,29 +91,29 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
 
         {/* Articles connexes */}
         {relatedArticles.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <div className={styles.relatedSection}>
+            <h2 className={styles.relatedTitle}>
               Articles connexes
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className={styles.relatedGrid}>
               {relatedArticles.map(related => (
                 <div 
                   key={related.id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
+                  className={styles.relatedCard}
                   onClick={() => onRelatedArticle(related.id)}
                 >
                   {related.image && (
                     <img 
                       src={related.image} 
                       alt={related.title}
-                      className="w-full h-32 object-cover"
+                      className={styles.relatedImage}
                     />
                   )}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                  <div className={styles.relatedContent}>
+                    <h3 className={styles.relatedCardTitle}>
                       {related.title}
                     </h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">
+                    <p className={styles.relatedExcerpt}>
                       {related.excerpt}
                     </p>
                   </div>
