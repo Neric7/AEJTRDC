@@ -23,6 +23,24 @@ nav {
   height: 60px;
 }
 
+@media (min-width: 1024px) {
+  .bar {
+    height: 70px;
+  }
+}
+
+@media (min-width: 640px) {
+  nav {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  nav {
+    padding: 0 2rem;
+  }
+}
+
 /* Logo / Brand */
 .brand {
   display: flex;
@@ -31,6 +49,7 @@ nav {
   flex-shrink: 0;
 }
 
+/* NOUVEAU STYLE POUR L'IMAGE DU LOGO */
 .brand img {
   width: 32px;
   height: 32px;
@@ -50,7 +69,18 @@ nav {
   color: #1f2937;
 }
 
-/* Navigation Desktop */
+@media (min-width: 1024px) {
+  .brand img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .brandName {
+    font-size: 1.25rem;
+  }
+}
+
+/* Navigation Desktop - MODIFICATION CRITIQUE */
 .nav {
   display: none;
   align-items: center;
@@ -58,10 +88,16 @@ nav {
   margin-left: 2rem;
 }
 
-/* Breakpoint modifié à 1130px */
+/* CHANGEMENT : Basculer à 1130px au lieu de 1024px */
 @media (min-width: 1130px) {
   .nav {
     display: flex;
+  }
+}
+
+@media (min-width: 1280px) {
+  .nav {
+    gap: 1rem;
   }
 }
 
@@ -83,6 +119,12 @@ nav {
   white-space: nowrap;
 }
 
+@media (min-width: 1280px) {
+  .link {
+    padding: 0.5rem 0.875rem;
+  }
+}
+
 .link:hover {
   color: #7CB342;
 }
@@ -99,11 +141,12 @@ nav {
   position: absolute;
   left: 0;
   top: 100%;
+  margin-top: 0;
   min-width: 16rem;
   background: white;
   border: 1px solid #f3f4f6;
   border-radius: 0.375rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   padding: 0.5rem 0;
   z-index: 50;
 }
@@ -125,7 +168,7 @@ nav {
   color: #7CB342;
 }
 
-/* Actions (CTA Buttons) Desktop */
+/* Actions (CTA Buttons) Desktop - MODIFICATION CRITIQUE */
 .actions {
   display: none;
   align-items: center;
@@ -133,10 +176,16 @@ nav {
   margin-left: 1rem;
 }
 
-/* Breakpoint modifié à 1130px */
+/* CHANGEMENT : Basculer à 1130px au lieu de 1024px */
 @media (min-width: 1130px) {
   .actions {
     display: flex;
+  }
+}
+
+@media (min-width: 1280px) {
+  .actions {
+    margin-left: 1.5rem;
   }
 }
 
@@ -164,16 +213,16 @@ nav {
   font-size: 0.9375rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   white-space: nowrap;
 }
 
 .primaryBtn:hover {
   background-color: #689F38;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-/* Menu Mobile Button */
+/* Menu Mobile Button - MODIFICATION CRITIQUE */
 .menuBtn {
   display: block;
   padding: 0.5rem;
@@ -188,7 +237,7 @@ nav {
   color: #7CB342;
 }
 
-/* Cacher le bouton menu à partir de 1130px */
+/* CHANGEMENT : Cacher le bouton menu seulement à partir de 1130px */
 @media (min-width: 1130px) {
   .menuBtn {
     display: none;
@@ -203,7 +252,7 @@ nav {
   margin-top: 0.5rem;
 }
 
-/* Cacher le menu mobile à partir de 1130px */
+/* CHANGEMENT : Cacher le menu mobile seulement à partir de 1130px */
 @media (min-width: 1130px) {
   .mobileMenu {
     display: none;
@@ -301,47 +350,34 @@ nav {
   background-color: #f9fafb;
 }
 
-/* Media Queries supplémentaires */
-@media (min-width: 640px) {
-  nav {
-    padding: 0 1.5rem;
+/* Animation pour le menu mobile */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (min-width: 1024px) {
-  nav {
-    padding: 0 2rem;
+.mobileMenu {
+  animation: slideDown 0.2s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .brandName {
+    font-size: 1rem;
   }
   
   .bar {
-    height: 70px;
-  }
-  
-  .brand img {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .brandName {
-    font-size: 1.25rem;
+    height: 56px;
   }
 }
 
-@media (min-width: 1280px) {
-  .nav {
-    gap: 1rem;
-  }
-  
-  .link {
-    padding: 0.5rem 0.875rem;
-  }
-  
-  .actions {
-    margin-left: 1.5rem;
-  }
-}
-
-/* Ajustements pour la transition entre desktop et mobile */
+/* NOUVELLE MEDIA QUERY POUR LA TRANSITION ENTRE 1024px ET 1130px */
 @media (min-width: 1024px) and (max-width: 1129px) {
   .link {
     padding: 0.5rem 0.4rem;
@@ -364,12 +400,19 @@ nav {
   }
 }
 
-@media (max-width: 640px) {
-  .brandName {
-    font-size: 1rem;
+@media (min-width: 1130px) and (max-width: 1280px) {
+  .link {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.875rem;
   }
   
-  .bar {
-    height: 56px;
+  .contactLink {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .primaryBtn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
   }
 }
