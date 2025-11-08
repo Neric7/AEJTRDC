@@ -31,23 +31,23 @@ function App() {
             <Route path="/index" element={<HomePage />} />
 
             {/* Page Contact */}
-            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/about/contact" element={<ContactPage />} />
 
             {/* Actualités */}
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news/:slug" element={<NewsPage />} />
 
             {/* Histoire */}
-            <Route path="/history" element={<History />} />
+            <Route path="/about/history" element={<History />} />
 
             {/* Mission&Vision */}
-            <Route path="/mission" element={<MissionVision />} />
+            <Route path="/about/mission" element={<MissionVision />} />
 
             {/* Valeurs */}
-            <Route path="/values" element={<Values />} />
+            <Route path="/about/values" element={<Values />} />
 
             {/* Objectifs */}
-            <Route path="/objectives" element={<Objectives />} />
+            <Route path="/about/objectives" element={<Objectives />} />
 
             {/* Page 404 */}
             <Route path="*" element={<NotFoundPage />} />

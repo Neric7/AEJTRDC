@@ -24,6 +24,11 @@ export default function NewsPage() {
   const [selectedTag, setSelectedTag] = useState('');
   const [availableTags, setAvailableTags] = useState([]);
 
+  // Scroller vers le haut au chargement de la page
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Charger un article spécifique si un slug est présent dans l'URL
   useEffect(() => {
     if (slug) {

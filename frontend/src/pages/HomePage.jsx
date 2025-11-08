@@ -21,7 +21,7 @@ export default function HomePage() {
       <CTASection />
 
       {/* Section des 3 dernières actualités */}
-      <LatestNews limit={3} />
+      <LatestNews limit={4} />
       
       {/* Autres sections à venir : 
           - Programmes et projets

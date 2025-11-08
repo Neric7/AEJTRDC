@@ -152,6 +152,7 @@ export default function LatestNews({ limit = 3 }) {
                 <Link 
                   to={`/news/${article.slug || article.id}`} 
                   className={styles.readButton}
+                  onClick={() => window.scrollTo(0, 0)}
                 >
                   Lire l'article
                 </Link>
@@ -162,7 +163,11 @@ export default function LatestNews({ limit = 3 }) {
 
         {/* CTA pour voir toutes les actualités */}
         <div className={styles.ctaSection}>
-          <Link to="/news" className={styles.ctaButton}>
+          <Link 
+            to="/news" 
+            className={styles.ctaButton}
+            onClick={() => window.scrollTo(0, 0)}
+          >
             Voir toutes les actualités
           </Link>
         </div>

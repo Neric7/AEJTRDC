@@ -50,7 +50,7 @@ export default function History() {
           <div className={styles.heroImage}>
             <div className={styles.imageShape}>
               <div className={styles.imagePlaceholder}>
-                <img src="src/assets/Ressources/image-enfant.webp" alt="" />
+                <img src="/src/assets/Ressources/image-enfant.webp" alt="" />
               </div>
             </div>
           </div>

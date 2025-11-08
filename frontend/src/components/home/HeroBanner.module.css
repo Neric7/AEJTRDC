@@ -1,6 +1,6 @@
 .heroContainer {
   background: #ffffff; /* Fond blanc */
-  padding: 40px 24px 50px; /* Padding réduit en haut et en bas */
+  padding: 10px 24px 50px; /* Padding réduit en haut et en bas */
   position: relative;
   overflow: hidden;
   min-height: calc(100vh - 70px); /* Soustraire la hauteur du header */

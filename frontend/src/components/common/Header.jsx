@@ -56,14 +56,14 @@ export default function Header() {
       label: 'À propos',
       href: '#',
       submenu: [
-        { label: 'Notre histoire', href: '/history' },
-        { label: 'Mission & Vision', href: '/mission' },
-        { label: 'Valeurs', href: '/values' },
-        { label: 'Objectifs', href: '/objectives' },
-        { label: 'Organigramme', href: '/structure' },
-        { label: 'Zones d\'intervention', href: '/zones' },
-        { label: 'Notre équipe', href: '/team' },
-        { label: 'Contact', href: '/contact' },
+        { label: 'Notre histoire', href: '/about/history' },
+        { label: 'Mission & Vision', href: '/about/mission' },
+        { label: 'Valeurs', href: '/about/values' },
+        { label: 'Objectifs', href: '/about/objectives' },
+        { label: 'Organigramme', href: '/about/structure' },
+        { label: 'Zones d\'intervention', href: '/about/zones' },
+        { label: 'Notre équipe', href: '/about/team' },
+        { label: 'Contact', href: '/about/contact' },
       ]
     },
   ];
