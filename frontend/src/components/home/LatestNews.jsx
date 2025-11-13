@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import styles from './LatestNews.module.css';
 
-export default function LatestNews({ limit = 3 }) {
+export default function LatestNews({ limit = 4 }) {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
