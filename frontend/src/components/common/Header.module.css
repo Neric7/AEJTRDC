@@ -222,6 +222,87 @@ nav {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
+.authLinks {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.loginLink {
+  text-decoration: none;
+  color: #374151;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.loginLink:hover {
+  color: #7CB342;
+}
+
+.signupBtn {
+  text-decoration: none;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid #7CB342;
+  border-radius: 9999px;
+  font-weight: 600;
+  color: #7CB342;
+  transition: all 0.2s ease;
+}
+
+.signupBtn:hover {
+  background: #7CB342;
+  color: white;
+}
+
+.userMenu {
+  position: relative;
+}
+
+.userButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.35rem 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+}
+
+.userButton svg {
+  transition: transform 0.2s ease;
+}
+
+.userDropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(55, 65, 81, 0.15);
+  min-width: 180px;
+  padding: 0.5rem 0;
+  z-index: 200;
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #1f2937;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdownItem:hover {
+  background: #f3f4f6;
+}
+
 /* Menu Mobile Button - MODIFICATION CRITIQUE */
 .menuBtn {
   display: block;
@@ -330,6 +411,18 @@ nav {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.mobileAuth {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.mobileUser {
+  font-weight: 600;
+  color: #1f2937;
 }
 
 .secondaryBtn {

@@ -5,173 +5,159 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\News;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Schema;
 
 class NewsController extends Controller
 {
-    /**
-     * Liste paginée des actualités
-     */
+    // Liste toutes les actualités avec pagination
     public function index(Request $request)
     {
-        $pageSize = min((int) $request->input('pageSize', 9), 50);
-        $search = $request->input('search', '');
-        
-        $query = News::where('status', 'published')
-            ->orderBy('published_at', 'desc');
-        
-        if (!empty($search)) {
+        $pageSize = (int) $request->input('pageSize', 10);
+        $limit = (int) $request->input('limit', 0);
+        $category = $request->input('category');
+        $search = $request->input('search');
+        $featured = $request->input('featured');
+        $sort = $request->input('sort', 'published_at');
+        $order = $request->input('order', 'desc');
+
+        $allowedSortColumns = ['published_at', 'created_at', 'views'];
+        if (!in_array($sort, $allowedSortColumns, true)) {
+            $sort = 'published_at';
+        }
+
+        // Si un paramètre limit est fourni, on l'utilise comme taille de page
+        if ($limit > 0) {
+            $pageSize = $limit;
+        }
+
+        $query = News::query()
+            ->where('status', 'published');
+
+        // Filtrer par catégorie si la colonne existe
+        $hasCategoryColumn = Schema::hasColumn('news', 'category');
+        if ($category && $hasCategoryColumn) {
+            $query->where('category', $category);
+        }
+
+        // Filtrer par recherche
+        if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                   ->orWhere('excerpt', 'like', "%{$search}%")
                   ->orWhere('content', 'like', "%{$search}%");
             });
         }
-        
-        $news = $query->paginate($pageSize);
-        
-        return response()->json([
-            'data' => $news->items(),
-            'pagination' => [
-                'page' => $news->currentPage(),
-                'pageSize' => $news->perPage(),
-                'total' => $news->total(),
-                'lastPage' => $news->lastPage(),
-            ]
-        ]);
-    }
-    
-    /**
-     * Détail d'une actualité par ID ou slug
-     */
-    public function show($idOrSlug)
-    {
-        $news = is_numeric($idOrSlug)
-            ? News::where('id', $idOrSlug)->where('status', 'published')->firstOrFail()
-            : News::where('slug', $idOrSlug)->where('status', 'published')->firstOrFail();
-        
-        // Incrémenter les vues
-        $news->increment('views');
-        
-        return response()->json($news);
-    }
-    
-    /**
-     * Dernières actualités
-     */
-    public function latest(Request $request)
-    {
-        $limit = min((int) $request->input('limit', 3), 10);
-        
-        $news = News::where('status', 'published')
-            ->orderBy('published_at', 'desc')
-            ->limit($limit)
-            ->get();
-        
-        return response()->json($news);
-    }
-    
-    /**
-     * Actualités par catégorie/tag
-     */
-    public function byTag($tag, Request $request)
-    {
-        $pageSize = min((int) $request->input('pageSize', 9), 50);
-        
-        $news = News::where('status', 'published')
-            ->whereJsonContains('tags', $tag)
-            ->orderBy('published_at', 'desc')
-            ->paginate($pageSize);
-        
-        return response()->json([
-            'data' => $news->items(),
-            'pagination' => [
-                'page' => $news->currentPage(),
-                'pageSize' => $news->perPage(),
-                'total' => $news->total(),
-            ]
-        ]);
-    }
-    
-    /**
-     * Articles connexes
-     */
-    public function related($id)
-    {
-        $news = News::findOrFail($id);
-        
-        $related = News::where('status', 'published')
-            ->where('id', '!=', $id)
-            ->where(function($query) use ($news) {
-                foreach ($news->tags ?? [] as $tag) {
-                    $query->orWhereJsonContains('tags', $tag);
-                }
-            })
-            ->orderBy('published_at', 'desc')
-            ->limit(3)
-            ->get();
-        
-        return response()->json($related);
-    }
-    
-    /**
-     * ADMIN - Créer une actualité
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'excerpt' => 'required|string|max:500',
-            'content' => 'required|string',
-            'image' => 'nullable|string',
-            'author' => 'required|string|max:100',
-            'tags' => 'nullable|array',
-            'status' => 'required|in:draft,published,archived',
-            'published_at' => 'nullable|date',
-        ]);
-        
-        $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);
-        
-        $news = News::create($validated);
-        
-        return response()->json($news, 201);
-    }
-    
-    /**
-     * ADMIN - Mettre à jour une actualité
-     */
-    public function update(Request $request, $id)
-    {
-        $news = News::findOrFail($id);
-        
-        $validated = $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'excerpt' => 'sometimes|string|max:500',
-            'content' => 'sometimes|string',
-            'image' => 'nullable|string',
-            'author' => 'sometimes|string|max:100',
-            'tags' => 'nullable|array',
-            'status' => 'sometimes|in:draft,published,archived',
-            'published_at' => 'nullable|date',
-        ]);
-        
-        if (isset($validated['title']) && $validated['title'] !== $news->title) {
-            $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);
+
+        // Filtrer les articles mis en avant
+        if (!is_null($featured)) {
+            $query->where('featured', filter_var($featured, FILTER_VALIDATE_BOOLEAN));
         }
-        
-        $news->update($validated);
-        
+
+        $news = $query->orderBy($sort, $order === 'asc' ? 'asc' : 'desc')
+                     ->paginate($pageSize);
+
         return response()->json($news);
     }
-    
-    /**
-     * ADMIN - Supprimer une actualité
-     */
-    public function destroy($id)
+
+    // Obtenir une actualité par ID ou slug
+    public function show($identifier)
     {
-        $news = News::findOrFail($id);
-        $news->delete();
-        
-        return response()->json(['message' => 'Actualité supprimée avec succès']);
+        $newsQuery = News::with([
+            'comments' => function ($query) {
+                $query->where('status', 'approved')
+                      ->orderBy('created_at', 'desc');
+            },
+            'comments.replies' => function ($query) {
+                $query->where('status', 'approved')
+                      ->orderBy('created_at', 'asc');
+            }
+        ]);
+
+        $news = ctype_digit((string) $identifier)
+            ? $newsQuery->where('id', $identifier)->first()
+            : $newsQuery->where('slug', $identifier)->first();
+
+        if (!$news) {
+            return response()->json([
+                'message' => 'Actualité introuvable.'
+            ], 404);
+        }
+
+        // Incrémenter le compteur de vues
+        $news->increment('views');
+
+        return response()->json([
+            'id' => $news->id,
+            'title' => $news->title,
+            'slug' => $news->slug,
+            'excerpt' => $news->excerpt,
+            'content' => $news->content,
+            'image' => $news->image,
+            'category' => $news->category,
+            'tags' => $news->tags,
+            'author' => $news->author,
+            'published_at' => optional($news->published_at)->format('Y-m-d H:i:s'),
+            'status' => $news->status,
+            'featured' => (bool) $news->featured,
+            'views' => $news->views,
+            'created_at' => optional($news->created_at)->format('Y-m-d H:i:s'),
+            'comments' => $news->comments->map(function ($comment) {
+                return [
+                    'id' => $comment->id,
+                    'name' => $comment->author_name,
+                    'email' => $comment->author_email,
+                    'message' => $comment->content,
+                    'status' => $comment->status,
+                    'created_at' => optional($comment->created_at)->format('Y-m-d H:i:s'),
+                    'replies' => $comment->replies->map(function ($reply) {
+                        return [
+                            'id' => $reply->id,
+                            'name' => $reply->author_name,
+                            'email' => $reply->author_email,
+                            'message' => $reply->content,
+                            'status' => $reply->status,
+                            'created_at' => optional($reply->created_at)->format('Y-m-d H:i:s'),
+                        ];
+                    }),
+                ];
+            }),
+        ]);
+    }
+
+    // Obtenir les actualités par tag
+    public function getByTag($tag)
+    {
+        $news = News::whereJsonContains('tags', $tag)
+                   ->orderBy('published_at', 'desc')
+                   ->paginate(9);
+
+        return response()->json($news);
+    }
+
+    // Obtenir les catégories disponibles
+    public function categories()
+    {
+        $categories = News::distinct()
+                         ->pluck('category')
+                         ->filter();
+
+        return response()->json([
+            'categories' => $categories
+        ]);
+    }
+
+    // Obtenir les tags disponibles
+    public function tags()
+    {
+        $allTags = News::whereNotNull('tags')
+                      ->get()
+                      ->pluck('tags')
+                      ->flatten()
+                      ->unique()
+                      ->values();
+
+        return response()->json([
+            'tags' => $allTags
+        ]);
     }
 }

@@ -1,45 +1,44 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\NewsController;
 use App\Http\Controllers\API\CommentController;
+use App\Http\Controllers\API\AuthController;
 
 /*
 |--------------------------------------------------------------------------
-| Public News API
+| API Routes
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('news')->group(function () {
-    Route::get('/', [NewsController::class, 'index']);
-    Route::get('/latest', [NewsController::class, 'latest']);
-    Route::get('/tag/{tag}', [NewsController::class, 'byTag']);
+// Routes publiques
+Route::prefix('')->group(function () {
+    
+    // Authentification
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 
-    // D'abord les routes spécifiques
-    Route::get('/{id}/related', [NewsController::class, 'related']);
+    // News - Routes publiques
+    Route::get('/news', [NewsController::class, 'index']);
+    Route::get('/news/tag/{tag}', [NewsController::class, 'getByTag']);
+    Route::get('/news/{id}', [NewsController::class, 'show']);
 
-    // Puis la route générique Slug ou ID
-    Route::get('/{idOrSlug}', [NewsController::class, 'show']);
+    // Commentaires - Lecture publique
+    Route::get('/news/{newsId}/comments', [CommentController::class, 'index']);
+    Route::post('/news/{newsId}/comments', [CommentController::class, 'store']);
 });
 
-Route::prefix('news/{newsId}/comments')->group(function () {
-    Route::get('/', [CommentController::class, 'index']);
-    Route::post('/', [CommentController::class, 'store']);
-});
+// Routes protégées (nécessitent authentification)
+Route::middleware('auth:sanctum')->group(function () {
+    
+    // Authentification
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/user/profile', [AuthController::class, 'updateProfile']);
+    Route::put('/user/password', [AuthController::class, 'changePassword']);
 
-/*
-|--------------------------------------------------------------------------
-| Admin News API (secured)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/news')->group(function () {
-    Route::post('/', [NewsController::class, 'store']);
-    Route::put('/{id}', [NewsController::class, 'update']);
-    Route::delete('/{id}', [NewsController::class, 'destroy']);
-});
-
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::patch('comments/{id}/approve', [CommentController::class, 'approve']);
-    Route::patch('comments/{id}/reject', [CommentController::class, 'reject']);
-    Route::delete('comments/{id}', [CommentController::class, 'destroy']);
+    // Commentaires - Actions nécessitant authentification
+    Route::put('/comments/{id}', [CommentController::class, 'update']);
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 });

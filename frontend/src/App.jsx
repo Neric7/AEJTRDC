@@ -14,7 +14,10 @@ import NewsArticle from './components/news/NewsArticle';
 import HomePage from './pages/HomePage'
 import ContactPage from './pages/ContactPage'
 import NewsPage from './pages/NewsPage';
-
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ProfilePage from './pages/ProfilePage';
+import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 
 function App() {
   return (
@@ -36,6 +39,18 @@ function App() {
             {/* Actualités */}
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news/:slug" element={<NewsPage />} />
+
+            {/* Auth */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Histoire */}
             <Route path="/about/history" element={<History />} />

@@ -9,11 +9,17 @@ const api = axios.create({
   },
 });
 
-// Debug: Log toutes les requêtes
+// Ajouter automatiquement le token si présent
 api.interceptors.request.use(
   (config) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
     console.log(`🔄 API Call: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
     console.log('Params:', config.params);
+
     return config;
   },
   (error) => {

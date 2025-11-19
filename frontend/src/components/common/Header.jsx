@@ -1,11 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Header() {
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const toggleSubmenu = (menu) => {
     setOpenSubmenu(openSubmenu === menu ? null : menu);
@@ -128,6 +144,53 @@ export default function Header() {
 
           {/* Boutons CTA Desktop */}
           <div className={styles.actions}>
+            {isAuthenticated ? (
+              <div className={styles.userMenu} ref={userMenuRef}>
+                <button
+                  className={styles.userButton}
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  aria-haspopup="true"
+                  aria-expanded={isUserMenuOpen}
+                >
+                  <span>{user?.name}</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+                {isUserMenuOpen && (
+                  <div className={styles.userDropdown}>
+                    <button
+                      className={styles.dropdownItem}
+                      onClick={() => {
+                        navigate('/profile');
+                        setIsUserMenuOpen(false);
+                      }}
+                    >
+                      Mon profil
+                    </button>
+                    <button
+                      className={styles.dropdownItem}
+                      onClick={async () => {
+                        setIsUserMenuOpen(false);
+                        await logout();
+                        navigate('/');
+                      }}
+                    >
+                      Déconnexion
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className={styles.authLinks}>
+                <Link to="/login" className={styles.loginLink}>
+                  Se connecter
+                </Link>
+                <Link to="/register" className={styles.signupBtn}>
+                  S'inscrire
+                </Link>
+              </div>
+            )}
             <Button className={styles.primaryBtn}>
               Faire un don
             </Button>
@@ -201,6 +264,45 @@ export default function Header() {
 
             {/* CTA Mobile */}
             <div className={styles.mobileCta}>
+              {isAuthenticated ? (
+                <div className={styles.mobileAuth}>
+                  <p className={styles.mobileUser}>Connecté en tant que <strong>{user?.name}</strong></p>
+                  <Link
+                    to="/profile"
+                    className={styles.secondaryBtn}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Mon profil
+                  </Link>
+                  <button
+                    className={styles.primaryBtn}
+                    onClick={async () => {
+                      await logout();
+                      setIsMenuOpen(false);
+                      navigate('/');
+                    }}
+                  >
+                    Déconnexion
+                  </button>
+                </div>
+              ) : (
+                <div className={styles.mobileAuth}>
+                  <Link
+                    to="/login"
+                    className={styles.secondaryBtn}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Se connecter
+                  </Link>
+                  <Link
+                    to="/register"
+                    className={styles.primaryBtn}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Créer un compte
+                  </Link>
+                </div>
+              )}
               <Button 
                 className={styles.primaryBtn}
                 onClick={() => setIsMenuOpen(false)}
