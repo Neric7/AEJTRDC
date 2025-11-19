@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             NewsSeeder::class,
-            // ProjectSeeder::class,
+            CommentSeeder::class,
             // TeamSeeder::class,
             // PartnerSeeder::class,
         ]);

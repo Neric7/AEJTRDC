@@ -34,8 +34,13 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
         const tag = article.tags[0];
         const response = await api.get(`/news/tag/${tag}`);
         
+        // S'assurer que response.data est un tableau
+        const articles = Array.isArray(response.data) 
+          ? response.data 
+          : (response.data?.data || response.data?.articles || []);
+        
         // Filtrer l'article actuel et limiter à 3 articles
-        const filtered = response.data
+        const filtered = articles
           .filter(item => item.id !== article.id)
           .slice(0, 3);
         
@@ -142,6 +147,7 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
   };
 
   const getInitials = (name) => {
+    if (!name) return '??';
     return name
       .split(' ')
       .map(word => word[0])
@@ -305,6 +311,126 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
             </div>
           </div>
         )}
+
+        {/* Section Commentaires */}
+        <div className={styles.commentsSection}>
+          <div className={styles.commentsSectionHeader}>
+            <h2 className={styles.commentsTitle}>
+              Commentaires ({comments.length})
+            </h2>
+            {!showCommentForm && (
+              <button
+                onClick={() => setShowCommentForm(true)}
+                className={styles.addCommentButton}
+              >
+                Ajouter un commentaire
+              </button>
+            )}
+          </div>
+
+          {/* Formulaire de commentaire */}
+          {showCommentForm && (
+            <div className={styles.commentFormWrapper}>
+              <form onSubmit={handleCommentSubmit} className={styles.commentForm}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="name" className={styles.formLabel}>
+                    Nom *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={commentFormData.name}
+                    onChange={handleCommentFormChange}
+                    className={styles.formInput}
+                    required
+                    placeholder="Votre nom"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="email" className={styles.formLabel}>
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={commentFormData.email}
+                    onChange={handleCommentFormChange}
+                    className={styles.formInput}
+                    required
+                    placeholder="votre.email@exemple.com"
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="message" className={styles.formLabel}>
+                    Commentaire *
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={commentFormData.message}
+                    onChange={handleCommentFormChange}
+                    className={styles.formTextarea}
+                    required
+                    rows="5"
+                    placeholder="Partagez votre commentaire..."
+                  />
+                </div>
+
+                <div className={styles.formActions}>
+                  <button
+                    type="button"
+                    onClick={() => setShowCommentForm(false)}
+                    className={styles.cancelButton}
+                    disabled={submittingComment}
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    className={styles.submitButton}
+                    disabled={submittingComment}
+                  >
+                    {submittingComment ? 'Publication...' : 'Publier'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Liste des commentaires */}
+          <div className={styles.commentsList}>
+            {comments.length === 0 ? (
+              <p className={styles.noComments}>
+                Aucun commentaire pour le moment. Soyez le premier à commenter !
+              </p>
+            ) : (
+              comments.map(comment => (
+                <div key={comment.id} className={styles.comment}>
+                  <div className={styles.commentHeader}>
+                    <div className={styles.commentAvatar}>
+                      {getInitials(comment.name || comment.author)}
+                    </div>
+                    <div className={styles.commentMeta}>
+                      <div className={styles.commentAuthor}>
+                        {comment.name || comment.author || 'Anonyme'}
+                      </div>
+                      <div className={styles.commentDate}>
+                        {formatDate(comment.created_at || comment.createdAt)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.commentBody}>
+                    {comment.message || comment.content || comment.text}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

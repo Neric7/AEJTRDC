@@ -98,4 +98,23 @@ class News extends Model
             'updated_at' => $this->updated_at?->toISOString(),
         ];
     }
+    /**
+ * Relation avec les commentaires
+ */
+public function comments()
+{
+    return $this->hasMany(Comment::class)
+                ->where('status', 'approved')
+                ->whereNull('parent_id')
+                ->orderBy('created_at', 'desc')
+                ->with('replies');
+}
+
+/**
+ * Tous les commentaires (incluant non-approuvés)
+ */
+public function allComments()
+{
+    return $this->hasMany(Comment::class);
+}
 }
