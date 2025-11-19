@@ -27,20 +27,35 @@ export default function RegisterPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError('');
+  // Ajoute cette validation dans handleSubmit avant d'appeler register :
 
-    try {
-      await register(formData);
-      navigate('/profile');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setSubmitting(true);
+  setError('');
+
+  // Validation côté client
+  if (formData.password.length < 8) {
+    setError('Le mot de passe doit contenir au moins 8 caractères');
+    setSubmitting(false);
+    return;
+  }
+
+  if (formData.password !== formData.password_confirmation) {
+    setError('Les mots de passe ne correspondent pas');
+    setSubmitting(false);
+    return;
+  }
+
+  try {
+    await register(formData);
+    navigate('/profile');
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <section className={styles.authSection}>
@@ -107,6 +122,7 @@ export default function RegisterPage() {
               name="password"
               type="password"
               required
+              minLength={8}  
               className={styles.input}
               placeholder="••••••••"
               value={formData.password}

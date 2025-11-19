@@ -18,6 +18,7 @@ api.interceptors.request.use(
     }
 
     console.log(`🔄 API Call: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
+    console.log('Data:', config.data); // CHANGÉ: afficher data au lieu de params
     console.log('Params:', config.params);
 
     return config;
@@ -40,6 +41,16 @@ api.interceptors.response.use(
       response: error.response,
       config: error.config
     });
+    
+    // Gestion des erreurs de validation Laravel
+    if (error.response?.status === 422) {
+      const validationErrors = error.response.data?.errors;
+      if (validationErrors) {
+        const errorMessages = Object.values(validationErrors).flat().join(', ');
+        throw new Error(errorMessages);
+      }
+    }
+    
     return Promise.reject(error);
   }
 );

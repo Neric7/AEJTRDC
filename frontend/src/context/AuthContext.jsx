@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import api from '../services/api';
+import * as authService from '../services/auth'; // ou le chemin correct vers ton fichier authService
 import {
   changePassword as changePasswordRequest,
   fetchCurrentUser,
@@ -98,20 +99,31 @@ export function AuthProvider({ children }) {
     [handleAuthResponse]
   );
 
-  const register = useCallback(
-    async (payload) => {
-      try {
-        setError(null);
-        const data = await registerRequest(payload);
-        handleAuthResponse(data);
-      } catch (err) {
-        const message = extractError(err, "Impossible de créer le compte");
-        setError(message);
-        throw new Error(message);
-      }
-    },
-    [handleAuthResponse]
-  );
+  // Dans AuthContext.jsx, trouve la fonction register et modifie-la comme ceci :
+
+const register = async (userData) => {
+  try {
+    setLoading(true);
+    const data = await authService.register(userData);
+    
+    if (data.token) {
+      localStorage.setItem('authToken', data.token);
+      setUser(data.user);
+      setIsAuthenticated(true);
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    
+    // Extraire le message d'erreur le plus spécifique possible
+    const errorMessage = error.message || 
+                        error.response?.data?.message || 
+                        'Erreur lors de l\'inscription';
+    
+    throw new Error(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const logout = useCallback(async () => {
     try {
