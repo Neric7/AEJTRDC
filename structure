@@ -147,13 +147,8 @@ SiteCongo/
 │   │   ├── Http/
 │   │   │   ├── Controllers/
 │   │   │   │   ├── API/
-│   │   │   │   │   ├── ProjectController.php
 │   │   │   │   │   ├── NewsController.php
-│   │   │   │   │   ├── TeamController.php
-│   │   │   │   │   ├── JobController.php
-│   │   │   │   │   ├── PartnerController.php
-│   │   │   │   │   ├── ReportController.php
-│   │   │   │   │   └── AlertController.php
+│   │   │   │   │   └── CommentController.php
 │   │   │   │   ├── ContactController.php
 │   │   │   │   ├── DonationController.php
 │   │   │   │   ├── VolunteerController.php
@@ -170,16 +165,9 @@ SiteCongo/
 │   │   │       └── VolunteerRequest.php
 │   │   │
 │   │   ├── Models/
-│   │   │   ├── Project.php
 │   │   │   ├── News.php
-│   │   │   ├── TeamMember.php
-│   │   │   ├── Job.php
-│   │   │   ├── Partner.php
-│   │   │   ├── Report.php
-│   │   │   ├── Alert.php
-│   │   │   ├── Contact.php
-│   │   │   ├── Donation.php
-│   │   │   └── Volunteer.php
+│   │   │   ├── Comment.php
+│   │   │   └── User.php
 │   │   │
 │   │   ├── Services/
 │   │   │   ├── PaymentService.php
@@ -207,10 +195,8 @@ SiteCongo/
 │   │   │
 │   │   ├── seeders/
 │   │   │   ├── DatabaseSeeder.php
-│   │   │   ├── ProjectSeeder.php
 │   │   │   ├── NewsSeeder.php
-│   │   │   ├── TeamSeeder.php
-│   │   │   └── PartnerSeeder.php
+│   │   │   └── CommentSeeder.php
 │   │   │
 │   │   └── factories/
 │   │       └── ProjectFactory.php
