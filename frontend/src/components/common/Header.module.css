@@ -49,7 +49,6 @@ nav {
   flex-shrink: 0;
 }
 
-/* NOUVEAU STYLE POUR L'IMAGE DU LOGO */
 .brand img {
   width: 32px;
   height: 32px;
@@ -80,7 +79,7 @@ nav {
   }
 }
 
-/* Navigation Desktop - MODIFICATION CRITIQUE */
+/* Navigation Desktop */
 .nav {
   display: none;
   align-items: center;
@@ -88,7 +87,6 @@ nav {
   margin-left: 2rem;
 }
 
-/* CHANGEMENT : Basculer à 1130px au lieu de 1024px */
 @media (min-width: 1130px) {
   .nav {
     display: flex;
@@ -168,7 +166,7 @@ nav {
   color: #7CB342;
 }
 
-/* Actions (CTA Buttons) Desktop - MODIFICATION CRITIQUE */
+/* Actions (CTA Buttons) Desktop */
 .actions {
   display: none;
   align-items: center;
@@ -176,7 +174,6 @@ nav {
   margin-left: 1rem;
 }
 
-/* CHANGEMENT : Basculer à 1130px au lieu de 1024px */
 @media (min-width: 1130px) {
   .actions {
     display: flex;
@@ -254,6 +251,7 @@ nav {
   color: white;
 }
 
+/* Menu utilisateur */
 .userMenu {
   position: relative;
 }
@@ -261,18 +259,26 @@ nav {
 .userButton {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   background: #f3f4f6;
   border: none;
   border-radius: 9999px;
-  padding: 0.35rem 0.9rem;
-  font-weight: 600;
+  padding: 0.4rem 0.75rem;
   color: #374151;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.userButton:hover {
+  background: #e5e7eb;
 }
 
 .userButton svg {
-  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.chevronRotated {
+  transform: rotate(180deg);
 }
 
 .userDropdown {
@@ -282,9 +288,16 @@ nav {
   background: white;
   border-radius: 0.75rem;
   box-shadow: 0 10px 25px rgba(55, 65, 81, 0.15);
-  min-width: 180px;
+  min-width: 200px;
   padding: 0.5rem 0;
   z-index: 200;
+}
+
+.userInfo {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  color: #1f2937;
+  font-size: 0.95rem;
 }
 
 .dropdownItem {
@@ -303,7 +316,7 @@ nav {
   background: #f3f4f6;
 }
 
-/* Menu Mobile Button - MODIFICATION CRITIQUE */
+/* Menu Mobile Button */
 .menuBtn {
   display: block;
   padding: 0.5rem;
@@ -318,7 +331,6 @@ nav {
   color: #7CB342;
 }
 
-/* CHANGEMENT : Cacher le bouton menu seulement à partir de 1130px */
 @media (min-width: 1130px) {
   .menuBtn {
     display: none;
@@ -333,7 +345,6 @@ nav {
   margin-top: 0.5rem;
 }
 
-/* CHANGEMENT : Cacher le menu mobile seulement à partir de 1130px */
 @media (min-width: 1130px) {
   .mobileMenu {
     display: none;
@@ -470,7 +481,7 @@ nav {
   }
 }
 
-/* NOUVELLE MEDIA QUERY POUR LA TRANSITION ENTRE 1024px ET 1130px */
+/* MEDIA QUERY POUR LA TRANSITION ENTRE 1024px ET 1130px */
 @media (min-width: 1024px) and (max-width: 1129px) {
   .link {
     padding: 0.5rem 0.4rem;

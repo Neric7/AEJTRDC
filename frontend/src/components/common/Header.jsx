@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaUserCircle, FaChevronDown } from 'react-icons/fa';
 import styles from './Header.module.css';
 import { useAuth } from '../../context/AuthContext';
 
@@ -151,14 +152,19 @@ export default function Header() {
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   aria-haspopup="true"
                   aria-expanded={isUserMenuOpen}
+                  title={user?.name}
                 >
-                  <span>{user?.name}</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <FaUserCircle size={24} />
+                  <FaChevronDown 
+                    size={12} 
+                    className={isUserMenuOpen ? styles.chevronRotated : ''}
+                  />
                 </button>
                 {isUserMenuOpen && (
                   <div className={styles.userDropdown}>
+                    <div className={styles.userInfo}>
+                      <strong>{user?.name}</strong>
+                    </div>
                     <button
                       className={styles.dropdownItem}
                       onClick={() => {
