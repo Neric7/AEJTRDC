@@ -1,17 +1,45 @@
 import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
-import { Link, useNavigate } from 'react-router-dom';
-import { FaUserCircle, FaChevronDown } from 'react-icons/fa';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { 
+  FaUserCircle, 
+  FaChevronDown, 
+  FaHome, 
+  FaNewspaper, 
+  FaHandsHelping, 
+  FaHandshake, 
+  FaChartLine, 
+  FaGlobeAfrica, 
+  FaInfoCircle 
+} from 'react-icons/fa';
 import styles from './Header.module.css';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState(null);
   const userMenuRef = useRef(null);
+
+  // Fonction pour vérifier si un item est actif
+  const isActive = (href, submenu) => {
+    // Pour l'accueil
+    if (href === '/' || href === '/index') {
+      return location.pathname === '/' || location.pathname === '/index' || location.pathname === '';
+    }
+    // Pour les items avec submenu
+    if (submenu) {
+      return submenu.some(subItem => location.pathname.startsWith(subItem.href));
+    }
+    // Pour les autres items
+    return location.pathname.startsWith(href) && href !== '/';
+  };
+
+  console.log('Current path:', location.pathname); // Debug
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -32,14 +60,17 @@ export default function Header() {
     {
       label: 'Accueil',
       href: '/',
+      icon: FaHome,
     },
     {
       label: 'Actualités',
       href: '/news',
+      icon: FaNewspaper,
     },
     {
       label: 'Nos actions',
       href: '#',
+      icon: FaHandsHelping,
       submenu: [
         { label: 'Protection de l\'enfance', href: '/projects/child-protection' },
         { label: 'Santé communautaire', href: '/projects/health' },
@@ -52,10 +83,12 @@ export default function Header() {
     {
       label: 'Partenaires',
       href: '/partners',
+      icon: FaHandshake,
     },
     {
       label: 'Transparence',
       href: '#',
+      icon: FaChartLine,
       submenu: [
         { label: 'Rapports d\'activités', href: '/transparency/reports' },
         { label: 'Rapports financiers', href: '/transparency/financial' },
@@ -68,10 +101,12 @@ export default function Header() {
     {
       label: 'Espace humanitaire',
       href: '/humanitarian',
+      icon: FaGlobeAfrica,
     },
     {
       label: 'À propos',
       href: '#',
+      icon: FaInfoCircle,
       submenu: [
         { label: 'Notre histoire', href: '/about/history' },
         { label: 'Mission & Vision', href: '/about/mission' },
@@ -89,58 +124,66 @@ export default function Header() {
     <header className={styles.headerWrapper}>
       <nav>
         <div className={styles.bar}>
-          {/* Logo/Brand : Maintenant cliquable et renvoie à la page d'accueil */}
-          <a href="/index" className={styles.brandLink}> 
+          {/* Logo/Brand */}
+          <a href="/" className={styles.brandLink}> 
             <div className={styles.brand}>
-              <img src="/src/assets/images/logo/logo.png" alt="" />
+              <img src="/src/assets/images/logo/logo.png" alt="AEJT-RDC" />
               <span className={styles.brandName}>AEJT-RDC</span>
             </div>
           </a>
 
-          {/* Navigation Desktop */}
+          {/* Navigation Desktop avec icônes et effet tiroir */}
           <div className={styles.nav}>
-            {menuItems.map((item, index) => (
-              <div 
-                key={index} 
-                className={styles.navItem}
-                onMouseEnter={() => item.submenu && setOpenSubmenu(item.label)}
-                onMouseLeave={() => item.submenu && setOpenSubmenu(null)}
-              >
-                <a href={item.href} className={styles.link}>
-                  {item.label}
-                  {item.submenu && (
-                    <svg 
-                      className={styles.chevron}
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M19 9l-7 7-7-7" 
-                      />
-                    </svg>
-                  )}
-                </a>
+            {menuItems.map((item, index) => {
+              const Icon = item.icon;
+              const itemIsActive = isActive(item.href, item.submenu);
+              const shouldShowLabel = hoveredItem === index || itemIsActive;
+              
+              return (
+                <div 
+                  key={index} 
+                  className={styles.navItem}
+                  onMouseEnter={() => {
+                    setHoveredItem(index);
+                    if (item.submenu) setOpenSubmenu(item.label);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveredItem(null);
+                    if (item.submenu) setOpenSubmenu(null);
+                  }}
+                >
+                  <a 
+                    href={item.href} 
+                    className={`${styles.iconLink} ${itemIsActive ? styles.iconLinkActive : ''}`}
+                  >
+                    <div className={styles.iconWrapper}>
+                      <Icon className={styles.navIcon} />
+                      <span className={`${styles.labelDrawer} ${shouldShowLabel ? styles.labelDrawerOpen : ''}`}>
+                        {item.label}
+                      </span>
+                    </div>
+                    {item.submenu && (
+                      <FaChevronDown className={styles.chevronSmall} />
+                    )}
+                  </a>
 
-                {/* Submenu Desktop */}
-                {item.submenu && openSubmenu === item.label && (
-                  <div className={styles.submenu}>
-                    {item.submenu.map((subItem, subIndex) => (
-                      <a
-                        key={subIndex}
-                        href={subItem.href}
-                        className={styles.submenuLink}
-                      >
-                        {subItem.label}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                  {/* Submenu Desktop */}
+                  {item.submenu && openSubmenu === item.label && (
+                    <div className={styles.submenu}>
+                      {item.submenu.map((subItem, subIndex) => (
+                        <a
+                          key={subIndex}
+                          href={subItem.href}
+                          className={styles.submenuLink}
+                        >
+                          {subItem.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Boutons CTA Desktop */}
@@ -223,50 +266,54 @@ export default function Header() {
         {/* Menu Mobile */}
         {isMenuOpen && (
           <div className={styles.mobileMenu}>
-            {menuItems.map((item, index) => (
-              <div key={index} className={styles.mobileItem}>
-                <div className={styles.mobileItemHeader}>
-                  <a
-                    href={item.href}
-                    className={styles.mobileLink}
-                    onClick={() => !item.submenu && setIsMenuOpen(false)}
-                  >
-                    {item.label}
-                  </a>
-                  {item.submenu && (
-                    <button
-                      onClick={() => toggleSubmenu(item.label)}
-                      className={`${styles.submenuToggle} ${openSubmenu === item.label ? styles.open : ''}`}
+            {menuItems.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <div key={index} className={styles.mobileItem}>
+                  <div className={styles.mobileItemHeader}>
+                    <a
+                      href={item.href}
+                      className={styles.mobileLink}
+                      onClick={() => !item.submenu && setIsMenuOpen(false)}
                     >
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          strokeWidth={2} 
-                          d="M19 9l-7 7-7-7" 
-                        />
-                      </svg>
-                    </button>
+                      <Icon className={styles.mobileIcon} />
+                      <span>{item.label}</span>
+                    </a>
+                    {item.submenu && (
+                      <button
+                        onClick={() => toggleSubmenu(item.label)}
+                        className={`${styles.submenuToggle} ${openSubmenu === item.label ? styles.open : ''}`}
+                      >
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={2} 
+                            d="M19 9l-7 7-7-7" 
+                          />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Submenu Mobile */}
+                  {item.submenu && openSubmenu === item.label && (
+                    <div className={styles.mobileSubmenu}>
+                      {item.submenu.map((subItem, subIndex) => (
+                        <a
+                          key={subIndex}
+                          href={subItem.href}
+                          className={styles.mobileSubmenuLink}
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {subItem.label}
+                        </a>
+                      ))}
+                    </div>
                   )}
                 </div>
-
-                {/* Submenu Mobile */}
-                {item.submenu && openSubmenu === item.label && (
-                  <div className={styles.mobileSubmenu}>
-                    {item.submenu.map((subItem, subIndex) => (
-                      <a
-                        key={subIndex}
-                        href={subItem.href}
-                        className={styles.mobileSubmenuLink}
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {subItem.label}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+              );
+            })}
 
             {/* CTA Mobile */}
             <div className={styles.mobileCta}>

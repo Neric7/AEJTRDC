@@ -16,6 +16,8 @@ SiteCongo/
 │   │   │   │   ├── team/
 │   │   │   │   ├── partners/
 │   │   │   │   └── icons/
+│   │   │   ├── Ressources/
+│   │   │   │   └── image-enfant.webp
 │   │   │   └── documents/
 │   │   │       └── pdf/
 │   │   │
@@ -29,17 +31,27 @@ SiteCongo/
 │   │   │   │   ├── Modal.jsx
 │   │   │   │   └── Loader.jsx
 │   │   │   │
+│   │   │   ├── auth/
+│   │   │   │   └── ProtectedRoute.jsx
+│   │   │   │
 │   │   │   ├── home/
 │   │   │   │   ├── HeroBanner.jsx
 │   │   │   │   ├── ImageCarousel.jsx
 │   │   │   │   ├── CTASection.jsx
-│   │   │   │   └── LatestNews.jsx
+│   │   │   │   ├── LatestNews.jsx
+│   │   │   │   └── AboutSection.module.css
 │   │   │   │
 │   │   │   ├── about/
 │   │   │   │   ├── History.jsx
+│   │   │   │   ├── History.module.css
 │   │   │   │   ├── MissionVision.jsx
+│   │   │   │   ├── MissionVision.module.css
 │   │   │   │   ├── OrganizationChart.jsx
-│   │   │   │   └── InterventionMap.jsx
+│   │   │   │   ├── InterventionMap.jsx
+│   │   │   │   ├── Objectives.jsx
+│   │   │   │   ├── Objectives.module.css
+│   │   │   │   ├── Values.jsx
+│   │   │   │   └── Values.module.css
 │   │   │   │
 │   │   │   ├── projects/
 │   │   │   │   ├── ProjectCard.jsx
@@ -99,10 +111,15 @@ SiteCongo/
 │   │   │   ├── ContactPage.jsx
 │   │   │   ├── LegalPage.jsx
 │   │   │   ├── PrivacyPage.jsx
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── RegisterPage.jsx
+│   │   │   ├── ProfilePage.jsx
 │   │   │   └── HumanitarianSpacePage.jsx
 │   │   │
 │   │   ├── services/
 │   │   │   ├── api.js
+│   │   │   ├── auth.js
+│   │   │   ├── news.js
 │   │   │   ├── paymentService.js
 │   │   │   ├── mapService.js
 │   │   │   └── emailService.js
@@ -111,7 +128,8 @@ SiteCongo/
 │   │   │   ├── validation.js
 │   │   │   ├── formatters.js
 │   │   │   ├── constants.js
-│   │   │   └── helpers.js
+│   │   │   ├── helpers.js
+│   │   │   └── imageHelper.js
 │   │   │
 │   │   ├── hooks/
 │   │   │   ├── useForm.js
@@ -120,7 +138,8 @@ SiteCongo/
 │   │   │
 │   │   ├── context/
 │   │   │   ├── LanguageContext.jsx
-│   │   │   └── ThemeContext.jsx
+│   │   │   ├── ThemeContext.jsx
+│   │   │   └── AuthContext.jsx
 │   │   │
 │   │   ├── styles/
 │   │   │   ├── index.css
@@ -138,15 +157,29 @@ SiteCongo/
 │   ├── tailwind.config.js
 │   ├── vite.config.js
 │   ├── eslint.config.js
-│   ├── index.html
 │   ├── index.css
 │   └── README.md
 │
 ├── backend/                           (Nouveau - API Laravel)
+│   ├── .editorconfig
+│   ├── .env
+│   ├── .env.example
+│   ├── .gitattributes
+│   ├── .gitignore
+│   ├── .phpunit.result.cache
+│   ├── artisan
+│   ├── composer.json
+│   ├── composer.lock
+│   ├── package.json
+│   ├── phpunit.xml
+│   ├── README.md
+│   ├── vite.config.js
+│   │
 │   ├── app/
 │   │   ├── Http/
 │   │   │   ├── Controllers/
 │   │   │   │   ├── API/
+│   │   │   │   │   ├── AuthController.php         # ← ajouté
 │   │   │   │   │   ├── NewsController.php
 │   │   │   │   │   └── CommentController.php
 │   │   │   │   ├── ContactController.php
@@ -180,8 +213,22 @@ SiteCongo/
 │   │       ├── NewsRepository.php
 │   │       └── ReportRepository.php
 │   │
+│   ├── bootstrap/
+│   │   └── app.php
+│   │
+│   ├── config/
+│   │   ├── app.php
+│   │   ├── auth.php
+│   │   ├── cors.php
+│   │   ├── database.php
+│   │   ├── mail.php
+│   │   ├── payment.php
+│   │   ├── sanctum.php
+│   │   └── services.php
+│   │
 │   ├── database/
 │   │   ├── migrations/
+│   │   │   ├── 0001_01_01_000000_create_users_table.php
 │   │   │   ├── 2025_01_01_create_projects_table.php
 │   │   │   ├── 2025_01_02_create_news_table.php
 │   │   │   ├── 2025_01_03_create_team_members_table.php
@@ -199,18 +246,19 @@ SiteCongo/
 │   │   │   └── CommentSeeder.php
 │   │   │
 │   │   └── factories/
-│   │       └── ProjectFactory.php
+│   │       ├── ProjectFactory.php
+│   │       └── UserFactory.php
+│   │
+│   ├── public/
+│   │   └── index.php
+│   │
+│   ├── resources/
+│   │   └── views/
+│   │       └── welcome.blade.php
 │   │
 │   ├── routes/
 │   │   ├── api.php
 │   │   └── web.php
-│   │
-│   ├── config/
-│   │   ├── app.php
-│   │   ├── database.php
-│   │   ├── mail.php
-│   │   ├── payment.php
-│   │   └── services.php
 │   │
 │   ├── storage/
 │   │   ├── app/
@@ -235,11 +283,7 @@ SiteCongo/
 │   │       ├── DonationTest.php
 │   │       └── APITest.php
 │   │
-│   ├── .env.example
-│   ├── .gitignore
-│   ├── composer.json
-│   ├── artisan
-│   └── README.md
+│   └── artisan
 │
 ├── admin/                             (Nouveau - Dashboard CMS)
 │   ├── public/
@@ -276,7 +320,7 @@ SiteCongo/
 │   ├── package.json
 │   └── README.md
 │
-├── docs/                              (Nouveau - Documentation)
+├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── API_DOCUMENTATION.md
 │   ├── USER_GUIDE.md
@@ -289,25 +333,25 @@ SiteCongo/
 │       ├── projects.png
 │       └── wireframes.fig
 │
-├── scripts/                           (Nouveau - Scripts utilitaires)
+├── scripts/
+│   ├── setup.sh
 │   ├── deploy.sh
 │   ├── backup.sh
-│   ├── setup.sh
 │   └── seed-data.js
 │
-├── docker/                            (Nouveau - Conteneurisation)
+├── docker/
 │   ├── Dockerfile.frontend
 │   ├── Dockerfile.backend
 │   ├── Dockerfile.admin
 │   ├── docker-compose.yml
 │   └── nginx.conf
 │
-├── .github/                           (Nouveau - CI/CD)
+├── .github/
 │   └── workflows/
 │       ├── ci.yml
-│       ├── deploy-frontend.yml
+│       ├── tests.yml
 │       ├── deploy-backend.yml
-│       └── tests.yml
+│       └── deploy-frontend.yml
 │
 ├── .gitignore
 ├── README.md
