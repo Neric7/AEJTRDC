@@ -17,7 +17,7 @@ class Comment extends Model
         'author_email',
         'content',
         'status',
-        'ip_address',
+        'user_id',
     ];
 
     protected $casts = [
@@ -25,19 +25,51 @@ class Comment extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Relations
+    /**
+     * Relation avec l'actualité
+     */
     public function news()
     {
-        return $this->belongsTo(News::class);
+        return $this->belongsTo(News::class, 'news_id', 'id');
     }
 
+    /**
+     * Relation avec le parent (pour les réponses)
+     */
     public function parent()
     {
-        return $this->belongsTo(Comment::class, 'parent_id');
+        return $this->belongsTo(Comment::class, 'parent_id', 'id');
     }
 
+    /**
+     * Relation avec les réponses
+     */
     public function replies()
     {
-        return $this->hasMany(Comment::class, 'parent_id');
+        return $this->hasMany(Comment::class, 'parent_id', 'id');
+    }
+
+    /**
+     * Relation avec l'utilisateur (optionnel)
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Scope pour les commentaires approuvés
+     */
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
+    }
+
+    /**
+     * Scope pour les commentaires en attente
+     */
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
     }
 }

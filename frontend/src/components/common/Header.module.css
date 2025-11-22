@@ -83,7 +83,7 @@ nav {
 .nav {
   display: none;
   align-items: center;
-  gap: 1.5rem; /* AUGMENTÉ: 1cm d'espace entre les icônes */
+  gap: 1rem; /* AUGMENTÉ: 1cm d'espace entre les icônes */
   margin-left: 2rem;
 }
 

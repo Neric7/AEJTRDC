@@ -15,11 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->unique();
             $table->string('title');
-            $table->text('excerpt');
+            $table->text('excerpt')->nullable();
             $table->longText('content');
-            $table->string('image')->nullable();
+            $table->string('image')->nullable(); // Image principale
+            $table->json('images')->nullable(); // Images supplémentaires (galerie)
+            $table->string('category')->default('general');
             $table->timestamp('published_at')->nullable();
-            $table->string('author', 100);
+            $table->string('author', 100)->nullable();
             $table->json('tags')->nullable();
             $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
             $table->unsignedInteger('views')->default(0);
@@ -29,6 +31,7 @@ return new class extends Migration
             
             // Indexes pour optimiser les requêtes
             $table->index('status');
+            $table->index('category');
             $table->index('published_at');
             $table->index('featured');
             $table->index(['status', 'published_at']);

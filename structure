@@ -285,7 +285,7 @@ SiteCongo/
 │   │
 │   └── artisan
 │
-├── admin/                             (Nouveau - Dashboard CMS)
+├── admin/                             (Nouveau - Dashboard BackOffice)
 │   ├── public/
 │   │   └── index.html
 │   │

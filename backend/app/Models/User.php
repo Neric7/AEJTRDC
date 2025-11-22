@@ -11,6 +11,9 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    /**
+     * Champs remplissables
+     */
     protected $fillable = [
         'name',
         'email',
@@ -18,24 +21,40 @@ class User extends Authenticatable
         'avatar',
         'phone',
         'bio',
-        'role',
-        'is_active',
+        'role',       // admin / user / etc.
+        'is_active',  // true / false
     ];
 
+    /**
+     * Champs cachés dans les réponses API
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    /**
+     * Casts des colonnes
+     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_active' => 'boolean',
     ];
 
-    // Relations
+    /**
+     * Relation : un utilisateur a plusieurs commentaires
+     */
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Vérifie si l'utilisateur est administrateur
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }
