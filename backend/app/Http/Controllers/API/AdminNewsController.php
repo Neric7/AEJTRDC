@@ -5,8 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\News;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class AdminNewsController extends Controller
 {
@@ -15,38 +17,49 @@ class AdminNewsController extends Controller
      */
     public function index(Request $request)
     {
-        $pageSize = (int) $request->input('pageSize', 10);
-        $status = $request->input('status');
-        $search = $request->input('search');
+        try {
+            $query = News::query();
 
-        $query = News::query()->orderBy('created_at', 'desc');
+            // Filtres
+            if ($request->has('status')) {
+                $query->where('status', $request->status);
+            }
 
-        // Filtrer par statut
-        if ($status && $status !== 'all') {
-            $query->where('status', $status);
+            if ($request->has('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhere('content', 'like', "%{$search}%");
+                });
+            }
+
+            $news = $query->orderBy('created_at', 'desc')
+                         ->paginate(15);
+
+            return response()->json($news);
+        } catch (\Exception $e) {
+            Log::error('AdminNewsController@index error: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Erreur lors du chargement des actualités',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Recherche
-        if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('excerpt', 'like', "%{$search}%")
-                  ->orWhere('content', 'like', "%{$search}%");
-            });
-        }
-
-        $news = $query->paginate($pageSize);
-
-        return response()->json($news);
     }
 
     /**
-     * Obtenir une actualité par ID
+     * Afficher une actualité
      */
     public function show($id)
     {
-        $news = News::findOrFail($id);
-        return response()->json($news);
+        try {
+            $news = News::findOrFail($id);
+            return response()->json($news);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Actualité introuvable',
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
 
     /**
@@ -54,35 +67,48 @@ class AdminNewsController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'excerpt' => 'required|string',
-            'content' => 'required|string',
-            'category' => 'nullable|string|max:100',
-            'tags' => 'nullable|array',
-            'author' => 'nullable|string|max:100',
-            'image' => 'nullable|string',
-            'status' => 'required|in:draft,published,archived',
-            'featured' => 'nullable|boolean',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'title' => 'required|string|max:255',
+                'content' => 'required|string',
+                'excerpt' => 'nullable|string|max:500',
+                'category' => 'nullable|string|max:100',
+                'author' => 'nullable|string|max:100',
+                'tags' => 'nullable|array',
+                'status' => 'required|in:draft,published,archived',
+                'featured' => 'nullable|boolean',
+            ]);
 
-        // Générer un slug unique
-        $validated['slug'] = $this->generateUniqueSlug($validated['title']);
-        
-        // Définir l'auteur par défaut
-        $validated['author'] = $validated['author'] ?? auth()->user()->name;
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Erreur de validation',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
 
-        // Définir la date de publication si le statut est "published"
-        if ($validated['status'] === 'published' && !isset($validated['published_at'])) {
-            $validated['published_at'] = now();
+            $data = $validator->validated();
+            
+            // Générer le slug
+            $data['slug'] = Str::slug($data['title']);
+            
+            // Si publié, ajouter la date de publication
+            if ($data['status'] === 'published' && !isset($data['published_at'])) {
+                $data['published_at'] = now();
+            }
+
+            $news = News::create($data);
+
+            return response()->json([
+                'message' => 'Actualité créée avec succès',
+                'data' => $news
+            ], 201);
+        } catch (\Exception $e) {
+            Log::error('AdminNewsController@store error: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Erreur lors de la création',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $news = News::create($validated);
-
-        return response()->json([
-            'message' => 'Actualité créée avec succès',
-            'data' => $news,
-        ], 201);
     }
 
     /**
@@ -90,36 +116,110 @@ class AdminNewsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $news = News::findOrFail($id);
+        try {
+            $news = News::findOrFail($id);
 
-        $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'excerpt' => 'sometimes|required|string',
-            'content' => 'sometimes|required|string',
-            'category' => 'nullable|string|max:100',
-            'tags' => 'nullable|array',
-            'author' => 'nullable|string|max:100',
-            'image' => 'nullable|string',
-            'status' => 'sometimes|required|in:draft,published,archived',
-            'featured' => 'nullable|boolean',
-        ]);
+            $validator = Validator::make($request->all(), [
+                'title' => 'sometimes|required|string|max:255',
+                'content' => 'sometimes|required|string',
+                'excerpt' => 'nullable|string|max:500',
+                'category' => 'nullable|string|max:100',
+                'author' => 'nullable|string|max:100',
+                'tags' => 'nullable|array',
+                'status' => 'sometimes|required|in:draft,published,archived',
+                'featured' => 'nullable|boolean',
+            ]);
 
-        // Mettre à jour le slug si le titre change
-        if (isset($validated['title']) && $validated['title'] !== $news->title) {
-            $validated['slug'] = $this->generateUniqueSlug($validated['title'], $news->id);
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Erreur de validation',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $data = $validator->validated();
+            
+            // Mettre à jour le slug si le titre change
+            if (isset($data['title']) && $data['title'] !== $news->title) {
+                $data['slug'] = Str::slug($data['title']);
+            }
+
+            // Si on passe à publié, ajouter la date
+            if (isset($data['status']) && $data['status'] === 'published' && !$news->published_at) {
+                $data['published_at'] = now();
+            }
+
+            $news->update($data);
+
+            return response()->json([
+                'message' => 'Actualité mise à jour avec succès',
+                'data' => $news->fresh()
+            ]);
+        } catch (\Exception $e) {
+            Log::error('AdminNewsController@update error: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Erreur lors de la mise à jour',
+                'error' => $e->getMessage()
+            ], 500);
         }
+    }
 
-        // Définir la date de publication si le statut devient "published"
-        if (isset($validated['status']) && $validated['status'] === 'published' && !$news->published_at) {
-            $validated['published_at'] = now();
+    /**
+     * Upload une image pour une actualité
+     * 🔥 FONCTION CRITIQUE POUR RÉSOUDRE LE PROBLÈME
+     */
+    public function uploadImage(Request $request, $id)
+    {
+        try {
+            $news = News::findOrFail($id);
+
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // 2MB max
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Erreur de validation',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Supprimer l'ancienne image si elle existe
+            if ($news->image) {
+                Storage::disk('public')->delete($news->image);
+            }
+
+            // Stocker la nouvelle image
+            $file = $request->file('image');
+            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            
+            // Stocker dans storage/app/public/news/
+            $path = $file->storeAs('news', $filename, 'public');
+
+            // Mettre à jour le modèle
+            $news->update(['image' => $path]);
+
+            Log::info("Image uploaded successfully", [
+                'news_id' => $id,
+                'path' => $path,
+                'full_url' => $news->image_url
+            ]);
+
+            return response()->json([
+                'message' => 'Image uploadée avec succès',
+                'data' => [
+                    'image' => $path,
+                    'image_url' => $news->image_url,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('AdminNewsController@uploadImage error: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+            return response()->json([
+                'message' => 'Erreur lors de l\'upload de l\'image',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $news->update($validated);
-
-        return response()->json([
-            'message' => 'Actualité mise à jour avec succès',
-            'data' => $news,
-        ]);
     }
 
     /**
@@ -127,18 +227,26 @@ class AdminNewsController extends Controller
      */
     public function destroy($id)
     {
-        $news = News::findOrFail($id);
-        
-        // Supprimer l'image si elle existe
-        if ($news->image) {
-            Storage::disk('public')->delete($news->image);
+        try {
+            $news = News::findOrFail($id);
+            
+            // Supprimer l'image associée
+            if ($news->image) {
+                Storage::disk('public')->delete($news->image);
+            }
+            
+            $news->delete();
+
+            return response()->json([
+                'message' => 'Actualité supprimée avec succès'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('AdminNewsController@destroy error: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Erreur lors de la suppression',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $news->delete();
-
-        return response()->json([
-            'message' => 'Actualité supprimée avec succès',
-        ]);
     }
 
     /**
@@ -146,17 +254,23 @@ class AdminNewsController extends Controller
      */
     public function publish($id)
     {
-        $news = News::findOrFail($id);
-        
-        $news->update([
-            'status' => 'published',
-            'published_at' => $news->published_at ?? now(),
-        ]);
+        try {
+            $news = News::findOrFail($id);
+            $news->update([
+                'status' => 'published',
+                'published_at' => now()
+            ]);
 
-        return response()->json([
-            'message' => 'Actualité publiée avec succès',
-            'data' => $news,
-        ]);
+            return response()->json([
+                'message' => 'Actualité publiée avec succès',
+                'data' => $news
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de la publication',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -164,70 +278,22 @@ class AdminNewsController extends Controller
      */
     public function unpublish($id)
     {
-        $news = News::findOrFail($id);
-        
-        $news->update([
-            'status' => 'draft',
-        ]);
+        try {
+            $news = News::findOrFail($id);
+            $news->update([
+                'status' => 'draft',
+                'published_at' => null
+            ]);
 
-        return response()->json([
-            'message' => 'Actualité dépubliée avec succès',
-            'data' => $news,
-        ]);
-    }
-
-    /**
-     * Upload d'image
-     */
-    public function uploadImage(Request $request, $id)
-    {
-        $news = News::findOrFail($id);
-
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-        ]);
-
-        // Supprimer l'ancienne image
-        if ($news->image) {
-            Storage::disk('public')->delete($news->image);
+            return response()->json([
+                'message' => 'Actualité dépubliée avec succès',
+                'data' => $news
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de la dépublication',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Enregistrer la nouvelle image
-        $path = $request->file('image')->store('news', 'public');
-
-        $news->update(['image' => $path]);
-
-        return response()->json([
-            'message' => 'Image uploadée avec succès',
-            'image' => $path,
-            'url' => Storage::url($path),
-        ]);
-    }
-
-    /**
-     * Générer un slug unique
-     */
-    private function generateUniqueSlug($title, $ignoreId = null)
-    {
-        $slug = Str::slug($title);
-        $originalSlug = $slug;
-        $count = 1;
-
-        while (true) {
-            $query = News::where('slug', $slug);
-            
-            if ($ignoreId) {
-                $query->where('id', '!=', $ignoreId);
-            }
-            
-            if (!$query->exists()) {
-                break;
-            }
-            
-            $slug = $originalSlug . '-' . $count;
-            $count++;
-        }
-
-        return $slug;
     }
 }

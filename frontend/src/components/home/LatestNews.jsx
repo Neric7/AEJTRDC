@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
+import { getImageUrl } from '../../utils/imageHelper';
 import styles from './LatestNews.module.css';
 
 export default function LatestNews({ limit = 4 }) {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imageErrors, setImageErrors] = useState({});
 
   useEffect(() => {
     let mounted = true;
@@ -60,6 +62,14 @@ export default function LatestNews({ limit = 4 }) {
     };
   }, [limit]);
 
+  const handleImageError = (articleId, e) => {
+    if (!imageErrors[articleId]) {
+      console.error('❌ Erreur chargement image pour article:', articleId);
+      setImageErrors(prev => ({ ...prev, [articleId]: true }));
+      e.target.src = '/images/placeholder-news.jpg';
+    }
+  };
+
   // État de chargement
   if (loading) {
     return (
@@ -104,61 +114,68 @@ export default function LatestNews({ limit = 4 }) {
 
         {/* Grid des articles */}
         <div className={styles.grid}>
-          {news.map((article) => (
-            <article key={article.id} className={styles.card}>
-              {/* Image */}
-              {article.image && (
-                <div className={styles.imageWrapper}>
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className={styles.image}
-                  />
-                  <div className={styles.imageOverlay}></div>
+          {news.map((article) => {
+            // Utiliser image_url si disponible, sinon construire l'URL
+            const imageUrl = article.image_url || getImageUrl(article.image);
+
+            return (
+              <article key={article.id} className={styles.card}>
+                {/* Image */}
+                {(article.image || article.image_url) && (
+                  <div className={styles.imageWrapper}>
+                    <img
+                      src={imageUrl}
+                      alt={article.title}
+                      className={styles.image}
+                      onError={(e) => handleImageError(article.id, e)}
+                      loading="lazy"
+                    />
+                    <div className={styles.imageOverlay}></div>
+                  </div>
+                )}
+
+                {/* Contenu */}
+                <div className={styles.content}>
+                  {/* Tag */}
+                  {article.tags && article.tags.length > 0 && (
+                    <span className={styles.tag}>
+                      {article.tags[0]}
+                    </span>
+                  )}
+
+                  {/* Titre */}
+                  <h3 className={styles.cardTitle}>
+                    {article.title}
+                  </h3>
+
+                  {/* Date */}
+                  {article.published_at && (
+                    <time className={styles.date} dateTime={article.published_at}>
+                      {new Date(article.published_at).toLocaleDateString('fr-FR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </time>
+                  )}
+
+                  {/* Extrait */}
+                  <p className={styles.excerpt}>
+                    {article.excerpt || article.content?.slice(0, 150) + '...'}
+                  </p>
+
+                  {/* Bouton */}
+                  <Link 
+                    to={`/news/${article.slug || article.id}`} 
+                    className={styles.readButton}
+                    onClick={() => window.scrollTo(0, 0)}
+                  >
+                    Lire l'article
+                  </Link>
                 </div>
-              )}
-
-              {/* Contenu */}
-              <div className={styles.content}>
-                {/* Tag */}
-                {article.tags && article.tags.length > 0 && (
-                  <span className={styles.tag}>
-                    {article.tags[0]}
-                  </span>
-                )}
-
-                {/* Titre */}
-                <h3 className={styles.cardTitle}>
-                  {article.title}
-                </h3>
-
-                {/* Date */}
-                {article.published_at && (
-                  <time className={styles.date} dateTime={article.published_at}>
-                    {new Date(article.published_at).toLocaleDateString('fr-FR', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </time>
-                )}
-
-                {/* Extrait */}
-                <p className={styles.excerpt}>
-                  {article.excerpt || article.content?.slice(0, 150)}
-                </p>
-
-                {/* Bouton */}
-                <Link 
-                  to={`/news/${article.slug || article.id}`} 
-                  className={styles.readButton}
-                  onClick={() => window.scrollTo(0, 0)}
-                >
-                  Lire l'article
-                </Link>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
 
         {/* CTA pour voir toutes les actualités */}
