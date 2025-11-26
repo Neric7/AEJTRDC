@@ -4,6 +4,9 @@ import api from '../../services/api';
 import { getImageUrl } from '../../utils/imageHelper';
 import styles from './LatestNews.module.css';
 
+// Image placeholder en base64 (1x1 pixel gris)
+const PLACEHOLDER_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23e5e7eb"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="18" fill="%239ca3af"%3EImage non disponible%3C/text%3E%3C/svg%3E';
+
 export default function LatestNews({ limit = 4 }) {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +21,6 @@ export default function LatestNews({ limit = 4 }) {
         setLoading(true);
         setError(null);
 
-        // Appel à votre API pour récupérer les dernières actualités
         const response = await api.get('/news', {
           params: {
             limit: limit,
@@ -40,7 +42,6 @@ export default function LatestNews({ limit = 4 }) {
           newsData = response;
         }
 
-        // Limiter aux n premiers articles
         setNews(newsData.slice(0, limit));
 
       } catch (err) {
@@ -63,11 +64,32 @@ export default function LatestNews({ limit = 4 }) {
   }, [limit]);
 
   const handleImageError = (articleId, e) => {
-    if (!imageErrors[articleId]) {
-      console.error('❌ Erreur chargement image pour article:', articleId);
-      setImageErrors(prev => ({ ...prev, [articleId]: true }));
-      e.target.src = '/images/placeholder-news.jpg';
+    // Éviter les boucles infinies
+    if (imageErrors[articleId]) return;
+    
+    console.warn(`⚠️ Image non chargée pour l'article ${articleId}`);
+    setImageErrors(prev => ({ ...prev, [articleId]: true }));
+    
+    // Remplacer par l'image placeholder
+    e.target.src = PLACEHOLDER_IMAGE;
+  };
+
+  const getArticleImage = (article) => {
+    // Si l'image a déjà échoué, retourner directement le placeholder
+    if (imageErrors[article.id]) {
+      return PLACEHOLDER_IMAGE;
     }
+    
+    // Priorité : image_url > image construite > placeholder
+    if (article.image_url) {
+      return article.image_url;
+    }
+    
+    if (article.image) {
+      return getImageUrl(article.image);
+    }
+    
+    return PLACEHOLDER_IMAGE;
   };
 
   // État de chargement
@@ -81,7 +103,7 @@ export default function LatestNews({ limit = 4 }) {
           </div>
 
           <div className={styles.grid}>
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3, 4].slice(0, limit).map((i) => (
               <div key={i} className={styles.loadingCard}>
                 <div className={styles.loadingImage}></div>
                 <div className={styles.loadingContent}>
@@ -115,24 +137,21 @@ export default function LatestNews({ limit = 4 }) {
         {/* Grid des articles */}
         <div className={styles.grid}>
           {news.map((article) => {
-            // Utiliser image_url si disponible, sinon construire l'URL
-            const imageUrl = article.image_url || getImageUrl(article.image);
+            const imageUrl = getArticleImage(article);
 
             return (
               <article key={article.id} className={styles.card}>
                 {/* Image */}
-                {(article.image || article.image_url) && (
-                  <div className={styles.imageWrapper}>
-                    <img
-                      src={imageUrl}
-                      alt={article.title}
-                      className={styles.image}
-                      onError={(e) => handleImageError(article.id, e)}
-                      loading="lazy"
-                    />
-                    <div className={styles.imageOverlay}></div>
-                  </div>
-                )}
+                <div className={styles.imageWrapper}>
+                  <img
+                    src={imageUrl}
+                    alt={article.title || 'Article'}
+                    className={styles.image}
+                    onError={(e) => handleImageError(article.id, e)}
+                    loading="lazy"
+                  />
+                  <div className={styles.imageOverlay}></div>
+                </div>
 
                 {/* Contenu */}
                 <div className={styles.content}>

@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { getImageUrl } from '../../utils/imageHelper';
 import styles from './NewsArticle.module.css';
 
 export default function NewsArticle({ article, onBack, onRelatedArticle }) {
+  const { user, isAuthenticated } = useAuth();
   const [relatedArticles, setRelatedArticles] = useState([]);
   const [imageError, setImageError] = useState(false);
   
   // État pour les commentaires
   const [comments, setComments] = useState([]);
   const [showCommentForm, setShowCommentForm] = useState(false);
+  const [replyingTo, setReplyingTo] = useState(null); // ID du commentaire auquel on répond
   const [commentFormData, setCommentFormData] = useState({
-    name: '',
-    email: '',
     message: ''
   });
   const [submittingComment, setSubmittingComment] = useState(false);
@@ -29,17 +30,14 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
 
   const fetchRelatedArticles = async () => {
     try {
-      // Essayer de charger des articles avec les mêmes tags
       if (article.tags && article.tags.length > 0) {
         const tag = article.tags[0];
         const response = await api.get(`/news/tag/${tag}`);
         
-        // S'assurer que response.data est un tableau
         const articles = Array.isArray(response.data) 
           ? response.data 
           : (response.data?.data || response.data?.articles || []);
         
-        // Filtrer l'article actuel et limiter à 3 articles
         const filtered = articles
           .filter(item => item.id !== article.id)
           .slice(0, 3);
@@ -58,25 +56,7 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
       setComments(response.data || []);
     } catch (error) {
       console.error('Erreur chargement commentaires:', error);
-      // Utiliser des commentaires de démonstration si l'API n'est pas prête
-      setComments([
-        {
-          id: 1,
-          name: 'Marie Kalala',
-          email: 'marie@example.com',
-          message: 'Excellente initiative ! Merci pour tout ce que vous faites pour nos enfants.',
-          created_at: new Date().toISOString(),
-          replies: []
-        },
-        {
-          id: 2,
-          name: 'Jean-Pierre Mukendi',
-          email: 'jean@example.com',
-          message: 'Ce programme est vraiment nécessaire. Comment peut-on participer en tant que bénévole ?',
-          created_at: new Date(Date.now() - 86400000).toISOString(),
-          replies: []
-        }
-      ]);
+      setComments([]);
     }
   };
 
@@ -90,26 +70,69 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!isAuthenticated) {
+      alert('Vous devez être connecté pour commenter');
+      return;
+    }
+
     setSubmittingComment(true);
 
     try {
-      // Envoyer le commentaire à l'API
-      const response = await api.post(`/news/${article.id}/comments`, commentFormData);
+      const payload = {
+        message: commentFormData.message,
+        parent_id: replyingTo
+      };
+
+      const response = await api.post(`/news/${article.id}/comments`, payload);
       
-      // Ajouter le nouveau commentaire à la liste
-      setComments(prev => [response.data, ...prev]);
+      // Si c'est une réponse, l'ajouter au bon commentaire parent
+      if (replyingTo) {
+        setComments(prevComments => 
+          prevComments.map(comment => {
+            if (comment.id === replyingTo) {
+              return {
+                ...comment,
+                replies: [...(comment.replies || []), response.data]
+              };
+            }
+            return comment;
+          })
+        );
+      } else {
+        // Sinon, ajouter en tant que nouveau commentaire
+        setComments(prev => [response.data, ...prev]);
+      }
       
       // Réinitialiser le formulaire
-      setCommentFormData({ name: '', email: '', message: '' });
+      setCommentFormData({ message: '' });
       setShowCommentForm(false);
+      setReplyingTo(null);
       
-      alert('Commentaire publié avec succès !');
+      alert(replyingTo ? 'Réponse publiée avec succès !' : 'Commentaire publié avec succès !');
     } catch (error) {
       console.error('Erreur soumission commentaire:', error);
-      alert('Erreur lors de la publication du commentaire. Veuillez réessayer.');
+      const errorMsg = error.response?.data?.message || 'Erreur lors de la publication du commentaire.';
+      alert(errorMsg);
     } finally {
       setSubmittingComment(false);
     }
+  };
+
+  const handleReplyClick = (commentId) => {
+    if (!isAuthenticated) {
+      alert('Vous devez être connecté pour répondre à un commentaire');
+      return;
+    }
+    setReplyingTo(commentId);
+    setShowCommentForm(true);
+    setCommentFormData({ message: '' });
+  };
+
+  const handleCancelReply = () => {
+    setReplyingTo(null);
+    setShowCommentForm(false);
+    setCommentFormData({ message: '' });
   };
 
   const handleImageError = (e) => {
@@ -122,7 +145,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
   const formatContent = (content) => {
     if (!content) return '';
     
-    // Convertir les retours à la ligne en paragraphes
     return content
       .split('\n\n')
       .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
@@ -156,6 +178,47 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
       .substring(0, 2);
   };
 
+  const renderComment = (comment, isReply = false) => (
+    <div 
+      key={comment.id} 
+      className={`${styles.comment} ${isReply ? styles.commentReply : ''}`}
+    >
+      <div className={styles.commentHeader}>
+        <div className={styles.commentAvatar}>
+          {getInitials(comment.name || comment.author)}
+        </div>
+        <div className={styles.commentMeta}>
+          <div className={styles.commentAuthor}>
+            {comment.name || comment.author || 'Anonyme'}
+          </div>
+          <div className={styles.commentDate}>
+            {formatDate(comment.created_at || comment.createdAt)}
+          </div>
+        </div>
+      </div>
+      <div className={styles.commentBody}>
+        {comment.message || comment.content || comment.text}
+      </div>
+      
+      {/* Bouton Répondre (uniquement pour les commentaires parents) */}
+      {!isReply && isAuthenticated && (
+        <button
+          onClick={() => handleReplyClick(comment.id)}
+          className={styles.replyButton}
+        >
+          Répondre
+        </button>
+      )}
+
+      {/* Afficher les réponses */}
+      {!isReply && comment.replies && comment.replies.length > 0 && (
+        <div className={styles.repliesContainer}>
+          {comment.replies.map(reply => renderComment(reply, true))}
+        </div>
+      )}
+    </div>
+  );
+
   if (!article) {
     return (
       <div className={styles.container}>
@@ -184,9 +247,8 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
         {/* Article principal */}
         <article className={styles.article}>
           
-          {/* Hero Section: Image + Title side by side */}
+          {/* Hero Section */}
           <div className={styles.heroSection}>
-            {/* Image à gauche */}
             {article.image && (
               <div>
                 <img 
@@ -199,9 +261,7 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
               </div>
             )}
             
-            {/* Header Content à droite (Tags + Title + Meta) */}
             <div className={styles.headerContent}>
-              {/* Tags */}
               {article.tags && article.tags.length > 0 && (
                 <div className={styles.tags}>
                   {article.tags.map((tag, index) => (
@@ -215,12 +275,10 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
                 </div>
               )}
 
-              {/* Titre */}
               <h1 className={styles.title}>
                 {article.title}
               </h1>
 
-              {/* Métadonnées */}
               <div className={styles.meta}>
                 <span className={`${styles.metaItem} ${styles.metaAuthor}`}>
                   Par {article.author || 'AEJT-RDC'}
@@ -245,16 +303,14 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
             </div>
           </div>
 
-          {/* Content Section: Excerpt + Body (full width below) */}
+          {/* Content Section */}
           <div className={styles.articleContent}>
-            {/* Extrait */}
             {article.excerpt && (
               <p className={styles.excerpt}>
                 {article.excerpt}
               </p>
             )}
 
-            {/* Contenu */}
             <div className={styles.body}>
               <div dangerouslySetInnerHTML={{ 
                 __html: formatContent(article.content) 
@@ -318,9 +374,12 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
             <h2 className={styles.commentsTitle}>
               Commentaires ({comments.length})
             </h2>
-            {!showCommentForm && (
+            {isAuthenticated && !showCommentForm && (
               <button
-                onClick={() => setShowCommentForm(true)}
+                onClick={() => {
+                  setShowCommentForm(true);
+                  setReplyingTo(null);
+                }}
                 className={styles.addCommentButton}
               >
                 Ajouter un commentaire
@@ -328,45 +387,38 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
             )}
           </div>
 
+          {/* Message de connexion */}
+          {!isAuthenticated && (
+            <div className={styles.loginPrompt}>
+              <p>
+                <strong>Vous devez être connecté pour commenter</strong>
+              </p>
+              <p>
+                <a href="/login" className={styles.loginLink}>Se connecter</a> 
+                {' ou '}
+                <a href="/register" className={styles.loginLink}>S'inscrire</a>
+              </p>
+            </div>
+          )}
+
           {/* Formulaire de commentaire */}
-          {showCommentForm && (
+          {showCommentForm && isAuthenticated && (
             <div className={styles.commentFormWrapper}>
               <form onSubmit={handleCommentSubmit} className={styles.commentForm}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="name" className={styles.formLabel}>
-                    Nom *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={commentFormData.name}
-                    onChange={handleCommentFormChange}
-                    className={styles.formInput}
-                    required
-                    placeholder="Votre nom"
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label htmlFor="email" className={styles.formLabel}>
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={commentFormData.email}
-                    onChange={handleCommentFormChange}
-                    className={styles.formInput}
-                    required
-                    placeholder="votre.email@exemple.com"
-                  />
+                <div className={styles.formHeader}>
+                  <p className={styles.formUserInfo}>
+                    Commenter en tant que <strong>{user?.name}</strong>
+                  </p>
+                  {replyingTo && (
+                    <p className={styles.replyingToInfo}>
+                      En réponse à un commentaire
+                    </p>
+                  )}
                 </div>
 
                 <div className={styles.formGroup}>
                   <label htmlFor="message" className={styles.formLabel}>
-                    Commentaire *
+                    {replyingTo ? 'Votre réponse' : 'Votre commentaire'} *
                   </label>
                   <textarea
                     id="message"
@@ -376,14 +428,14 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
                     className={styles.formTextarea}
                     required
                     rows="5"
-                    placeholder="Partagez votre commentaire..."
+                    placeholder={replyingTo ? "Écrivez votre réponse..." : "Partagez votre commentaire..."}
                   />
                 </div>
 
                 <div className={styles.formActions}>
                   <button
                     type="button"
-                    onClick={() => setShowCommentForm(false)}
+                    onClick={handleCancelReply}
                     className={styles.cancelButton}
                     disabled={submittingComment}
                   >
@@ -408,26 +460,7 @@ export default function NewsArticle({ article, onBack, onRelatedArticle }) {
                 Aucun commentaire pour le moment. Soyez le premier à commenter !
               </p>
             ) : (
-              comments.map(comment => (
-                <div key={comment.id} className={styles.comment}>
-                  <div className={styles.commentHeader}>
-                    <div className={styles.commentAvatar}>
-                      {getInitials(comment.name || comment.author)}
-                    </div>
-                    <div className={styles.commentMeta}>
-                      <div className={styles.commentAuthor}>
-                        {comment.name || comment.author || 'Anonyme'}
-                      </div>
-                      <div className={styles.commentDate}>
-                        {formatDate(comment.created_at || comment.createdAt)}
-                      </div>
-                    </div>
-                  </div>
-                  <div className={styles.commentBody}>
-                    {comment.message || comment.content || comment.text}
-                  </div>
-                </div>
-              ))
+              comments.map(comment => renderComment(comment))
             )}
           </div>
         </div>

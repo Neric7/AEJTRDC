@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             NewsSeeder::class,
             CommentSeeder::class,
+            AdminSeeder::class,
             // TeamSeeder::class,
             // PartnerSeeder::class,
         ]);

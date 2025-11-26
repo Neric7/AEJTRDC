@@ -24,9 +24,8 @@ Route::get('/news/categories', [NewsController::class, 'categories']);
 Route::get('/news/tags', [NewsController::class, 'tags']);
 Route::get('/news/{id}', [NewsController::class, 'show']);
 
-// Commentaires - Routes publiques
+// Commentaires - Lecture publique UNIQUEMENT
 Route::get('/news/{newsId}/comments', [CommentController::class, 'index']);
-Route::post('/news/{newsId}/comments', [CommentController::class, 'store']);
 
 // Routes protégées utilisateurs
 Route::middleware('auth:sanctum')->group(function () {
@@ -35,7 +34,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/profile', [AuthController::class, 'updateProfile']);
     Route::put('/user/password', [AuthController::class, 'changePassword']);
     
-    // Commentaires - Actions authentifiées
+    // 🔒 Commentaires - PROTÉGÉS (nécessite authentification)
+    Route::post('/news/{newsId}/comments', [CommentController::class, 'store']);
     Route::put('/comments/{id}', [CommentController::class, 'update']);
     Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 });
@@ -65,7 +65,12 @@ Route::prefix('admin')->group(function () {
         Route::post('/news/{id}/unpublish', [AdminNewsController::class, 'unpublish']);
         Route::post('/news/{id}/image', [AdminNewsController::class, 'uploadImage']);
         
-        // Dashboard stats (à implémenter plus tard)
+        // Gestion des commentaires (admin peut modérer)
+        Route::get('/comments', [CommentController::class, 'indexAll']); // Tous les commentaires
+        Route::put('/comments/{id}/approve', [CommentController::class, 'approve']);
+        Route::put('/comments/{id}/reject', [CommentController::class, 'reject']);
+        
+        // Dashboard stats
         Route::get('/dashboard/stats', function () {
             return response()->json([
                 'projects' => 12,
@@ -87,8 +92,11 @@ Route::prefix('admin')->group(function () {
     });
 });
 
-        // Ajoutez ces routes temporaires dans routes/web.php pour tester
-
+/*
+|--------------------------------------------------------------------------
+| Routes de test (à supprimer en production)
+|--------------------------------------------------------------------------
+*/
 Route::get('/test-storage', function () {
     $results = [
         'storage_link_exists' => is_link(public_path('storage')),
@@ -98,7 +106,6 @@ Route::get('/test-storage', function () {
         'test_file_exists' => file_exists(storage_path('app/public/news')),
     ];
     
-    // Créer un fichier de test
     if (!file_exists(storage_path('app/public/news'))) {
         mkdir(storage_path('app/public/news'), 0755, true);
     }
@@ -114,7 +121,6 @@ Route::get('/test-storage', function () {
     return response()->json($results);
 });
 
-// Route pour servir le fichier directement
 Route::get('/serve-test', function () {
     $path = storage_path('app/public/news/test.txt');
     
@@ -125,7 +131,6 @@ Route::get('/serve-test', function () {
     return response()->file($path);
 });
 
-// Route pour lister les fichiers
 Route::get('/list-storage', function () {
     $files = [];
     $path = storage_path('app/public/news');

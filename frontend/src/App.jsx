@@ -5,10 +5,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Header from './components/common/Header'
 import Footer from './components/common/Footer'
 import History from './components/about/History'
-import MissionVision from './components/about/MissionVision'
-import Values from './components/about/Values'
+import MissionVisionValeurs from './components/about/MissionVisionValeurs.jsx'
 import Objectives from './components/about/Objectives'
-import NewsArticle from './components/news/NewsArticle';
 
 // Pages
 import HomePage from './pages/HomePage'
@@ -18,6 +16,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx'
 
 function App() {
   return (
@@ -34,7 +33,7 @@ function App() {
             <Route path="/index" element={<HomePage />} />
 
             {/* Page Contact */}
-            <Route path="/about/contact" element={<ContactPage />} />
+            <Route path="/contact" element={<ContactPage />} />
 
             {/* Actualités */}
             <Route path="/news" element={<NewsPage />} />
@@ -56,10 +55,7 @@ function App() {
             <Route path="/about/history" element={<History />} />
 
             {/* Mission&Vision */}
-            <Route path="/about/mission" element={<MissionVision />} />
-
-            {/* Valeurs */}
-            <Route path="/about/values" element={<Values />} />
+            <Route path="/about/mission" element={<MissionVisionValeurs />} />
 
             {/* Objectifs */}
             <Route path="/about/objectives" element={<Objectives />} />
@@ -74,26 +70,6 @@ function App() {
         <Footer />
       </div>
       </Router>
-  )
-}
-
-const NotFoundPage = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center">
-        <h1 className="text-6xl font-bold text-green-600 mb-4">404</h1>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Page non trouvée</h2>
-        <p className="text-gray-600 mb-6">
-          Désolé, la page que vous recherchez n'existe pas.
-        </p>
-        <a 
-          href="/" 
-          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors inline-block"
-        >
-          Retour à l'accueil
-        </a>
-      </div>
-    </div>
   )
 }
 

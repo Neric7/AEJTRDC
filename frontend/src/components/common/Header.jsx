@@ -7,10 +7,12 @@ import {
   FaHome, 
   FaNewspaper, 
   FaHandsHelping, 
-  FaHandshake, 
   FaChartLine, 
   FaGlobeAfrica, 
-  FaInfoCircle 
+  FaInfoCircle, 
+  FaUser,
+  FaEnvelope,
+  FaHandshake
 } from 'react-icons/fa';
 import styles from './Header.module.css';
 import { useAuth } from '../../context/AuthContext';
@@ -82,7 +84,7 @@ export default function Header() {
     },
     {
       label: 'Partenaires',
-      href: '/partners',
+      href: '/partenaires',
       icon: FaHandshake,
     },
     {
@@ -109,14 +111,18 @@ export default function Header() {
       icon: FaInfoCircle,
       submenu: [
         { label: 'Notre histoire', href: '/about/history' },
-        { label: 'Mission & Vision', href: '/about/mission' },
-        { label: 'Valeurs', href: '/about/values' },
+        { label: 'Mission & Vision & Valeurs', href: '/about/mission' },
         { label: 'Objectifs', href: '/about/objectives' },
         { label: 'Organigramme', href: '/about/structure' },
+        { label: 'Listes partenaires', href: '/about/partenaires' },
         { label: 'Zones d\'intervention', href: '/about/zones' },
         { label: 'Notre équipe', href: '/about/team' },
-        { label: 'Contact', href: '/about/contact' },
       ]
+    },
+    {
+      label: 'Contact',
+      href: '/contact',
+      icon: FaEnvelope,
     },
   ];
 

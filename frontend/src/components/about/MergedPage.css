@@ -1,0 +1,775 @@
+/* ============================================
+   MergedPage.css - Mission, Vision & Valeurs
+   Style cohérent préservé des deux pages
+   ============================================ */
+
+/* Global Container */
+.merged-container {
+    min-height: 100vh;
+    background: #f8f9fa;
+  }
+  
+  /* ============================================
+     HERO SECTION
+     ============================================ */
+  .merged-hero {
+    position: relative;
+    padding: 40px 20px 50px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    min-height: 450px;
+    overflow: hidden;
+  }
+  
+  /* Decorative Elements */
+  .merged-decorCircleBlue {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 45px;
+    height: 45px;
+    background: #475569;
+    border-radius: 50%;
+    opacity: 0.8;
+    z-index: 1;
+  }
+  
+  .merged-decorCircleGreen {
+    position: absolute;
+    top: 50px;
+    right: 80px;
+    width: 25px;
+    height: 25px;
+    background: #1e293b;
+    border-radius: 50%;
+    opacity: 0.7;
+    z-index: 1;
+  }
+  
+  .merged-decorCirclePurple {
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #64748b;
+    border-radius: 50%;
+    opacity: 0.6;
+    z-index: 1;
+  }
+  
+  .merged-decorCircleOrange {
+    position: absolute;
+    bottom: 90px;
+    left: 30%;
+    width: 30px;
+    height: 30px;
+    background: #ff9a3c;
+    border-radius: 50%;
+    opacity: 0.6;
+    z-index: 1;
+  }
+  
+  .merged-decorDots {
+    position: absolute;
+    top: 15%;
+    right: 50px;
+    width: 50px;
+    height: 50px;
+    background-image: radial-gradient(circle, #d1d5db 2px, transparent 2px);
+    background-size: 12px 12px;
+    opacity: 0.4;
+    z-index: 1;
+  }
+  
+  /* Hero Content */
+  .merged-heroContent {
+    position: relative;
+    z-index: 10;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  
+  .merged-heroText {
+    padding-right: 20px;
+  }
+  
+  .merged-heroTag {
+    display: inline-block;
+    color: #ff9a3c;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  
+  .merged-heroTitle {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #111827;
+    margin-bottom: 16px;
+  }
+  
+  .merged-heroSubtitle {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #6b7280;
+  }
+  
+  .merged-heroButton {
+    padding: 12px 28px;
+    background: #1e293b;
+    color: white;
+    border-radius: 50px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+  }
+  
+  .merged-heroButton:hover {
+    background: #334155;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Hero Stats */
+  .merged-heroStats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 0;
+  }
+  
+  .merged-heroStatItem {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .merged-heroStatItem:hover {
+    border-color: #ff9a3c;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 154, 60, 0.15);
+  }
+  
+  .merged-heroStatNumber {
+    font-size: 32px;
+    font-weight: 800;
+    color: #000000;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  
+  .merged-heroStatLabel {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Hero Image */
+  .merged-heroImage {
+    position: relative;
+    z-index: 5;
+  }
+  
+  .merged-imageShape {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 1;
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    margin-left: auto;
+  }
+  
+  .merged-imagePlaceholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .merged-imagePlaceholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  
+  /* ============================================
+     MAIN CONTENT
+     ============================================ */
+  .merged-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 20px;
+  }
+  
+  .merged-section {
+    margin-bottom: 100px;
+  }
+  
+  .merged-sectionLabel {
+    color: #ff9a3c;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  
+  .merged-sectionTitle {
+    font-size: 42px;
+    font-weight: 700;
+    color: #111827;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* ============================================
+     VISION SECTION
+     ============================================ */
+  .merged-visionCard {
+    background: white;
+    border-radius: 24px;
+    padding: 60px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  }
+  
+  .merged-cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  
+  .merged-iconBox {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .merged-iconBox svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .merged-cardTitle {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+  }
+  
+  .merged-cardContent {
+    margin-bottom: 40px;
+  }
+  
+  .merged-textLarge {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #374151;
+    margin-bottom: 24px;
+  }
+  
+  .merged-text {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #4b5563;
+    margin-bottom: 24px;
+  }
+  
+  .merged-highlight {
+    font-weight: 600;
+    color: #1e293b;
+  }
+  
+  .merged-highlightGreen {
+    font-weight: 600;
+    color: #475569;
+  }
+  
+  /* Pillars Grid */
+  .merged-pillarsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+  }
+  
+  .merged-pillarCard {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .merged-pillarCard:hover {
+    border-color: #ff9a3c;
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(255, 154, 60, 0.15);
+  }
+  
+  .merged-pillarIcon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  
+  .merged-pillarTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 6px;
+  }
+  
+  .merged-pillarDesc {
+    font-size: 14px;
+    color: #6b7280;
+  }
+  
+  /* ============================================
+     MISSION SECTION
+     ============================================ */
+  .merged-missionCard {
+    background: white;
+    border-radius: 24px;
+    padding: 60px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Components Grid */
+  .merged-componentsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+  }
+  
+  .merged-componentCard {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.3s ease;
+  }
+  
+  .merged-componentCard:hover {
+    border-color: #ff9a3c;
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(255, 154, 60, 0.15);
+  }
+  
+  .merged-componentIcon {
+    width: 60px;
+    height: 60px;
+    background: #fff7ed;
+    color: #ff9a3c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .merged-componentCard:hover .merged-componentIcon {
+    background: #ff9a3c;
+    color: white;
+  }
+  
+  .merged-componentIcon svg {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .merged-componentTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 12px;
+  }
+  
+  .merged-componentDesc {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.6;
+  }
+  
+  /* ============================================
+     VALUES SECTION
+     ============================================ */
+  .merged-valuesIntro {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  
+  .merged-introText {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #6b7280;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .merged-valuesGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 60px;
+  }
+  
+  .merged-valueCard {
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+  }
+  
+  .merged-valueCard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(255, 154, 60, 0.12);
+  }
+  
+  .merged-valueHeader {
+    padding: 40px 32px;
+    color: white;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  
+  .merged-valueIconBox {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .merged-valueIconBox svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2;
+  }
+  
+  .merged-valueTitle {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  .merged-valueDescription {
+    font-size: 16px;
+    opacity: 0.95;
+    line-height: 1.5;
+  }
+  
+  .merged-valueContent {
+    padding: 32px;
+  }
+  
+  .merged-detailsTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 20px;
+  }
+  
+  .merged-detailsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .merged-detailItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: #4b5563;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  
+  .merged-checkIcon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background: #d1fae5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+  
+  .merged-checkIcon svg {
+    width: 16px;
+    height: 16px;
+    color: #10b981;
+  }
+  
+  /* ============================================
+     ADDITIONAL VALUES SECTION
+     ============================================ */
+  .merged-additionalSection {
+    margin-bottom: 80px;
+  }
+  
+  .merged-additionalCard {
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    border-radius: 24px;
+    padding: 50px;
+  }
+  
+  .merged-additionalTitle {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1e293b;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .merged-additionalGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  
+  .merged-additionalItem {
+    text-align: center;
+  }
+  
+  .merged-additionalIcon {
+    width: 64px;
+    height: 64px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    color: #ff9a3c;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .merged-additionalIcon svg {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .merged-additionalItemTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+  
+  .merged-additionalItemDesc {
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.6;
+  }
+  
+  /* ============================================
+     IMPACT SECTION
+     ============================================ */
+  .merged-impactSection {
+    margin-top: 80px;
+  }
+  
+  .merged-impactCard {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 24px;
+    padding: 50px;
+    text-align: center;
+  }
+  
+  .merged-impactTitle {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 16px;
+  }
+  
+  .merged-impactText {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #475569;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  /* ============================================
+     RESPONSIVE DESIGN
+     ============================================ */
+  @media (max-width: 1024px) {
+    .merged-heroContent {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+    
+    .merged-heroText {
+      padding-right: 0;
+    }
+    
+    .merged-heroTitle {
+      font-size: 40px;
+    }
+  
+    .merged-imageShape {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    .merged-pillarsGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .merged-componentsGrid {
+      grid-template-columns: 1fr;
+    }
+  
+    .merged-valuesGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .merged-additionalGrid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .merged-hero {
+      padding: 30px 20px 40px;
+      min-height: 450px;
+    }
+    
+    .merged-heroTitle {
+      font-size: 32px;
+    }
+  
+    .merged-heroSubtitle {
+      font-size: 15px;
+    }
+  
+    .merged-imageShape {
+      max-width: 320px;
+    }
+    
+    .merged-sectionTitle {
+      font-size: 32px;
+    }
+    
+    .merged-visionCard,
+    .merged-missionCard {
+      padding: 30px;
+    }
+    
+    .merged-cardHeader {
+      flex-direction: column;
+      text-align: center;
+      gap: 16px;
+    }
+    
+    .merged-cardTitle {
+      font-size: 28px;
+    }
+  
+    .merged-textLarge,
+    .merged-text {
+      font-size: 15px;
+    }
+  
+    .merged-pillarsGrid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  
+    .merged-componentsGrid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  
+    .merged-introText {
+      font-size: 16px;
+    }
+    
+    .merged-valuesGrid {
+      gap: 20px;
+    }
+  
+    .merged-valueHeader {
+      padding: 30px 24px;
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .merged-valueTitle {
+      font-size: 24px;
+    }
+  
+    .merged-valueDescription {
+      font-size: 15px;
+    }
+  
+    .merged-valueContent {
+      padding: 24px;
+    }
+    
+    .merged-additionalCard {
+      padding: 30px;
+    }
+  
+    .merged-additionalTitle {
+      font-size: 28px;
+    }
+  
+    .merged-additionalGrid {
+      gap: 20px;
+    }
+    
+    .merged-impactCard {
+      padding: 30px;
+    }
+    
+    .merged-impactTitle {
+      font-size: 28px;
+    }
+  
+    .merged-impactText {
+      font-size: 16px;
+    }
+  }

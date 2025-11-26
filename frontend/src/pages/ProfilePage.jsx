@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import Loader from '../components/common/Loader';
+import { FaUser, FaEnvelope, FaPhone, FaImage, FaEdit, FaLock, FaKey, FaShieldAlt, FaCheck, FaSave, FaSignOutAlt } from 'react-icons/fa';
 import styles from './ProfilePage.module.css';
 
 export default function ProfilePage() {
   const { user, updateProfile, changePassword, logout } = useAuth();
+  
+  const [activeTab, setActiveTab] = useState('profile'); // 'profile' ou 'security'
+  
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -12,6 +16,7 @@ export default function ProfilePage() {
     avatar: user?.avatar || '',
     bio: user?.bio || '',
   });
+  
   const [passwordData, setPasswordData] = useState({
     current_password: '',
     password: '',
@@ -65,7 +70,7 @@ export default function ProfilePage() {
       };
 
       const response = await updateProfile(payload);
-      setProfileStatus({ type: 'success', message: response.message || 'Profil mis à jour.' });
+      setProfileStatus({ type: 'success', message: response.message || 'Profil mis à jour avec succès !' });
     } catch (err) {
       setProfileStatus({ type: 'error', message: err.message });
     } finally {
@@ -80,7 +85,7 @@ export default function ProfilePage() {
 
     try {
       const response = await changePassword(passwordData);
-      setPasswordStatus({ type: 'success', message: response.message || 'Mot de passe mis à jour.' });
+      setPasswordStatus({ type: 'success', message: response.message || 'Mot de passe modifié avec succès !' });
       setPasswordData({
         current_password: '',
         password: '',
@@ -96,182 +101,283 @@ export default function ProfilePage() {
   return (
     <section className={styles.profileSection}>
       <div className={styles.container}>
-        <aside className={styles.card}>
-          <div className={styles.profileHeader}>
+        
+        {/* En-tête avec cover et avatar */}
+        <div className={styles.profileCover}>
+          <div className={styles.coverGradient}></div>
+          <div className={styles.avatarWrapper}>
             {profileData.avatar ? (
-              <img src={profileData.avatar} alt={user.name} className={styles.avatar} style={{ objectFit: 'cover' }} />
+              <img src={profileData.avatar} alt={user.name} className={styles.avatarLarge} />
             ) : (
-              <div className={styles.avatar}>{initials}</div>
+              <div className={styles.avatarLarge}>{initials}</div>
             )}
-            <div>
-              <p className={styles.name}>{user.name}</p>
-              <p>{user.email}</p>
+            <div className={styles.userInfo}>
+              <h1 className={styles.userName}>{user.name}</h1>
+              <p className={styles.userEmail}>{user.email}</p>
+              <span className={styles.roleBadge}>
+                {user.role === 'admin' ? (
+                  <>
+                    <FaShieldAlt /> Administrateur
+                  </>
+                ) : (
+                  <>
+                    <FaUser /> Utilisateur
+                  </>
+                )}
+              </span>
             </div>
-            <span className={styles.chip}>
-              {user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
-            </span>
           </div>
+        </div>
 
-          <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <p>
-              <strong>Contact :</strong> {user.phone || 'Non renseigné'}
-            </p>
-            {user.bio && (
-              <p>
-                <strong>Bio :</strong> {user.bio}
-              </p>
-            )}
-            <button className={styles.secondaryBtn} onClick={logout}>
-              Se déconnecter
+        {/* Navigation par onglets */}
+        <div className={styles.tabsContainer}>
+          <div className={styles.tabs}>
+            <button 
+              className={`${styles.tab} ${activeTab === 'profile' ? styles.tabActive : ''}`}
+              onClick={() => setActiveTab('profile')}
+            >
+              <FaUser className={styles.tabIcon} />
+              Profil
+            </button>
+            <button 
+              className={`${styles.tab} ${activeTab === 'security' ? styles.tabActive : ''}`}
+              onClick={() => setActiveTab('security')}
+            >
+              <FaLock className={styles.tabIcon} />
+              Sécurité
             </button>
           </div>
-        </aside>
+          <button className={styles.logoutBtn} onClick={logout}>
+            <FaSignOutAlt /> Déconnexion
+          </button>
+        </div>
 
-        <div className="forms">
-          <div className={styles.card} style={{ marginBottom: '2rem' }}>
-            <h2 className={styles.cardsTitle}>Informations personnelles</h2>
-            {profileStatus.message && (
-              <p className={profileStatus.type === 'success' ? styles.success : styles.error}>{profileStatus.message}</p>
-            )}
-
-            <form className={styles.form} onSubmit={handleProfileSubmit}>
-              <div className={styles.formGroup}>
-                <label htmlFor="name" className={styles.label}>
-                  Nom complet
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  className={styles.input}
-                  value={profileData.name}
-                  onChange={handleProfileChange}
-                  required
-                />
+        {/* Contenu des onglets */}
+        <div className={styles.tabContent}>
+          
+          {/* Onglet Profil */}
+          {activeTab === 'profile' && (
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <h2 className={styles.cardTitle}>Informations personnelles</h2>
+                  <p className={styles.cardSubtitle}>Gérez vos informations de profil</p>
+                </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label htmlFor="email" className={styles.label}>
-                  Adresse e-mail
-                </label>
-                <input id="email" name="email" type="email" className={styles.input} value={profileData.email} disabled />
+              {profileStatus.message && (
+                <div className={profileStatus.type === 'success' ? styles.alertSuccess : styles.alertError}>
+                  <span className={styles.alertIcon}>
+                    {profileStatus.type === 'success' ? <FaCheck /> : '⚠'}
+                  </span>
+                  {profileStatus.message}
+                </div>
+              )}
+
+              <div className={styles.formWrapper}>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="name" className={styles.label}>
+                      <FaUser className={styles.labelIcon} />
+                      Nom complet
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      className={styles.input}
+                      value={profileData.name}
+                      onChange={handleProfileChange}
+                      placeholder="Jean Dupont"
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="email" className={styles.label}>
+                      <FaEnvelope className={styles.labelIcon} />
+                      Adresse e-mail
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      className={`${styles.input} ${styles.inputDisabled}`}
+                      value={profileData.email}
+                      disabled
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="phone" className={styles.label}>
+                      <FaPhone className={styles.labelIcon} />
+                      Téléphone
+                    </label>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      className={styles.input}
+                      value={profileData.phone}
+                      onChange={handleProfileChange}
+                      placeholder="+33 6 12 34 56 78"
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label htmlFor="avatar" className={styles.label}>
+                      <FaImage className={styles.labelIcon} />
+                      URL Avatar
+                    </label>
+                    <input
+                      id="avatar"
+                      name="avatar"
+                      type="url"
+                      className={styles.input}
+                      value={profileData.avatar}
+                      onChange={handleProfileChange}
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="bio" className={styles.label}>
+                    <FaEdit className={styles.labelIcon} />
+                    Bio
+                  </label>
+                  <textarea
+                    id="bio"
+                    name="bio"
+                    className={styles.textarea}
+                    value={profileData.bio}
+                    onChange={handleProfileChange}
+                    placeholder="Parlez-nous de vous..."
+                    rows={4}
+                  />
+                </div>
+
+                <div className={styles.formActions}>
+                  <button 
+                    onClick={handleProfileSubmit}
+                    className={styles.btnPrimary}
+                    disabled={profileLoading}
+                  >
+                    {profileLoading ? (
+                      <>
+                        <span className={styles.spinner}></span>
+                        Enregistrement...
+                      </>
+                    ) : (
+                      <>
+                        <FaSave />
+                        Enregistrer les modifications
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Onglet Sécurité */}
+          {activeTab === 'security' && (
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <h2 className={styles.cardTitle}>Modifier le mot de passe</h2>
+                  <p className={styles.cardSubtitle}>Assurez-vous d'utiliser un mot de passe sécurisé</p>
+                </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label htmlFor="phone" className={styles.label}>
-                  Téléphone
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  className={styles.input}
-                  value={profileData.phone}
-                  onChange={handleProfileChange}
-                />
-              </div>
+              {passwordStatus.message && (
+                <div className={passwordStatus.type === 'success' ? styles.alertSuccess : styles.alertError}>
+                  <span className={styles.alertIcon}>
+                    {passwordStatus.type === 'success' ? <FaCheck /> : '⚠'}
+                  </span>
+                  {passwordStatus.message}
+                </div>
+              )}
 
-              <div className={styles.formGroup}>
-                <label htmlFor="avatar" className={styles.label}>
-                  URL de l&apos;avatar
-                </label>
-                <input
-                  id="avatar"
-                  name="avatar"
-                  type="url"
-                  className={styles.input}
-                  placeholder="https://..."
-                  value={profileData.avatar}
-                  onChange={handleProfileChange}
-                />
-              </div>
+              <div className={styles.formWrapper}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="current_password" className={styles.label}>
+                    <FaKey className={styles.labelIcon} />
+                    Mot de passe actuel
+                  </label>
+                  <input
+                    id="current_password"
+                    name="current_password"
+                    type="password"
+                    className={styles.input}
+                    value={passwordData.current_password}
+                    onChange={handlePasswordChange}
+                    placeholder="••••••••"
+                  />
+                </div>
 
-              <div className={styles.formGroup}>
-                <label htmlFor="bio" className={styles.label}>
-                  Bio
-                </label>
-                <textarea
-                  id="bio"
-                  name="bio"
-                  className={styles.textarea}
-                  value={profileData.bio}
-                  onChange={handleProfileChange}
-                />
-              </div>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="password" className={styles.label}>
+                      <FaLock className={styles.labelIcon} />
+                      Nouveau mot de passe
+                    </label>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      className={styles.input}
+                      value={passwordData.password}
+                      onChange={handlePasswordChange}
+                      placeholder="••••••••"
+                      minLength={8}
+                    />
+                    <small className={styles.helpText}>Minimum 8 caractères</small>
+                  </div>
 
-              <div className={styles.actions}>
-                <button type="submit" className={styles.primaryBtn} disabled={profileLoading}>
-                  {profileLoading ? 'Enregistrement...' : 'Enregistrer'}
-                </button>
-              </div>
-            </form>
-          </div>
+                  <div className={styles.formGroup}>
+                    <label htmlFor="password_confirmation" className={styles.label}>
+                      <FaCheck className={styles.labelIcon} />
+                      Confirmer le mot de passe
+                    </label>
+                    <input
+                      id="password_confirmation"
+                      name="password_confirmation"
+                      type="password"
+                      className={styles.input}
+                      value={passwordData.password_confirmation}
+                      onChange={handlePasswordChange}
+                      placeholder="••••••••"
+                    />
+                  </div>
+                </div>
 
-          <div className={styles.card}>
-            <h2 className={styles.cardsTitle}>Mot de passe</h2>
-            {passwordStatus.message && (
-              <p className={passwordStatus.type === 'success' ? styles.success : styles.error}>
-                {passwordStatus.message}
-              </p>
-            )}
-
-            <form className={styles.form} onSubmit={handlePasswordSubmit}>
-              <div className={styles.formGroup}>
-                <label htmlFor="current_password" className={styles.label}>
-                  Mot de passe actuel
-                </label>
-                <input
-                  id="current_password"
-                  name="current_password"
-                  type="password"
-                  className={styles.input}
-                  value={passwordData.current_password}
-                  onChange={handlePasswordChange}
-                  required
-                />
+                <div className={styles.formActions}>
+                  <button 
+                    onClick={handlePasswordSubmit}
+                    className={styles.btnPrimary}
+                    disabled={passwordLoading}
+                  >
+                    {passwordLoading ? (
+                      <>
+                        <span className={styles.spinner}></span>
+                        Mise à jour...
+                      </>
+                    ) : (
+                      <>
+                        <FaLock />
+                        Mettre à jour le mot de passe
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
+            </div>
+          )}
 
-              <div className={styles.formGroup}>
-                <label htmlFor="password" className={styles.label}>
-                  Nouveau mot de passe
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  className={styles.input}
-                  value={passwordData.password}
-                  onChange={handlePasswordChange}
-                  required
-                  minLength={8}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="password_confirmation" className={styles.label}>
-                  Confirmation
-                </label>
-                <input
-                  id="password_confirmation"
-                  name="password_confirmation"
-                  type="password"
-                  className={styles.input}
-                  value={passwordData.password_confirmation}
-                  onChange={handlePasswordChange}
-                  required
-                />
-              </div>
-
-              <div className={styles.actions}>
-                <button type="submit" className={styles.primaryBtn} disabled={passwordLoading}>
-                  {passwordLoading ? 'Mise à jour...' : 'Mettre à jour'}
-                </button>
-              </div>
-            </form>
-          </div>
         </div>
       </div>
     </section>
   );
 }
-
