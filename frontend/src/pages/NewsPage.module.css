@@ -1,230 +1,251 @@
 /* NewsPage.module.css */
 
 .container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-    padding: 3rem 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  padding: 2rem 0;
+}
+
+.wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Header Section - Compact */
+.header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  animation: fadeInDown 0.5s ease-out;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+  position: relative;
+  display: inline-block;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #F59E0B, #D97706);
+  border-radius: 2px;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #718096;
+  max-width: 450px;
+  margin: 0.5rem auto 0;
+  line-height: 1.4;
+}
+
+/* Search Bar - Compact & Left Aligned */
+.searchSection {
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.5s ease-out 0.1s backwards;
+}
+
+.searchForm {
+  max-width: 100%;
+}
+
+.searchWrapper {
+  position: relative;
+  max-width: 380px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.7rem 6.5rem 0.7rem 1rem;
+  font-size: 0.9rem;
+  border: 1px solid #e2e8f0;
+  background: white;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.08);
+}
+
+.searchInput::placeholder {
+  color: #a0aec0;
+  font-size: 0.875rem;
+}
+
+.searchButton {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.45rem 1.1rem;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: white;
+  border: none;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+}
+
+.searchButton:hover {
+  transform: translateY(-50%) translateY(-1px);
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+}
+
+.searchButton:active {
+  transform: translateY(-50%) scale(0.97);
+}
+
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 0;
+}
+
+/* Error State */
+.errorContainer {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.errorBox {
+  background: #fff5f5;
+  border: 2px solid #fc8181;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(252, 129, 129, 0.15);
+}
+
+.errorTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #c53030;
+  margin-bottom: 0.75rem;
+}
+
+.errorMessage {
+  color: #e53e3e;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.errorHint {
+  font-size: 0.875rem;
+  color: #718096;
+  margin-bottom: 1.5rem;
+}
+
+.retryButton {
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  background: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retryButton:hover {
+  background: #c53030;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+}
+
+/* Empty State */
+.emptyContainer {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.emptyMessage {
+  font-size: 1.1rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
-  
-  .wrapper {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  /* Header Section */
-  .header {
-    text-align: center;
-    margin-bottom: 4rem;
-    animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem 0;
+  }
+
   .title {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #1a202c;
-    margin-bottom: 1rem;
-    letter-spacing: -0.02em;
-    position: relative;
-    display: inline-block;
+    font-size: 1.5rem;
   }
-  
-  .title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(90deg, #F59E0B, #D97706);
-    border-radius: 2px;
-  }
-  
+
   .subtitle {
-    font-size: 1.25rem;
-    color: #4a5568;
-    max-width: 600px;
-    margin: 1.5rem auto 0;
-    line-height: 1.6;
+    font-size: 0.8rem;
   }
-  
-  /* Search Bar */
-  .searchSection {
-    margin-bottom: 3rem;
-    animation: fadeInUp 0.8s ease-out 0.2s backwards;
-  }
-  
-  .searchForm {
-    max-width: 700px;
-    margin: 0 auto;
-  }
-  
+
   .searchWrapper {
-    position: relative;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    overflow: hidden;
+    max-width: 100%;
   }
-  
+
   .searchInput {
-    width: 100%;
-    padding: 1.25rem 10rem 1.25rem 1.5rem;
-    font-size: 1.125rem;
-    border: 2px solid transparent;
-    background: white;
-    transition: all 0.3s ease;
-    outline: none;
+    padding: 0.65rem 5.5rem 0.65rem 0.875rem;
+    font-size: 0.85rem;
   }
-  
-  .searchInput:focus {
-    border-color: #F59E0B;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
-  }
-  
-  .searchInput::placeholder {
-    color: #a0aec0;
-  }
-  
+
   .searchButton {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 0.75rem 2rem;
-    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    padding: 0.45rem 0.9rem;
+    font-size: 0.8rem;
   }
-  
-  .searchButton:hover {
-    transform: translateY(-50%) translateY(-2px);
-    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.35rem;
   }
-  
-  .searchButton:active {
-    transform: translateY(-50%) scale(0.98);
+
+  .subtitle {
+    font-size: 0.75rem;
   }
-  
-  /* Loading State */
-  .loadingContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 5rem 0;
-  }
-  
-  /* Error State */
-  .errorContainer {
-    text-align: center;
-    padding: 5rem 0;
-  }
-  
-  .errorBox {
-    background: #fff5f5;
-    border: 2px solid #fc8181;
-    border-radius: 12px;
-    padding: 2rem;
-    max-width: 500px;
-    margin: 0 auto;
-    box-shadow: 0 4px 20px rgba(252, 129, 129, 0.15);
-  }
-  
-  .errorTitle {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #c53030;
-    margin-bottom: 0.75rem;
-  }
-  
-  .errorMessage {
-    color: #e53e3e;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-  }
-  
-  .errorHint {
-    font-size: 0.875rem;
-    color: #718096;
-    margin-bottom: 1.5rem;
-  }
-  
-  .retryButton {
-    margin-top: 1rem;
-    padding: 0.75rem 2rem;
-    background: #e53e3e;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .retryButton:hover {
-    background: #c53030;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
-  }
-  
-  /* Empty State */
-  .emptyContainer {
-    text-align: center;
-    padding: 5rem 0;
-  }
-  
-  .emptyMessage {
-    font-size: 1.25rem;
-    color: #718096;
-    font-weight: 500;
-  }
-  
-  /* Animations */
-  @keyframes fadeInDown {
-    from {
-      opacity: 0;
-      transform: translateY(-30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .title {
-      font-size: 2rem;
-    }
-  
-    .subtitle {
-      font-size: 1rem;
-    }
-  
-    .searchInput {
-      padding: 1rem 1.25rem;
-      padding-right: 8rem;
-      font-size: 1rem;
-    }
-  
-    .searchButton {
-      padding: 0.625rem 1.25rem;
-      font-size: 0.875rem;
-    }
-  }
+}

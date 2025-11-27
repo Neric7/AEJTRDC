@@ -447,3 +447,104 @@
   border-radius: 16px; /* Réduit */
   box-shadow: 0 3px 8px rgba(253, 185, 19, 0.3); /* Réduit */
 }
+
+/* AJOUT : Cache les infos de contact dans la section des zones d'intervention */
+.zonesContent .contactInfo {
+  display: none; 
+}
+
+
+/* Section Objectifs (Mise à jour pour suivre le font size) */
+.objectivesContent {
+  padding: 1rem 0;
+}
+
+.objectivesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.objectiveCard {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid #e5e7eb;
+}
+
+.objectiveCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-color: #6b7280;
+}
+
+.objectiveIcon {
+  font-size: 2rem; 
+  color: #374151;
+  margin-bottom: 12px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px; 
+  height: 50px; 
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.objectiveTitle {
+  font-size: 1.3rem; /* TAILLE AGRANDIE pour l'objectif */
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 12px; 
+  margin-top: 0.5rem;
+}
+
+.objectiveList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.objectiveList li {
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  position: relative;
+  color: #4b5563;
+  line-height: 1.6;
+  font-size: 0.9rem; /* Harmonisation */
+}
+
+.objectiveList li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #374151;
+  font-weight: bold;
+  font-size: 0.9rem; /* Harmonisation */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .objectivesGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .objectiveIcon {
+    font-size: 1.5rem;
+    width: 40px; 
+    height: 40px; 
+  }
+
+  .objectiveTitle {
+    font-size: 1.2rem;
+  }
+
+  .objectiveList li {
+    font-size: 0.85rem;
+  }
+}
