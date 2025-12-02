@@ -1,4 +1,4 @@
-/* Header.module.css */
+/* Header.module.css - Avec sélecteur de langue */
 
 /* Container principal */
 .headerWrapper {
@@ -83,7 +83,7 @@ nav {
 .nav {
   display: none;
   align-items: center;
-  gap: 1rem; /* AUGMENTÉ: 1cm d'espace entre les icônes */
+  gap: 1rem;
   margin-left: 2rem;
 }
 
@@ -95,7 +95,7 @@ nav {
 
 @media (min-width: 1280px) {
   .nav {
-    gap: 1.5rem; /* AUGMENTÉ: 1.5cm d'espace sur grands écrans */
+    gap: 1.5rem;
   }
 }
 
@@ -103,7 +103,7 @@ nav {
   position: relative;
 }
 
-/* NOUVEAU: Style pour le lien avec icône */
+/* Style pour le lien avec icône */
 .iconLink {
   display: flex;
   align-items: center;
@@ -122,7 +122,7 @@ nav {
   background: #f0f9ff;
 }
 
-/* NOUVEAU: Style pour l'état actif */
+/* Style pour l'état actif */
 .iconLinkActive {
   color: #7CB342 !important;
   background: #f0f9ff !important;
@@ -139,7 +139,7 @@ nav {
   margin-left: 0.5rem !important;
 }
 
-/* NOUVEAU: Wrapper pour l'icône et le texte tiroir */
+/* Wrapper pour l'icône et le texte tiroir */
 .iconWrapper {
   display: flex;
   align-items: center;
@@ -148,14 +148,14 @@ nav {
   height: 24px;
 }
 
-/* NOUVEAU: Style de l'icône */
+/* Style de l'icône */
 .navIcon {
   font-size: 1.5rem;
   flex-shrink: 0;
   transition: transform 0.3s ease;
 }
 
-/* NOUVEAU: Effet tiroir pour le texte */
+/* Effet tiroir pour le texte */
 .labelDrawer {
   font-weight: 500;
   font-size: 0.9375rem;
@@ -173,7 +173,7 @@ nav {
   margin-left: 0.5rem;
 }
 
-/* NOUVEAU: Petit chevron pour les submenus */
+/* Petit chevron pour les submenus */
 .chevronSmall {
   font-size: 0.75rem;
   margin-left: 0.25rem;
@@ -191,7 +191,7 @@ nav {
   position: absolute;
   left: 0;
   top: 100%;
-  margin-top: 0.5rem;
+  margin-top: 0;
   min-width: 16rem;
   background: white;
   border: 1px solid #f3f4f6;
@@ -261,43 +261,138 @@ nav {
   transform: translateY(-1px);
 }
 
-.authLinks {
-  display: flex;
+/* ===================================
+   SÉLECTEUR DE LANGUE - DESKTOP
+   =================================== */
+
+.langMenu {
+  position: relative;
+}
+
+.langButton {
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.loginLink {
-  text-decoration: none;
-  color: #374151;
-  font-weight: 500;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.loginLink:hover {
-  color: #7CB342;
-  background: #f0f9ff;
-}
-
-.signupBtn {
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border: 2px solid #7CB342;
+  gap: 0.4rem;
+  background: #f3f4f6;
+  border: none;
   border-radius: 9999px;
-  font-weight: 600;
-  color: #7CB342;
+  padding: 0.4rem 0.6rem;
+  color: #374151;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.signupBtn:hover {
-  background: #7CB342;
-  color: white;
+.langButton:hover {
+  background: #e5e7eb;
   transform: translateY(-1px);
 }
 
-/* Menu utilisateur */
+.flagEmoji {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.chevronRotated {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+
+.langDropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(55, 65, 81, 0.15);
+  min-width: 180px;
+  padding: 0.5rem 0;
+  z-index: 200;
+  animation: slideDown 0.2s ease-out;
+}
+
+.langDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.langDropdownItem:hover {
+  background: #f3f4f6;
+  color: #7CB342;
+  padding-left: 1.25rem;
+}
+
+.langDropdownItemActive {
+  background: #f0f9ff !important;
+  color: #7CB342 !important;
+  font-weight: 600;
+}
+
+/* ===================================
+   MENU AUTHENTIFICATION - DESKTOP
+   =================================== */
+
+.authMenu {
+  position: relative;
+}
+
+.authButton {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: #374151;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.authButton:hover {
+  background: #f3f4f6;
+  color: #7CB342;
+}
+
+.authDropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(55, 65, 81, 0.15);
+  min-width: 160px;
+  padding: 0.5rem 0;
+  z-index: 200;
+  animation: slideDown 0.2s ease-out;
+}
+
+.authDropdownItem {
+  display: block;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #1f2937;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.authDropdownItem:hover {
+  background: #f3f4f6;
+  color: #7CB342;
+  padding-left: 1.25rem;
+}
+
+/* Menu utilisateur (connecté) */
 .userMenu {
   position: relative;
 }
@@ -322,11 +417,6 @@ nav {
 
 .userButton svg {
   flex-shrink: 0;
-}
-
-.chevronRotated {
-  transform: rotate(180deg);
-  transition: transform 0.3s ease;
 }
 
 .userDropdown {
@@ -366,7 +456,10 @@ nav {
   padding-left: 1.25rem;
 }
 
-/* Menu Mobile Button */
+/* ===================================
+   MENU MOBILE
+   =================================== */
+
 .menuBtn {
   display: block;
   padding: 0.5rem;
@@ -387,7 +480,6 @@ nav {
   }
 }
 
-/* Menu Mobile Container */
 .mobileMenu {
   display: block;
   padding-bottom: 1rem;
@@ -402,7 +494,64 @@ nav {
   }
 }
 
-/* Items Mobile */
+/* ===================================
+   SÉLECTEUR DE LANGUE - MOBILE
+   =================================== */
+
+.mobileLangSection {
+  padding: 1rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 0.5rem;
+}
+
+.mobileLangLabel {
+  display: block;
+  fontSize: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+.mobileLangButtons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.mobileLangButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.mobileLangButton:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.mobileLangButtonActive {
+  background: #f0f9ff !important;
+  border-color: #7CB342 !important;
+  color: #7CB342 !important;
+  font-weight: 600;
+}
+
+.mobileLangCode {
+  font-size: 0.875rem;
+}
+
+/* ===================================
+   ITEMS MENU MOBILE
+   =================================== */
+
 .mobileItem {
   border-bottom: 1px solid #f3f4f6;
 }
@@ -434,7 +583,6 @@ nav {
   flex-shrink: 0;
 }
 
-/* Toggle Button Mobile Submenu */
 .submenuToggle {
   padding: 0.75rem;
   color: #6b7280;
@@ -453,7 +601,6 @@ nav {
   transform: rotate(180deg);
 }
 
-/* Submenu Mobile */
 .mobileSubmenu {
   padding-left: 2.5rem;
   padding-bottom: 0.5rem;
@@ -556,7 +703,7 @@ nav {
   
   .nav {
     margin-left: 1rem;
-    gap: 0.75rem; /* Espace réduit sur petits écrans */
+    gap: 0.75rem;
   }
 }
 
@@ -575,6 +722,6 @@ nav {
   }
   
   .nav {
-    gap: 1rem; /* Espace moyen */
+    gap: 1rem;
   }
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   FaUserCircle, 
   FaChevronDown, 
@@ -24,29 +25,60 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState('fr');
   const [hoveredItem, setHoveredItem] = useState(null);
   const userMenuRef = useRef(null);
+  const langMenuRef = useRef(null);
 
-  // Fonction pour vérifier si un item est actif
+  const { i18n } = useTranslation();
+
+  // Langues disponibles avec drapeaux emoji
+  const languages = [
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'sw', name: 'Swahili', flag: '🇹🇿' },
+    { code: 'ln', name: 'Lingala', flag: '🇨🇩' }
+  ];
+
+  // Initialisation de la langue au chargement du composant
+  useEffect(() => {
+    // Vérifier si i18n est correctement initialisé
+    if (!i18n || typeof i18n.changeLanguage !== 'function') {
+      console.warn('i18n not properly initialized');
+      return;
+    }
+
+    const savedLang = localStorage.getItem('lang');
+    const browserLang = navigator.language.split('-')[0];
+    const supportedLangs = ['fr', 'en', 'sw', 'ln'];
+    
+    // Priorité: 1. Langue sauvegardée, 2. Langue du navigateur si supportée, 3. Français par défaut
+    const langToUse = savedLang || (supportedLangs.includes(browserLang) ? browserLang : 'fr');
+    
+    setCurrentLang(langToUse);
+    i18n.changeLanguage(langToUse).catch(err => {
+      console.error('Erreur lors du changement de langue:', err);
+    });
+  }, [i18n]);
+
   const isActive = (href, submenu) => {
-    // Pour l'accueil
     if (href === '/' || href === '/index') {
       return location.pathname === '/' || location.pathname === '/index' || location.pathname === '';
     }
-    // Pour les items avec submenu
     if (submenu) {
       return submenu.some(subItem => location.pathname.startsWith(subItem.href));
     }
-    // Pour les autres items
     return location.pathname.startsWith(href) && href !== '/';
   };
-
-  console.log('Current path:', location.pathname); // Debug
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
+      }
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target)) {
+        setIsLangMenuOpen(false);
       }
     };
 
@@ -56,6 +88,19 @@ export default function Header() {
 
   const toggleSubmenu = (menu) => {
     setOpenSubmenu(openSubmenu === menu ? null : menu);
+  };
+
+  const handleLanguageChange = async (langCode) => {
+    setCurrentLang(langCode);
+    setIsLangMenuOpen(false);
+  
+    localStorage.setItem('lang', langCode);
+  
+    try {
+      await i18n.changeLanguage(langCode);
+    } catch (error) {
+      console.error('Erreur lors du changement de langue:', error);
+    }
   };
 
   const menuItems = [
@@ -84,7 +129,7 @@ export default function Header() {
     },
     {
       label: 'Partenaires',
-      href: '/partenaires',
+      href: '/partners',
       icon: FaHandshake,
     },
     {
@@ -126,6 +171,8 @@ export default function Header() {
     },
   ];
 
+  const currentLanguage = languages.find(lang => lang.code === currentLang);
+  
   return (
     <header className={styles.headerWrapper}>
       <nav>
@@ -194,6 +241,37 @@ export default function Header() {
 
           {/* Boutons CTA Desktop */}
           <div className={styles.actions}>
+            {/* Sélecteur de langue */}
+            <div className={styles.langMenu} ref={langMenuRef}>
+              <button
+                className={styles.langButton}
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                aria-label="Changer de langue"
+                title={currentLanguage?.name || 'Langue'}
+              >
+                <span className={styles.flagEmoji}>{currentLanguage?.flag || '🌐'}</span>
+                <FaChevronDown 
+                  size={10} 
+                  className={isLangMenuOpen ? styles.chevronRotated : ''}
+                />
+              </button>
+              {isLangMenuOpen && (
+                <div className={styles.langDropdown}>
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      className={`${styles.langDropdownItem} ${currentLang === lang.code ? styles.langDropdownItemActive : ''}`}
+                      onClick={() => handleLanguageChange(lang.code)}
+                    >
+                      <span className={styles.flagEmoji}>{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Menu utilisateur */}
             {isAuthenticated ? (
               <div className={styles.userMenu} ref={userMenuRef}>
                 <button
@@ -237,15 +315,35 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <div className={styles.authLinks}>
-                <Link to="/login" className={styles.loginLink}>
-                  Se connecter
-                </Link>
-                <Link to="/register" className={styles.signupBtn}>
-                  S'inscrire
-                </Link>
+              <div className={styles.authMenu} ref={userMenuRef}>
+                <button
+                  className={styles.authButton}
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  aria-label="Connexion"
+                >
+                  <FaUserCircle size={24} />
+                </button>
+                {isUserMenuOpen && (
+                  <div className={styles.authDropdown}>
+                    <Link
+                      to="/login"
+                      className={styles.authDropdownItem}
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      Se connecter
+                    </Link>
+                    <Link
+                      to="/register"
+                      className={styles.authDropdownItem}
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      S'inscrire
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
+            
             <Button className={styles.primaryBtn}>
               Faire un don
             </Button>
@@ -272,6 +370,24 @@ export default function Header() {
         {/* Menu Mobile */}
         {isMenuOpen && (
           <div className={styles.mobileMenu}>
+            {/* Sélecteur de langue mobile */}
+            <div className={styles.mobileLangSection}>
+              <span className={styles.mobileLangLabel}>Langue:</span>
+              <div className={styles.mobileLangButtons}>
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    className={`${styles.mobileLangButton} ${currentLang === lang.code ? styles.mobileLangButtonActive : ''}`}
+                    onClick={() => handleLanguageChange(lang.code)}
+                    title={lang.name}
+                  >
+                    <span className={styles.flagEmoji}>{lang.flag}</span>
+                    <span className={styles.mobileLangCode}>{lang.code.toUpperCase()}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {menuItems.map((item, index) => {
               const Icon = item.icon;
               return (

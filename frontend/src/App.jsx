@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import './i18n';
 
 // Components
 import Header from './components/common/Header'
@@ -17,6 +17,7 @@ import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx'
+import PartnersPage from './pages/PartnersPage';
 
 function App() {
   return (
@@ -60,16 +61,18 @@ function App() {
             {/* Objectifs */}
             <Route path="/about/objectives" element={<Objectives />} />
 
+            {/* Partenaires */}
+            <Route path="/partners" element={<PartnersPage />} />
+            
             {/* Page 404 */}
             <Route path="*" element={<NotFoundPage />} />
-
           </Routes>
         </main>
 
-        {/* Footer - À venir */}
+        {/* Footer */}
         <Footer />
       </div>
-      </Router>
+    </Router>
   )
 }
 
