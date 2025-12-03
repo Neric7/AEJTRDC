@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import './i18n';
 
 // Components
 import Header from './components/common/Header'
@@ -7,6 +7,9 @@ import Footer from './components/common/Footer'
 import History from './components/about/History'
 import MissionVisionValeurs from './components/about/MissionVisionValeurs.jsx'
 import Objectives from './components/about/Objectives'
+
+// Details Domains
+import EducationMarginalisee from './details_domains/EducationMarginalisee'
 
 // Pages
 import HomePage from './pages/HomePage'
@@ -17,6 +20,9 @@ import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx'
+import PartnersPage from './pages/PartnersPage';
+import DomainsPage from './pages/DomainsPage';
+import ProjectsPage from './pages/ProjectsPage';
 
 function App() {
   return (
@@ -60,16 +66,27 @@ function App() {
             {/* Objectifs */}
             <Route path="/about/objectives" element={<Objectives />} />
 
+            {/* Partenaires */}
+            <Route path="/partners" element={<PartnersPage />} />
+            
             {/* Page 404 */}
             <Route path="*" element={<NotFoundPage />} />
 
+            {/* Domains */}
+            <Route path="/domains" element={<DomainsPage />} />
+
+            {/* Details Domains */}
+            <Route path="/domains/1" element={<EducationMarginalisee />} />
+
+            {/* Projects */}
+            <Route path="/projects" element={<ProjectsPage />} />
           </Routes>
         </main>
 
-        {/* Footer - À venir */}
+        {/* Footer */}
         <Footer />
       </div>
-      </Router>
+    </Router>
   )
 }
 

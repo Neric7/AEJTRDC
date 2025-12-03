@@ -1,0 +1,161 @@
+/* Container Principal */
+.pageContainer {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  
+  /* Layout Flex */
+  .domaineContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Section Principale - Gauche */
+  .domaineMain {
+    flex: 2;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .domaineImage {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .domaineContent {
+    padding: 30px;
+  }
+  
+  .domaineTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0c5a31;
+    margin: 0 0 20px 0;
+    line-height: 1.3;
+  }
+  
+  .domaineText {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #333;
+    text-align: justify;
+    margin-bottom: 15px;
+  }
+  
+  /* Sidebar - Droite */
+  .domaineSidebar {
+    flex: 1;
+    min-width: 280px;
+  }
+  
+  .sidebarCard {
+    background: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 20px;
+  }
+  
+  .sidebarTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: #05b38a;
+    margin: 0 0 20px 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e0e0e0;
+  }
+  
+  .domainesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .domaineItem {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    transition: all 0.3s ease;
+  }
+  
+  .domaineItem:last-child {
+    border-bottom: none;
+  }
+  
+  .domaineItem:hover {
+    background-color: #f8f9fa;
+    padding-left: 10px;
+  }
+  
+  .domaineLink {
+    color: #0c5a31;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    display: block;
+  }
+  
+  .domaineLink:hover {
+    color: #05b38a;
+  }
+  
+  /* Responsive */
+  @media (max-width: 992px) {
+    .domaineContainer {
+      flex-direction: column;
+    }
+    
+    .domaineMain {
+      flex: 1;
+    }
+    
+    .domaineSidebar {
+      flex: 1;
+      min-width: 100%;
+    }
+    
+    .sidebarCard {
+      position: relative;
+      top: 0;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .pageContainer {
+      padding: 20px 15px;
+    }
+    
+    .domaineTitle {
+      font-size: 24px;
+    }
+    
+    .domaineText {
+      font-size: 15px;
+    }
+    
+    .domaineContent {
+      padding: 20px;
+    }
+    
+    .sidebarCard {
+      padding: 20px;
+    }
+    
+    .sidebarTitle {
+      font-size: 18px;
+    }
+    
+    .domaineLink {
+      font-size: 14px;
+    }
+  }
