@@ -119,12 +119,8 @@ export default function Header() {
       href: '#',
       icon: FaHandsHelping,
       submenu: [
-        { label: 'Protection de l\'enfance', href: '/projects/child-protection' },
-        { label: 'Santé communautaire', href: '/projects/health' },
-        { label: 'Insertion socio-économique', href: '/projects/economic' },
-        { label: 'Environnement', href: '/projects/environment' },
-        { label: 'Plaidoyer', href: '/projects/advocacy' },
-        { label: 'Tous les projets', href: '/projects' },
+        { label: 'Domaines d\'intervention', href: '/domains' },
+        { label: 'Projets', href: '/projects' },
       ]
     },
     {

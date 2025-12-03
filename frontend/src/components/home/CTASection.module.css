@@ -265,6 +265,7 @@
   width: 100%;
   max-width: 450px;
   margin-top: 20px;
+  animation: animate 2s ease-in-out infinite;
 }
 
 .overlayTitle {
@@ -354,5 +355,17 @@
 @media (prefers-reduced-motion: no-preference) {
   .yearsNumber {
     transition: color 0.3s ease;
+  }
+}
+
+@keyframes animate {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }

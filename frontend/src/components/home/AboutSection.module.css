@@ -548,3 +548,33 @@
     font-size: 0.85rem;
   }
 }
+
+.seeMoreLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0B2B5B; /* bleu foncé AEJT */
+  text-decoration: none;
+  transition: all 0.25s ease-in-out;
+  padding: 4px 8px;
+  border-radius: 6px;
+  position: relative;
+}
+
+.seeMoreLink::after {
+  transition: transform 0.25s ease-in-out;
+}
+
+.seeMoreLink:hover {
+  color: #ffffff;
+  background: #0B2B5B; /* bleu foncé */
+  padding-left: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.seeMoreLink:hover::after {
+  transform: translateX(4px);
+}
+

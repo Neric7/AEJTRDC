@@ -167,6 +167,7 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.9);
   min-width: 140px; /* Largeur réduite */
+  animation: animate 2s ease-in-out infinite;
 }
 
 @media (min-width: 768px) {
@@ -342,5 +343,17 @@
   .africaImage {
     height: 250px;
     margin-top: 10px;
+  }
+}
+
+@keyframes animate {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }

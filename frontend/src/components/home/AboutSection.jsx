@@ -202,9 +202,12 @@ export default function AboutSection() {
                           <span className={styles.provinceTag}>Kinshasa (2020)</span>
                           <span className={styles.provinceTag}>Kavumu (2023)</span>
                         </div>
-                        {/* Les informations de contact ont été retirées comme demandé */}
                       </div>
+                      
                     </div>
+                    <Link to="/about/zones" className={styles.seeMoreLink} onClick={() => window.scrollTo(0, 0)}>
+                          Voir plus →
+                        </Link>
                   </div>
                 )}
 

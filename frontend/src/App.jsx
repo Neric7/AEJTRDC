@@ -8,6 +8,9 @@ import History from './components/about/History'
 import MissionVisionValeurs from './components/about/MissionVisionValeurs.jsx'
 import Objectives from './components/about/Objectives'
 
+// Details Domains
+import EducationMarginalisee from './details_domains/EducationMarginalisee'
+
 // Pages
 import HomePage from './pages/HomePage'
 import ContactPage from './pages/ContactPage'
@@ -18,6 +21,7 @@ import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import PartnersPage from './pages/PartnersPage';
+import DomainsPage from './pages/DomainsPage';
 
 function App() {
   return (
@@ -66,6 +70,12 @@ function App() {
             
             {/* Page 404 */}
             <Route path="*" element={<NotFoundPage />} />
+
+            {/* Domains */}
+            <Route path="/domains" element={<DomainsPage />} />
+
+            {/* Details Domains */}
+            <Route path="/domains/1" element={<EducationMarginalisee />} />
           </Routes>
         </main>
 
