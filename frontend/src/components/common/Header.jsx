@@ -33,13 +33,13 @@ export default function Header() {
 
   const { i18n } = useTranslation();
 
-  // Langues disponibles avec drapeaux emoji
-  const languages = [
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'sw', name: 'Swahili', flag: '🇹🇿' },
-    { code: 'ln', name: 'Lingala', flag: '🇨🇩' }
-  ];
+// Langues disponibles avec drapeaux emoji
+const languages = [
+  { code: 'fr', name: 'Français', flag: '🇨🇩' },
+  { code: 'en', name: 'English', flag: '🇨🇩' },
+  { code: 'sw', name: 'Swahili', flag: '🇨🇩' },
+  { code: 'ln', name: 'Lingala', flag: '🇨🇩' }
+];
 
   // Initialisation de la langue au chargement du composant
   useEffect(() => {
@@ -154,7 +154,6 @@ export default function Header() {
         { label: 'Notre histoire', href: '/about/history' },
         { label: 'Mission & Vision & Valeurs', href: '/about/mission' },
         { label: 'Objectifs', href: '/about/objectives' },
-        { label: 'Organigramme', href: '/about/structure' },
         { label: 'Listes partenaires', href: '/about/partenaires' },
         { label: 'Zones d\'intervention', href: '/about/zones' },
         { label: 'Notre équipe', href: '/about/team' },

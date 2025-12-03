@@ -14,6 +14,10 @@ export default function HeroBanner() {
 
   const slides = [
     {
+      title: " Ensemble, redonnons espoir aux enfants et jeunes travailleurs de la RDC.",
+      highlight: "enfants et jeunes travailleurs"
+    },
+    {
       subtitle: "Solidarité, Paix et Développement",
       title: "Nos projets intégrés touchent l'éducation, la santé, l'autonomisation économique, la paix et la protection de l'environnement.",
       highlight: "l'éducation, la santé, l'autonomisation économique"

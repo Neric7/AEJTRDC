@@ -22,6 +22,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import PartnersPage from './pages/PartnersPage';
 import DomainsPage from './pages/DomainsPage';
+import ProjectsPage from './pages/ProjectsPage';
 
 function App() {
   return (
@@ -76,6 +77,9 @@ function App() {
 
             {/* Details Domains */}
             <Route path="/domains/1" element={<EducationMarginalisee />} />
+
+            {/* Projects */}
+            <Route path="/projects" element={<ProjectsPage />} />
           </Routes>
         </main>
 
