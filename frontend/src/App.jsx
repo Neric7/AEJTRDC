@@ -7,9 +7,7 @@ import Footer from './components/common/Footer'
 import History from './components/about/History'
 import MissionVisionValeurs from './components/about/MissionVisionValeurs.jsx'
 import Objectives from './components/about/Objectives'
-
-// Details Domains
-import EducationMarginalisee from './details_domains/EducationMarginalisee'
+import DomaineDetail from './components/details_domains/DomaineDetail.jsx'
 
 // Pages
 import HomePage from './pages/HomePage'
@@ -76,7 +74,7 @@ function App() {
             <Route path="/domains" element={<DomainsPage />} />
 
             {/* Details Domains */}
-            <Route path="/domains/1" element={<EducationMarginalisee />} />
+            <Route path="/domains/:id" element={<DomaineDetail />} />
 
             {/* Projects */}
             <Route path="/projects" element={<ProjectsPage />} />

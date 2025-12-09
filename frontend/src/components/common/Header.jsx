@@ -13,7 +13,21 @@ import {
   FaInfoCircle, 
   FaUser,
   FaEnvelope,
-  FaHandshake
+  FaHandshake,
+  FaBullseye,
+  FaProjectDiagram,
+  FaFileAlt,
+  FaMoneyBillWave,
+  FaGavel,
+  FaUsers,
+  FaBriefcase,
+  FaHandHoldingHeart,
+  FaBook,
+  FaEye,
+  FaHeart,
+  FaListUl,
+  FaMapMarkedAlt,
+  FaUserTie
 } from 'react-icons/fa';
 import styles from './Header.module.css';
 import { useAuth } from '../../context/AuthContext';
@@ -33,17 +47,16 @@ export default function Header() {
 
   const { i18n } = useTranslation();
 
-// Langues disponibles avec drapeaux emoji
-const languages = [
-  { code: 'fr', name: 'Français', flag: '🇨🇩' },
-  { code: 'en', name: 'English', flag: '🇨🇩' },
-  { code: 'sw', name: 'Swahili', flag: '🇨🇩' },
-  { code: 'ln', name: 'Lingala', flag: '🇨🇩' }
-];
+  // Langues disponibles avec drapeaux emoji
+  const languages = [
+    { code: 'fr', name: 'Français', flag: '🇨🇩' },
+    { code: 'en', name: 'English', flag: '🇨🇩' },
+    { code: 'sw', name: 'Swahili', flag: '🇨🇩' },
+    { code: 'ln', name: 'Lingala', flag: '🇨🇩' }
+  ];
 
   // Initialisation de la langue au chargement du composant
   useEffect(() => {
-    // Vérifier si i18n est correctement initialisé
     if (!i18n || typeof i18n.changeLanguage !== 'function') {
       console.warn('i18n not properly initialized');
       return;
@@ -53,7 +66,6 @@ const languages = [
     const browserLang = navigator.language.split('-')[0];
     const supportedLangs = ['fr', 'en', 'sw', 'ln'];
     
-    // Priorité: 1. Langue sauvegardée, 2. Langue du navigateur si supportée, 3. Français par défaut
     const langToUse = savedLang || (supportedLangs.includes(browserLang) ? browserLang : 'fr');
     
     setCurrentLang(langToUse);
@@ -119,8 +131,8 @@ const languages = [
       href: '#',
       icon: FaHandsHelping,
       submenu: [
-        { label: 'Domaines d\'intervention', href: '/domains' },
-        { label: 'Projets', href: '/projects' },
+        { label: 'Domaines d\'intervention', href: '/domains', icon: FaBullseye },
+        { label: 'Projets', href: '/projects', icon: FaProjectDiagram },
       ]
     },
     {
@@ -133,12 +145,12 @@ const languages = [
       href: '#',
       icon: FaChartLine,
       submenu: [
-        { label: 'Rapports d\'activités', href: '/transparency/reports' },
-        { label: 'Rapports financiers', href: '/transparency/financial' },
-        { label: 'Politiques internes', href: '/transparency/policies' },
-        { label: 'Gouvernance', href: '/transparency/governance' },
-        { label: 'Carrières', href: '/careers' },
-        { label: 'Bénévolat', href: '/volunteer' },
+        { label: 'Rapports d\'activités', href: '/transparency/reports', icon: FaFileAlt },
+        { label: 'Rapports financiers', href: '/transparency/financial', icon: FaMoneyBillWave },
+        { label: 'Politiques internes', href: '/transparency/policies', icon: FaGavel },
+        { label: 'Gouvernance', href: '/transparency/governance', icon: FaUsers },
+        { label: 'Carrières', href: '/careers', icon: FaBriefcase },
+        { label: 'Bénévolat', href: '/volunteer', icon: FaHandHoldingHeart },
       ]
     },
     {
@@ -151,12 +163,12 @@ const languages = [
       href: '#',
       icon: FaInfoCircle,
       submenu: [
-        { label: 'Notre histoire', href: '/about/history' },
-        { label: 'Mission & Vision & Valeurs', href: '/about/mission' },
-        { label: 'Objectifs', href: '/about/objectives' },
-        { label: 'Listes partenaires', href: '/about/partenaires' },
-        { label: 'Zones d\'intervention', href: '/about/zones' },
-        { label: 'Notre équipe', href: '/about/team' },
+        { label: 'Notre histoire', href: '/about/history', icon: FaBook },
+        { label: 'Mission & Vision & Valeurs', href: '/about/mission', icon: FaEye },
+        { label: 'Objectifs', href: '/about/objectives', icon: FaHeart },
+        { label: 'Listes partenaires', href: '/about/partenaires', icon: FaListUl },
+        { label: 'Zones d\'intervention', href: '/about/zones', icon: FaMapMarkedAlt },
+        { label: 'Notre équipe', href: '/about/team', icon: FaUserTie },
       ]
     },
     {
@@ -218,15 +230,19 @@ const languages = [
                   {/* Submenu Desktop */}
                   {item.submenu && openSubmenu === item.label && (
                     <div className={styles.submenu}>
-                      {item.submenu.map((subItem, subIndex) => (
-                        <a
-                          key={subIndex}
-                          href={subItem.href}
-                          className={styles.submenuLink}
-                        >
-                          {subItem.label}
-                        </a>
-                      ))}
+                      {item.submenu.map((subItem, subIndex) => {
+                        const SubIcon = subItem.icon;
+                        return (
+                          <a
+                            key={subIndex}
+                            href={subItem.href}
+                            className={styles.submenuLink}
+                          >
+                            <SubIcon className={styles.submenuIcon} />
+                            <span>{subItem.label}</span>
+                          </a>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -416,16 +432,20 @@ const languages = [
                   {/* Submenu Mobile */}
                   {item.submenu && openSubmenu === item.label && (
                     <div className={styles.mobileSubmenu}>
-                      {item.submenu.map((subItem, subIndex) => (
-                        <a
-                          key={subIndex}
-                          href={subItem.href}
-                          className={styles.mobileSubmenuLink}
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {subItem.label}
-                        </a>
-                      ))}
+                      {item.submenu.map((subItem, subIndex) => {
+                        const SubIcon = subItem.icon;
+                        return (
+                          <a
+                            key={subIndex}
+                            href={subItem.href}
+                            className={styles.mobileSubmenuLink}
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <SubIcon className={styles.mobileSubmenuIcon} />
+                            <span>{subItem.label}</span>
+                          </a>
+                        );
+                      })}
                     </div>
                   )}
                 </div>

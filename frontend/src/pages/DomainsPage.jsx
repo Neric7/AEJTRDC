@@ -1,4 +1,6 @@
+// src/pages/DomainsPage.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaGraduationCap, FaHeartbeat, FaBriefcase, FaLeaf, FaBullhorn, FaShieldAlt, FaRing, FaIndustry, FaUserMd, FaFootballBall, FaFemale, FaChild, FaAmbulance, FaArrowRight } from 'react-icons/fa';
 import styles from './DomainsPage.module.css';
 
@@ -8,91 +10,91 @@ export default function DomainsPage() {
       id: 1,
       title: "Éducation des enfants marginalisés",
       description: "L'AEJT – RDC œuvre pour garantir l'accès à l'éducation aux populations marginalisées...",
-      image: "https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=800&q=80",
+      image: "/src/assets/images/domains/68fa9ecaf1d0c0.29467065.jpg",
       icon: FaGraduationCap,
     },
     {
       id: 2,
       title: "Éducation inclusive pour les enfants vivant avec un handicap",
       description: "AEJT – RDC s'engage à promouvoir une éducation inclusive pour les enfants...",
-      image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80",
+      image: "/src/assets/images/domains/68fa9e8c319630.69281871.jpg",
       icon: FaShieldAlt,
     },
     {
       id: 3,
       title: "Lutte contre le mariage précoce des enfants",
       description: "L'AEJT – RDC œuvre pour prévenir et réduire les mariages précoces, qui...",
-      image: "https://images.unsplash.com/photo-1544191696-102dbdaeeaa0?w=800&q=80",
+      image: "/src/assets/images/domains/68fa9dfa8a2832.75914076.jpg",
       icon: FaRing,
     },
     {
       id: 4,
       title: "Protection des enfants dans les mines artisanales",
       description: "AEJT – RDC s'engage activement à mettre fin à l'implication d'enfants...",
-      image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80",
+      image: "/src/assets/images/domains/68fa9d2bd69995.07585915.jpg",
       icon: FaIndustry,
     },
     {
       id: 5,
       title: "Santé sexuelle et reproductive des adolescents",
       description: "L'AEJT – RDC œuvre à l'amélioration de la santé sexuelle et reproductive...",
-      image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&q=80",
+      image: "/src/assets/images/domains/68fa99cc335d81.89565554.jpg",
       icon: FaUserMd,
     },
     {
       id: 6,
       title: "L'inclusion par le sport",
       description: "L'AEJT – RDC utilise le sport comme outil d'inclusion sociale et d'éducation...",
-      image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80",
+      image: "/src/assets/images/domains/68fa99594efc66.96353983.jpg",
       icon: FaFootballBall,
     },
     {
       id: 7,
       title: "Lutte contre la violence faite aux filles dans les écoles",
       description: "L'AEJT – RDC œuvre à la création d'un environnement scolaire sûr et protecteur...",
-      image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80",
+      image: "/src/assets/images/domains/68fa991ad97ed4.30888153.jpg",
       icon: FaFemale,
     },
     {
       id: 8,
       title: "Les pires formes de travail des enfants",
       description: "L'AEJT – RDC s'engage à protéger les enfants des pires dangers...",
-      image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80",
+      image: "/src/assets/images/domains/68fa9d52352c47.74657218.jpg",
       icon: FaChild,
     },
     {
       id: 9,
       title: "Éducation d'urgence pour les enfants, jeunes et femmes touchés par les crises",
       description: "AEJT – RDC intervient dans des contextes de crises, de conflits ou de catastrophes...",
-      image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80",
+      image: "/src/assets/images/domains/68fa986295af79.24579904.jpg",
       icon: FaAmbulance,
     },
     {
       id: 10,
       title: "Entrepreneuriat et autonomisation des femmes et des jeunes",
       description: "L'AEJT – RDC soutient les femmes et les jeunes dans leur emploi socio-économique...",
-      image: "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=800&q=80",
+      image: "/src/assets/images/domains/68fa95578fa5a4.49222161.jpg",
       icon: FaBriefcase,
     },
     {
       id: 11,
       title: "Règlement pacifique des conflits, paix et bonne gouvernance",
       description: "L'AEJT – RDC promeut une paix durable et la cohésion sociale dans la région...",
-      image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80",
+      image: "/src/assets/images/domains/68fa939535deb2.67763353.jpg",
       icon: FaBullhorn,
     },
     {
       id: 12,
       title: "Nutrition, sécurité alimentaire et environnement",
       description: "L'AEJT – RDC œuvre pour améliorer la sécurité alimentaire et préserver l'environnement...",
-      image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80",
+      image: "/src/assets/images/domains/68fa90f927f355.68983087.jpg",
       icon: FaHeartbeat,
     },
     {
       id: 13,
       title: "Conservation de la biodiversité",
       description: "AEJT - RDC s'engage pour la conservation de la biodiversité et la protection...",
-      image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80",
+      image: "/src/assets/images/domains/68fa8cd4e55465.16973276.jpg",
       icon: FaLeaf,
     }
   ];
@@ -146,13 +148,13 @@ export default function DomainsPage() {
                   
                   {/* Read More Button */}
                   <div className={styles.cardFooter}>
-                    <a
-                      href={`/domains/${domain.id}`}
+                    <Link
+                      to={`/domains/${domain.id}`}
                       className={styles.readMoreLink}
                     >
                       Lire Plus
                       <FaArrowRight className={styles.readMoreIcon} />
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -171,12 +173,12 @@ export default function DomainsPage() {
             Votre soutien peut transformer des vies. Rejoignez notre mission aujourd'hui.
           </p>
           <div className={styles.ctaButtons}>
-            <a href="/donate" className={`${styles.ctaButton} ${styles.ctaButtonPrimary}`}>
+            <Link to="/donate" className={`${styles.ctaButton} ${styles.ctaButtonPrimary}`}>
               Faire un don
-            </a>
-            <a href="/volunteer" className={`${styles.ctaButton} ${styles.ctaButtonSecondary}`}>
+            </Link>
+            <Link to="/volunteer" className={`${styles.ctaButton} ${styles.ctaButtonSecondary}`}>
               Devenir bénévole
-            </a>
+            </Link>
           </div>
         </div>
       </div>
