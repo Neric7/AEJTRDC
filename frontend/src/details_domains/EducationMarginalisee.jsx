@@ -24,7 +24,7 @@ export default function EducationMarginalisee() {
         {/* Contenu Principal - Gauche */}
         <div className={styles.domaineMain}>
           <img 
-            src="https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=800&q=80" 
+            src="/src/assets/images/domains/68fa9ecaf1d0c0.29467065.jpg" 
             alt="Éducation des enfants marginalisés"
             className={styles.domaineImage}
           />
