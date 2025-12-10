@@ -20,7 +20,7 @@ export default function HomePage() {
       {/* Section Call-to-Action avec boutons */}
       <CTASection />
 
-      {/* Section des 3 dernières actualités */}
+      {/* Section des 4 dernières actualités */}
       <LatestNews limit={4} />
       
       {/* Autres sections à venir : 
