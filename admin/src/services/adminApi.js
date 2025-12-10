@@ -225,3 +225,19 @@ export const volunteersAPI = {
 };
 
 export default api;
+
+// ============ DOMAINES D'INTERVENTION ============
+export const domainsAPI = {
+  getAll: (params) => api.get('/admin/domains', { params }),
+  getById: (id) => api.get(`/admin/domains/${id}`),
+  create: (formData) => 
+    api.post('/admin/domains', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  update: (id, formData) => 
+    api.post(`/admin/domains/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  delete: (id) => api.delete(`/admin/domains/${id}`),
+  toggleStatus: (id) => api.post(`/admin/domains/${id}/toggle-status`),
+};

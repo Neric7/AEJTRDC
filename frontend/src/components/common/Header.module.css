@@ -385,14 +385,16 @@ nav {
   background: white;
   border-radius: 0.75rem;
   box-shadow: 0 10px 25px rgba(55, 65, 81, 0.15);
-  min-width: 160px;
+  min-width: 180px;
   padding: 0.5rem 0;
   z-index: 200;
   animation: slideDown 0.2s ease-out;
 }
 
 .authDropdownItem {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   width: 100%;
   padding: 0.65rem 1rem;
   text-align: left;
@@ -406,6 +408,17 @@ nav {
   background: #f3f4f6;
   color: #7CB342;
   padding-left: 1.25rem;
+}
+
+.authDropdownIcon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.authDropdownItem:hover .authDropdownIcon {
+  color: #7CB342;
 }
 
 /* Menu utilisateur (connecté) */
@@ -456,6 +469,9 @@ nav {
 }
 
 .dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   width: 100%;
   padding: 0.65rem 1rem;
   background: transparent;
@@ -470,6 +486,17 @@ nav {
 .dropdownItem:hover {
   background: #f3f4f6;
   padding-left: 1.25rem;
+}
+
+.dropdownIcon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.dropdownItem:hover .dropdownIcon {
+  color: #7CB342;
 }
 
 /* ===================================

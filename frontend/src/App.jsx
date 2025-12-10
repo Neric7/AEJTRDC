@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './i18n';
+import { ScrollToTop } from './hooks/useScrollToTop';
 
 // Components
 import Header from './components/common/Header'
@@ -25,6 +26,7 @@ import ProjectsPage from './pages/ProjectsPage';
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen bg-white">
         {/* Header fixe */}
         <Header />

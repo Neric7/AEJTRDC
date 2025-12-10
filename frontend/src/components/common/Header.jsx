@@ -27,7 +27,9 @@ import {
   FaHeart,
   FaListUl,
   FaMapMarkedAlt,
-  FaUserTie
+  FaUserTie,
+  FaSignInAlt,
+  FaUserPlus
 } from 'react-icons/fa';
 import styles from './Header.module.css';
 import { useAuth } from '../../context/AuthContext';
@@ -310,7 +312,8 @@ export default function Header() {
                         setIsUserMenuOpen(false);
                       }}
                     >
-                      Mon profil
+                      <FaUser className={styles.dropdownIcon} />
+                      <span>Mon profil</span>
                     </button>
                     <button
                       className={styles.dropdownItem}
@@ -320,7 +323,8 @@ export default function Header() {
                         navigate('/');
                       }}
                     >
-                      Déconnexion
+                      <FaSignInAlt className={styles.dropdownIcon} />
+                      <span>Déconnexion</span>
                     </button>
                   </div>
                 )}
@@ -341,14 +345,16 @@ export default function Header() {
                       className={styles.authDropdownItem}
                       onClick={() => setIsUserMenuOpen(false)}
                     >
-                      Se connecter
+                      <FaSignInAlt className={styles.authDropdownIcon} />
+                      <span>Se connecter</span>
                     </Link>
                     <Link
                       to="/register"
                       className={styles.authDropdownItem}
                       onClick={() => setIsUserMenuOpen(false)}
                     >
-                      S'inscrire
+                      <FaUserPlus className={styles.authDropdownIcon} />
+                      <span>S'inscrire</span>
                     </Link>
                   </div>
                 )}

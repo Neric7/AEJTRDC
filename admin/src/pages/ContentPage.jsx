@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Plus, Search, Filter, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Filter, Edit, Trash2, Eye, ExternalLink } from 'lucide-react';
 import { 
   newsAPI, 
   projectsAPI, 
@@ -9,7 +9,8 @@ import {
   teamAPI,
   partnersAPI,
   reportsAPI,
-  mediaAPI 
+  mediaAPI,
+  domainsAPI
 } from '../services/adminApi';
 import toast from 'react-hot-toast';
 import './ContentPage.css';
@@ -19,6 +20,7 @@ import NewsEditor from '../components/ContentEditor/NewsEditor';
 import ProjectEditor from '../components/ContentEditor/ProjectEditor';
 import JobEditor from '../components/ContentEditor/JobEditor';
 import AlertEditor from '../components/ContentEditor/AlertEditor';
+import DomainEditor from '../components/ContentEditor/DomainEditor';
 
 const ContentPage = () => {
   const { type } = useParams();
@@ -29,54 +31,72 @@ const ContentPage = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all');
 
+  // URL du frontend
+  const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || 'http://localhost:5173';
+
   const contentConfig = {
     news: {
       title: 'Actualités',
       api: newsAPI,
       editor: NewsEditor,
       columns: ['Titre', 'Catégorie', 'Statut', 'Date', 'Actions'],
+      viewUrl: (item) => `${FRONTEND_URL}/news/${item.slug || item.id}`,
     },
     projects: {
       title: 'Projets',
       api: projectsAPI,
       editor: ProjectEditor,
       columns: ['Titre', 'Lieu', 'Statut', 'Budget', 'Actions'],
+      viewUrl: (item) => `${FRONTEND_URL}/projects/${item.slug || item.id}`,
+    },
+    domains: {
+      title: 'Domaines d\'intervention',
+      api: domainsAPI,
+      editor: DomainEditor,
+      columns: ['Titre', 'Slug', 'Ordre', 'Statut', 'Actions'],
+      viewUrl: (item) => `${FRONTEND_URL}/domains/${item.id}`, // Utiliser ID au lieu de slug
     },
     jobs: {
       title: 'Offres d\'emploi',
       api: jobsAPI,
       editor: JobEditor,
       columns: ['Titre', 'Type', 'Lieu', 'Statut', 'Actions'],
+      viewUrl: (item) => `${FRONTEND_URL}/careers`,
     },
     alerts: {
       title: 'Alertes humanitaires',
       api: alertsAPI,
       editor: AlertEditor,
       columns: ['Titre', 'Priorité', 'Statut', 'Date', 'Actions'],
+      viewUrl: (item) => `${FRONTEND_URL}/humanitarian`,
     },
     team: {
       title: 'Équipe',
       api: teamAPI,
       editor: null,
       columns: ['Nom', 'Poste', 'Email', 'Téléphone', 'Actions'],
+      viewUrl: (item) => `${FRONTEND_URL}/about/team`,
     },
     partners: {
       title: 'Partenaires',
       api: partnersAPI,
       editor: null,
       columns: ['Nom', 'Type', 'Site web', 'Statut', 'Actions'],
+      viewUrl: (item) => `${FRONTEND_URL}/partners`,
     },
     reports: {
       title: 'Rapports',
       api: reportsAPI,
       editor: null,
       columns: ['Titre', 'Type', 'Année', 'Téléchargements', 'Actions'],
+      viewUrl: (item) => `${FRONTEND_URL}/transparency/reports`,
     },
     media: {
       title: 'Médias',
       api: mediaAPI,
       editor: null,
       columns: ['Nom', 'Type', 'Taille', 'Date', 'Actions'],
+      viewUrl: null,
     },
   };
 
@@ -110,6 +130,15 @@ const ContentPage = () => {
     setShowEditor(true);
   };
 
+  const handleView = (item) => {
+    if (config.viewUrl) {
+      const url = config.viewUrl(item);
+      window.open(url, '_blank');
+    } else {
+      toast.info('Aperçu non disponible pour ce type de contenu');
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
       return;
@@ -137,6 +166,64 @@ const ContentPage = () => {
     )
   );
 
+  // Fonction pour afficher les données selon le type
+  const renderTableRow = (item) => {
+    switch (type) {
+      case 'domains':
+        return (
+          <>
+            <td>{item.titre}</td>
+            <td><code>{item.slug}</code></td>
+            <td>{item.ordre || 0}</td>
+            <td>
+              <span className={`status-badge status-${item.actif ? 'published' : 'archived'}`}>
+                {item.actif ? 'Actif' : 'Inactif'}
+              </span>
+            </td>
+          </>
+        );
+      case 'news':
+        return (
+          <>
+            <td>{item.title}</td>
+            <td>{item.category || 'general'}</td>
+            <td>
+              <span className={`status-badge status-${item.status}`}>
+                {item.status === 'published' ? 'Publié' : item.status === 'draft' ? 'Brouillon' : 'Archivé'}
+              </span>
+            </td>
+            <td>{item.published_at ? new Date(item.published_at).toLocaleDateString('fr-FR') : '-'}</td>
+          </>
+        );
+      case 'projects':
+        return (
+          <>
+            <td>{item.title}</td>
+            <td>{item.location}</td>
+            <td>
+              <span className={`status-badge status-${item.status}`}>
+                {item.status === 'active' ? 'Actif' : item.status === 'completed' ? 'Terminé' : 'Inactif'}
+              </span>
+            </td>
+            <td>{item.budget ? `${item.budget} $` : '-'}</td>
+          </>
+        );
+      default:
+        return (
+          <>
+            <td>{item.title || item.name || item.titre}</td>
+            <td>{item.category || item.type || item.location}</td>
+            <td>
+              <span className={`status-badge status-${item.status || 'published'}`}>
+                {item.status || 'publié'}
+              </span>
+            </td>
+            <td>{item.date || item.budget || item.priority}</td>
+          </>
+        );
+    }
+  };
+
   return (
     <div className="content-container">
       <div className="content-header">
@@ -161,18 +248,20 @@ const ContentPage = () => {
           />
         </div>
 
-        <div className="filter-group">
-          <Filter size={20} />
-          <select 
-            value={filterStatus} 
-            onChange={(e) => setFilterStatus(e.target.value)}
-          >
-            <option value="all">Tous</option>
-            <option value="published">Publié</option>
-            <option value="draft">Brouillon</option>
-            <option value="archived">Archivé</option>
-          </select>
-        </div>
+        {type !== 'domains' && (
+          <div className="filter-group">
+            <Filter size={20} />
+            <select 
+              value={filterStatus} 
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="all">Tous</option>
+              <option value="published">Publié</option>
+              <option value="draft">Brouillon</option>
+              <option value="archived">Archivé</option>
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="card">
@@ -198,21 +287,15 @@ const ContentPage = () => {
               <tbody>
                 {filteredItems.map((item) => (
                   <tr key={item.id}>
-                    <td>{item.title || item.name}</td>
-                    <td>{item.category || item.type || item.location}</td>
-                    <td>
-                      <span className={`status-badge status-${item.status}`}>
-                        {item.status}
-                      </span>
-                    </td>
-                    <td>{item.date || item.budget || item.priority}</td>
+                    {renderTableRow(item)}
                     <td>
                       <div className="action-buttons">
                         <button
                           className="action-btn btn-view"
-                          title="Voir"
+                          onClick={() => handleView(item)}
+                          title="Voir sur le site"
                         >
-                          <Eye size={18} />
+                          <ExternalLink size={18} />
                         </button>
                         <button
                           className="action-btn btn-edit"

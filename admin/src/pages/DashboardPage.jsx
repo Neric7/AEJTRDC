@@ -6,7 +6,8 @@ import {
   Briefcase,
   DollarSign,
   AlertTriangle,
-  Activity
+  Activity,
+  Layers
 } from 'lucide-react';
 import { dashboardAPI } from '../services/adminApi';
 import toast from 'react-hot-toast';
@@ -48,6 +49,13 @@ const DashboardPage = () => {
   }
 
   const statCards = [
+    {
+      title: 'Domaines',
+      value: stats?.domains || 0,
+      icon: <Layers size={24} />,
+      color: '#6366f1',
+      change: '+5%',
+    },
     {
       title: 'Projets actifs',
       value: stats?.projects || 0,
@@ -175,6 +183,10 @@ const DashboardPage = () => {
             <h3 className="card-title">Actions rapides</h3>
           </div>
           <div className="quick-actions">
+            <button className="quick-action-btn">
+              <Layers size={20} />
+              <span>Nouveau domaine</span>
+            </button>
             <button className="quick-action-btn">
               <FileText size={20} />
               <span>Nouvelle actualité</span>

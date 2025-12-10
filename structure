@@ -1,3 +1,4 @@
+; filepath: d:\Stage 2025\SiteCongo\structure
 SiteCongo/
 │
 ├── frontend/                          (Existant - Application React)
@@ -17,7 +18,9 @@ SiteCongo/
 │   │   │   │   ├── partners/
 │   │   │   │   └── icons/
 │   │   │   ├── Ressources/
-│   │   │   │   └── image-enfant.webp
+│   │   │   │   ├── image-enfant.webp
+│   │   │   │   ├── afrique.jpg
+│   │   │   │   └── story_1_111.png
 │   │   │   └── documents/
 │   │   │       └── pdf/
 │   │   │
@@ -36,15 +39,19 @@ SiteCongo/
 │   │   │   │
 │   │   │   ├── home/
 │   │   │   │   ├── HeroBanner.jsx
+│   │   │   │   ├── HeroBanner.module.css
 │   │   │   │   ├── ImageCarousel.jsx
 │   │   │   │   ├── CTASection.jsx
+│   │   │   │   ├── CTASection.module.css
 │   │   │   │   ├── LatestNews.jsx
+│   │   │   │   ├── AboutSection.jsx
 │   │   │   │   └── AboutSection.module.css
 │   │   │   │
 │   │   │   ├── about/
 │   │   │   │   ├── History.jsx
 │   │   │   │   ├── History.module.css
 │   │   │   │   ├── MissionVision.jsx
+│   │   │   │   ├── MissionVisionValeurs.jsx
 │   │   │   │   ├── MissionVision.module.css
 │   │   │   │   ├── OrganizationChart.jsx
 │   │   │   │   ├── InterventionMap.jsx
@@ -55,9 +62,16 @@ SiteCongo/
 │   │   │   │
 │   │   │   ├── projects/
 │   │   │   │   ├── ProjectCard.jsx
+│   │   │   │   ├── ProjectCard.css
 │   │   │   │   ├── ProjectDetail.jsx
+│   │   │   │   ├── ProjectDetail.css
 │   │   │   │   ├── ProjectFilter.jsx
+│   │   │   │   ├── ProjectFilter.css
 │   │   │   │   └── TestimonySection.jsx
+│   │   │   │
+│   │   │   ├── details_domains/              # ← NOUVEAU DOSSIER
+│   │   │   │   ├── DomaineDetail.jsx
+│   │   │   │   └── DomaineDetail.css
 │   │   │   │
 │   │   │   ├── partners/
 │   │   │   │   ├── PartnerGrid.jsx
@@ -102,24 +116,45 @@ SiteCongo/
 │   │   │   ├── HomePage.jsx
 │   │   │   ├── AboutPage.jsx
 │   │   │   ├── ProjectsPage.jsx
+│   │   │   ├── ProjectsPage.css
 │   │   │   ├── PartnersPage.jsx
+│   │   │   ├── PartnersPage.css
+│   │   │   ├── DomainsPage.jsx
+│   │   │   ├── DomainsPage.css
 │   │   │   ├── TransparencyPage.jsx
 │   │   │   ├── NewsPage.jsx
+│   │   │   ├── NewsPage.css
 │   │   │   ├── TeamPage.jsx
+│   │   │   ├── TeamPage.css
 │   │   │   ├── CareersPage.jsx
+│   │   │   ├── CareersPage.css
 │   │   │   ├── DonatePage.jsx
+│   │   │   ├── DonatePage.css
 │   │   │   ├── ContactPage.jsx
+│   │   │   ├── ContactPage.css
 │   │   │   ├── LegalPage.jsx
 │   │   │   ├── PrivacyPage.jsx
 │   │   │   ├── LoginPage.jsx
+│   │   │   ├── LoginPage.css
 │   │   │   ├── RegisterPage.jsx
+│   │   │   ├── RegisterPage.css
 │   │   │   ├── ProfilePage.jsx
+│   │   │   ├── ProfilePage.module.css
+│   │   │   ├── NotFoundPage.jsx
+│   │   │   ├── NotFoundPage.css
 │   │   │   └── HumanitarianSpacePage.jsx
+│   │   │
+│   │   ├── data/
+│   │   │   ├── domainsData.js
+│   │   │   ├── projectsData.js
+│   │   │   └── newsData.js
 │   │   │
 │   │   ├── services/
 │   │   │   ├── api.js
 │   │   │   ├── auth.js
 │   │   │   ├── news.js
+│   │   │   ├── domains.js
+│   │   │   ├── projects.js
 │   │   │   ├── paymentService.js
 │   │   │   ├── mapService.js
 │   │   │   └── emailService.js
@@ -134,7 +169,9 @@ SiteCongo/
 │   │   ├── hooks/
 │   │   │   ├── useForm.js
 │   │   │   ├── useApi.js
-│   │   │   └── useMediaQuery.js
+│   │   │   ├── useMediaQuery.js
+│   │   │   ├── useEntryAnimation.js
+│   │   │   └── useScrollToTop.js
 │   │   │
 │   │   ├── context/
 │   │   │   ├── LanguageContext.jsx
@@ -143,9 +180,11 @@ SiteCongo/
 │   │   │
 │   │   ├── styles/
 │   │   │   ├── index.css
+│   │   │   ├── entry.css
 │   │   │   ├── tailwind.css
 │   │   │   └── variables.css
 │   │   │
+│   │   ├── i18n.js
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   │
@@ -160,7 +199,7 @@ SiteCongo/
 │   ├── index.css
 │   └── README.md
 │
-├── backend/                           (Nouveau - API Laravel)
+├── backend/                           (API Laravel)
 │   ├── .editorconfig
 │   ├── .env
 │   ├── .env.example
@@ -174,14 +213,18 @@ SiteCongo/
 │   ├── phpunit.xml
 │   ├── README.md
 │   ├── vite.config.js
+│   ├── fix-storage.php
 │   │
 │   ├── app/
 │   │   ├── Http/
 │   │   │   ├── Controllers/
 │   │   │   │   ├── API/
-│   │   │   │   │   ├── AuthController.php         # ← ajouté
+│   │   │   │   │   ├── AuthController.php
 │   │   │   │   │   ├── NewsController.php
-│   │   │   │   │   └── CommentController.php
+│   │   │   │   │   ├── CommentController.php
+│   │   │   │   │   ├── ProjectController.php
+│   │   │   │   │   ├── DomainController.php
+│   │   │   │   │   └── PartnerController.php
 │   │   │   │   ├── ContactController.php
 │   │   │   │   ├── DonationController.php
 │   │   │   │   ├── VolunteerController.php
@@ -190,17 +233,26 @@ SiteCongo/
 │   │   │   ├── Middleware/
 │   │   │   │   ├── CheckAdmin.php
 │   │   │   │   ├── SanitizeInput.php
-│   │   │   │   └── RateLimiter.php
+│   │   │   │   ├── RateLimiter.php
+│   │   │   │   └── Authenticate.php
 │   │   │   │
 │   │   │   └── Requests/
 │   │   │       ├── ContactRequest.php
 │   │   │       ├── DonationRequest.php
-│   │   │       └── VolunteerRequest.php
+│   │   │       ├── VolunteerRequest.php
+│   │   │       ├── ProjectRequest.php
+│   │   │       └── DomainRequest.php
 │   │   │
 │   │   ├── Models/
+│   │   │   ├── User.php
 │   │   │   ├── News.php
 │   │   │   ├── Comment.php
-│   │   │   └── User.php
+│   │   │   ├── Project.php
+│   │   │   ├── Domain.php
+│   │   │   ├── Partner.php
+│   │   │   ├── Contact.php
+│   │   │   ├── Donation.php
+│   │   │   └── Volunteer.php
 │   │   │
 │   │   ├── Services/
 │   │   │   ├── PaymentService.php
@@ -211,6 +263,7 @@ SiteCongo/
 │   │   └── Repositories/
 │   │       ├── ProjectRepository.php
 │   │       ├── NewsRepository.php
+│   │       ├── DomainRepository.php
 │   │       └── ReportRepository.php
 │   │
 │   ├── bootstrap/
@@ -231,23 +284,29 @@ SiteCongo/
 │   │   │   ├── 0001_01_01_000000_create_users_table.php
 │   │   │   ├── 2025_01_01_create_projects_table.php
 │   │   │   ├── 2025_01_02_create_news_table.php
-│   │   │   ├── 2025_01_03_create_team_members_table.php
-│   │   │   ├── 2025_01_04_create_jobs_table.php
-│   │   │   ├── 2025_01_05_create_partners_table.php
-│   │   │   ├── 2025_01_06_create_reports_table.php
-│   │   │   ├── 2025_01_07_create_alerts_table.php
-│   │   │   ├── 2025_01_08_create_contacts_table.php
-│   │   │   ├── 2025_01_09_create_donations_table.php
-│   │   │   └── 2025_01_10_create_volunteers_table.php
+│   │   │   ├── 2025_01_03_create_domains_table.php
+│   │   │   ├── 2025_01_04_create_team_members_table.php
+│   │   │   ├── 2025_01_05_create_jobs_table.php
+│   │   │   ├── 2025_01_06_create_partners_table.php
+│   │   │   ├── 2025_01_07_create_reports_table.php
+│   │   │   ├── 2025_01_08_create_alerts_table.php
+│   │   │   ├── 2025_01_09_create_contacts_table.php
+│   │   │   ├── 2025_01_10_create_donations_table.php
+│   │   │   └── 2025_01_11_create_volunteers_table.php
 │   │   │
 │   │   ├── seeders/
 │   │   │   ├── DatabaseSeeder.php
 │   │   │   ├── NewsSeeder.php
-│   │   │   └── CommentSeeder.php
+│   │   │   ├── CommentSeeder.php
+│   │   │   ├── ProjectSeeder.php
+│   │   │   ├── DomainSeeder.php
+│   │   │   └── PartnerSeeder.php
 │   │   │
 │   │   └── factories/
 │   │       ├── ProjectFactory.php
-│   │       └── UserFactory.php
+│   │       ├── UserFactory.php
+│   │       ├── NewsFactory.php
+│   │       └── DomainFactory.php
 │   │
 │   ├── public/
 │   │   └── index.php
@@ -263,6 +322,9 @@ SiteCongo/
 │   ├── storage/
 │   │   ├── app/
 │   │   │   ├── public/
+│   │   │   │   ├── news/
+│   │   │   │   ├── projects/
+│   │   │   │   ├── domains/
 │   │   │   │   ├── images/
 │   │   │   │   ├── documents/
 │   │   │   │   └── uploads/
@@ -276,53 +338,104 @@ SiteCongo/
 │   ├── tests/
 │   │   ├── Unit/
 │   │   │   ├── ProjectTest.php
+│   │   │   ├── DomainTest.php
 │   │   │   ├── PaymentTest.php
 │   │   │   └── ValidationTest.php
 │   │   └── Feature/
 │   │       ├── ContactFormTest.php
 │   │       ├── DonationTest.php
-│   │       └── APITest.php
+│   │       ├── ProjectAPITest.php
+│   │       ├── DomainAPITest.php
+│   │       └── AuthAPITest.php
 │   │
 │   └── artisan
 │
-├── admin/                             (Nouveau - Dashboard BackOffice)
+├── admin/                             (Dashboard BackOffice React)
+│   ├── .env
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   └── README.md
+│   │
 │   ├── public/
-│   │   └── index.html
+│   │   ├── index.html
+│   │   ├── favicon.ico
+│   │   └── robots.txt
 │   │
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── common/
+│   │   │   │   ├── Navbar.jsx
+│   │   │   │   ├── Sidebar.jsx
+│   │   │   │   └── Sidebar.css
+│   │   │   │
 │   │   │   ├── Dashboard.jsx
-│   │   │   ├── Sidebar.jsx
+│   │   │   ├── Dashboard.css
+│   │   │   │
 │   │   │   ├── ContentEditor/
-│   │   │   │   ├── ProjectEditor.jsx
 │   │   │   │   ├── NewsEditor.jsx
+│   │   │   │   ├── NewsEditor.css
+│   │   │   │   ├── ProjectEditor.jsx
+│   │   │   │   ├── ProjectEditor.css
+│   │   │   │   ├── DomainEditor.jsx
+│   │   │   │   ├── DomainEditor.css
 │   │   │   │   ├── JobEditor.jsx
-│   │   │   │   └── AlertEditor.jsx
+│   │   │   │   ├── JobEditor.css
+│   │   │   │   ├── AlertEditor.jsx
+│   │   │   │   ├── AlertEditor.css
+│   │   │   │   └── Editor.css
+│   │   │   │
 │   │   │   ├── MediaManager.jsx
+│   │   │   ├── MediaManager.css
 │   │   │   ├── ReportManager.jsx
+│   │   │   ├── ReportManager.css
 │   │   │   └── UserManager.jsx
 │   │   │
 │   │   ├── pages/
 │   │   │   ├── LoginPage.jsx
+│   │   │   ├── LoginPage.css
 │   │   │   ├── DashboardPage.jsx
+│   │   │   ├── DashboardPage.css
 │   │   │   ├── ContentPage.jsx
-│   │   │   └── SettingsPage.jsx
+│   │   │   ├── ContentPage.css
+│   │   │   ├── MediaPage.jsx
+│   │   │   ├── MediaPage.css
+│   │   │   ├── SettingsPage.jsx
+│   │   │   ├── SettingsPage.css
+│   │   │   └── UsersPage.jsx
 │   │   │
 │   │   ├── services/
-│   │   │   └── adminApi.js
+│   │   │   ├── adminApi.js
+│   │   │   ├── authService.js
+│   │   │   └── uploadService.js
+│   │   │
+│   │   ├── hooks/
+│   │   │   ├── useAdminAuth.js
+│   │   │   └── useAdminForm.js
+│   │   │
+│   │   ├── context/
+│   │   │   └── AdminAuthContext.jsx
 │   │   │
 │   │   ├── styles/
-│   │   │   └── admin.css
+│   │   │   ├── admin.css
+│   │   │   ├── variables.css
+│   │   │   └── responsive.css
 │   │   │
-│   │   └── App.jsx
+│   │   ├── App.jsx
+│   │   └── main.jsx
 │   │
-│   ├── .env.example
-│   ├── package.json
-│   └── README.md
 │
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── API_DOCUMENTATION.md
+│   ├── FRONTEND_GUIDE.md
+│   ├── BACKEND_GUIDE.md
+│   ├── ADMIN_GUIDE.md
 │   ├── USER_GUIDE.md
 │   ├── DEPLOYMENT.md
 │   ├── SECURITY.md
@@ -331,28 +444,36 @@ SiteCongo/
 │       ├── homepage.png
 │       ├── about.png
 │       ├── projects.png
+│       ├── domains.png
 │       └── wireframes.fig
 │
 ├── scripts/
 │   ├── setup.sh
+│   ├── setup-frontend.sh
+│   ├── setup-backend.sh
 │   ├── deploy.sh
 │   ├── backup.sh
-│   └── seed-data.js
+│   ├── seed-data.js
+│   └── migrate.sh
 │
 ├── docker/
 │   ├── Dockerfile.frontend
 │   ├── Dockerfile.backend
 │   ├── Dockerfile.admin
 │   ├── docker-compose.yml
-│   └── nginx.conf
+│   ├── docker-compose.prod.yml
+│   ├── nginx.conf
+│   └── nginx-admin.conf
 │
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml
 │       ├── tests.yml
 │       ├── deploy-backend.yml
-│       └── deploy-frontend.yml
+│       ├── deploy-frontend.yml
+│       └── deploy-admin.yml
 │
 ├── .gitignore
 ├── README.md
-└── LICENSE
+├── LICENSE
+└── CHANGELOG.md

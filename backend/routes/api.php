@@ -6,6 +6,7 @@ use App\Http\Controllers\API\CommentController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\AdminAuthController;
 use App\Http\Controllers\API\AdminNewsController;
+use App\Http\Controllers\API\DomainController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +76,7 @@ Route::prefix('admin')->group(function () {
             return response()->json([
                 'projects' => 12,
                 'news' => \App\Models\News::count(),
+                'domains' => \App\Models\Domain::count(),
                 'volunteers' => 87,
                 'donations' => 15420,
                 'activeAlerts' => 2,
@@ -146,4 +148,33 @@ Route::get('/list-storage', function () {
         'public_link' => public_path('storage/news'),
         'public_link_exists' => is_dir(public_path('storage/news')),
     ]);
+});
+
+// Routes publiques pour les domaines
+Route::prefix('domains')->group(function () {
+    Route::get('/', [DomainController::class, 'index']); // Liste tous les domaines
+    Route::get('/{id}', [DomainController::class, 'show']); // Récupérer un domaine par ID
+    Route::get('/slug/{slug}', [DomainController::class, 'showBySlug']); // Par slug
+    Route::get('/{id}/others', [DomainController::class, 'others']); // Autres domaines
+});
+
+// Routes protégées (Admin uniquement)
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/domains')->group(function () {
+    Route::post('/', [DomainController::class, 'store']); // Créer
+    Route::put('/{id}', [DomainController::class, 'update']); // Mettre à jour
+    Route::delete('/{id}', [DomainController::class, 'destroy']); // Supprimer
+});
+
+// À AJOUTER dans routes/api.php dans la section Admin
+
+Route::middleware(['auth:sanctum', 'check.admin'])->prefix('admin')->group(function () {
+    // ... autres routes admin ...
+    
+    // 🎯 DOMAINES D'INTERVENTION
+    Route::get('/domains', [DomainController::class, 'adminIndex']);
+    Route::get('/domains/{id}', [DomainController::class, 'adminShow']);
+    Route::post('/domains', [DomainController::class, 'store']);
+    Route::post('/domains/{id}', [DomainController::class, 'update']); // POST pour FormData
+    Route::delete('/domains/{id}', [DomainController::class, 'destroy']);
+    Route::post('/domains/{id}/toggle-status', [DomainController::class, 'toggleStatus']);
 });

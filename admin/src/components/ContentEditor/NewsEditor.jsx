@@ -17,7 +17,7 @@ const NewsEditor = ({ item, onSave, onCancel }) => {
   });
 
   const [images, setImages] = useState([]);
-  const [imagePreview, setImagePreview] = useState(item?.image || null);
+  const [imagePreview, setImagePreview] = useState(item?.image_url || null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -42,6 +42,11 @@ const NewsEditor = ({ item, onSave, onCancel }) => {
     }));
 
     setImages(prev => [...prev, ...newImages]);
+    
+    // Cacher l'ancienne image dès qu'une nouvelle est sélectionnée
+    if (imagePreview && newImages.length > 0) {
+      setImagePreview(null);
+    }
   };
 
   const removeImage = (index) => {
@@ -49,8 +54,18 @@ const NewsEditor = ({ item, onSave, onCancel }) => {
       const newImages = [...prev];
       URL.revokeObjectURL(newImages[index].preview);
       newImages.splice(index, 1);
+      
+      // Si on supprime toutes les nouvelles images, réafficher l'ancienne
+      if (newImages.length === 0 && item?.image_url) {
+        setImagePreview(item.image_url);
+      }
+      
       return newImages;
     });
+  };
+
+  const removeCurrentImage = () => {
+    setImagePreview(null);
   };
 
   const handleSubmit = async (e) => {
@@ -260,15 +275,23 @@ const NewsEditor = ({ item, onSave, onCancel }) => {
               onClick={() => fileInputRef.current?.click()}
             >
               <Upload size={20} />
-              Ajouter des images
+              {images.length > 0 || imagePreview ? 'Remplacer l\'image' : 'Ajouter des images'}
             </button>
           </div>
 
-          {/* Preview des images existantes */}
+          {/* Preview de l'image actuelle (seulement si aucune nouvelle image) */}
           {imagePreview && images.length === 0 && (
             <div className="image-preview-grid">
               <div className="image-preview-item">
                 <img src={imagePreview} alt="Image actuelle" />
+                <button
+                  type="button"
+                  className="remove-image-btn"
+                  onClick={removeCurrentImage}
+                  title="Supprimer"
+                >
+                  <Trash2 size={16} />
+                </button>
                 <p className="image-name">Image actuelle</p>
               </div>
             </div>

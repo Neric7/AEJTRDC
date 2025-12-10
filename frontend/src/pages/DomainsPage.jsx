@@ -1,103 +1,129 @@
 // src/pages/DomainsPage.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaGraduationCap, FaHeartbeat, FaBriefcase, FaLeaf, FaBullhorn, FaShieldAlt, FaRing, FaIndustry, FaUserMd, FaFootballBall, FaFemale, FaChild, FaAmbulance, FaArrowRight } from 'react-icons/fa';
+import { getAllDomains } from '../services/domains';
 import styles from './DomainsPage.module.css';
 
 export default function DomainsPage() {
-  const domains = [
-    {
-      id: 1,
-      title: "Éducation des enfants marginalisés",
-      description: "L'AEJT – RDC œuvre pour garantir l'accès à l'éducation aux populations marginalisées...",
-      image: "/src/assets/images/domains/68fa9ecaf1d0c0.29467065.jpg",
-      icon: FaGraduationCap,
-    },
-    {
-      id: 2,
-      title: "Éducation inclusive pour les enfants vivant avec un handicap",
-      description: "AEJT – RDC s'engage à promouvoir une éducation inclusive pour les enfants...",
-      image: "/src/assets/images/domains/68fa9e8c319630.69281871.jpg",
-      icon: FaShieldAlt,
-    },
-    {
-      id: 3,
-      title: "Lutte contre le mariage précoce des enfants",
-      description: "L'AEJT – RDC œuvre pour prévenir et réduire les mariages précoces, qui...",
-      image: "/src/assets/images/domains/68fa9dfa8a2832.75914076.jpg",
-      icon: FaRing,
-    },
-    {
-      id: 4,
-      title: "Protection des enfants dans les mines artisanales",
-      description: "AEJT – RDC s'engage activement à mettre fin à l'implication d'enfants...",
-      image: "/src/assets/images/domains/68fa9d2bd69995.07585915.jpg",
-      icon: FaIndustry,
-    },
-    {
-      id: 5,
-      title: "Santé sexuelle et reproductive des adolescents",
-      description: "L'AEJT – RDC œuvre à l'amélioration de la santé sexuelle et reproductive...",
-      image: "/src/assets/images/domains/68fa99cc335d81.89565554.jpg",
-      icon: FaUserMd,
-    },
-    {
-      id: 6,
-      title: "L'inclusion par le sport",
-      description: "L'AEJT – RDC utilise le sport comme outil d'inclusion sociale et d'éducation...",
-      image: "/src/assets/images/domains/68fa99594efc66.96353983.jpg",
-      icon: FaFootballBall,
-    },
-    {
-      id: 7,
-      title: "Lutte contre la violence faite aux filles dans les écoles",
-      description: "L'AEJT – RDC œuvre à la création d'un environnement scolaire sûr et protecteur...",
-      image: "/src/assets/images/domains/68fa991ad97ed4.30888153.jpg",
-      icon: FaFemale,
-    },
-    {
-      id: 8,
-      title: "Les pires formes de travail des enfants",
-      description: "L'AEJT – RDC s'engage à protéger les enfants des pires dangers...",
-      image: "/src/assets/images/domains/68fa9d52352c47.74657218.jpg",
-      icon: FaChild,
-    },
-    {
-      id: 9,
-      title: "Éducation d'urgence pour les enfants, jeunes et femmes touchés par les crises",
-      description: "AEJT – RDC intervient dans des contextes de crises, de conflits ou de catastrophes...",
-      image: "/src/assets/images/domains/68fa986295af79.24579904.jpg",
-      icon: FaAmbulance,
-    },
-    {
-      id: 10,
-      title: "Entrepreneuriat et autonomisation des femmes et des jeunes",
-      description: "L'AEJT – RDC soutient les femmes et les jeunes dans leur emploi socio-économique...",
-      image: "/src/assets/images/domains/68fa95578fa5a4.49222161.jpg",
-      icon: FaBriefcase,
-    },
-    {
-      id: 11,
-      title: "Règlement pacifique des conflits, paix et bonne gouvernance",
-      description: "L'AEJT – RDC promeut une paix durable et la cohésion sociale dans la région...",
-      image: "/src/assets/images/domains/68fa939535deb2.67763353.jpg",
-      icon: FaBullhorn,
-    },
-    {
-      id: 12,
-      title: "Nutrition, sécurité alimentaire et environnement",
-      description: "L'AEJT – RDC œuvre pour améliorer la sécurité alimentaire et préserver l'environnement...",
-      image: "/src/assets/images/domains/68fa90f927f355.68983087.jpg",
-      icon: FaHeartbeat,
-    },
-    {
-      id: 13,
-      title: "Conservation de la biodiversité",
-      description: "AEJT - RDC s'engage pour la conservation de la biodiversité et la protection...",
-      image: "/src/assets/images/domains/68fa8cd4e55465.16973276.jpg",
-      icon: FaLeaf,
-    }
-  ];
+  const [domains, setDomains] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Mapping des icônes
+  const iconMapping = {
+    'FaGraduationCap': FaGraduationCap,
+    'FaHeartbeat': FaHeartbeat,
+    'FaBriefcase': FaBriefcase,
+    'FaLeaf': FaLeaf,
+    'FaBullhorn': FaBullhorn,
+    'FaShieldAlt': FaShieldAlt,
+    'FaRing': FaRing,
+    'FaIndustry': FaIndustry,
+    'FaUserMd': FaUserMd,
+    'FaFootballBall': FaFootballBall,
+    'FaFemale': FaFemale,
+    'FaChild': FaChild,
+    'FaAmbulance': FaAmbulance,
+  };
+
+  useEffect(() => {
+    const fetchDomains = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await getAllDomains();
+        
+        if (response.success) {
+          setDomains(response.data);
+        } else {
+          setError('Impossible de charger les domaines');
+        }
+      } catch (err) {
+        console.error('Erreur:', err);
+        setError('Une erreur est survenue lors du chargement des domaines');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDomains();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className={styles.domainsPage}>
+        <div className={styles.loadingContainer}>
+          {/* Logo AEJT-RDC CENTRÉ VERTICALEMENT */}
+          <div className={styles.logoCenterContainer}>
+            <div className={styles.logoCircle}>
+              <span className={styles.logoText}>AEJT-RDC</span>
+            </div>
+            
+            {/* Animation de chargement */}
+            <div className={styles.loadingAnimation}>
+              <div className={styles.spinner}></div>
+              <div className={styles.loadingTextContainer}>
+                <h3 className={styles.loadingTitle}>Chargement des domaines</h3>
+                <div className={styles.loadingDots}>
+                  <span className={styles.dot}></span>
+                  <span className={styles.dot}></span>
+                  <span className={styles.dot}></span>
+                </div>
+                <p className={styles.loadingSubtitle}>
+                  Récupération des activités en cours...
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mini preview des cartes (animation) */}
+          <div className={styles.cardsPreview}>
+            <div className={styles.previewCard}></div>
+            <div className={styles.previewCard}></div>
+            <div className={styles.previewCard}></div>
+          </div>
+          
+          {/* Message de patience */}
+          <div className={styles.patienceMessage}>
+            <svg className={styles.clockIcon} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <p>Merci de patienter pendant le chargement</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.domainsPage}>
+        <div className={styles.errorContainer}>
+          <div className={styles.errorIcon}>
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+          </div>
+          <h2 className={styles.errorTitle}>Erreur de chargement</h2>
+          <p className={styles.errorMessage}>{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className={styles.retryButton}
+          >
+            <svg className={styles.retryIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M23 4v6h-6"></path>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            Réessayer
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.domainsPage}>
@@ -119,15 +145,19 @@ export default function DomainsPage() {
       <div className={styles.domainsSection}>
         <div className={styles.domainsGrid}>
           {domains.map((domain) => {
-            const Icon = domain.icon;
+            const Icon = iconMapping[domain.icon] || FaGraduationCap;
+            
             return (
               <div key={domain.id} className={styles.domainCard}>
                 {/* Image Container */}
                 <div className={styles.imageContainer}>
                   <img
                     src={domain.image}
-                    alt={domain.title}
+                    alt={domain.titre}
                     className={styles.domainImage}
+                    onError={(e) => {
+                      e.target.src = '/placeholder-domain.jpg';
+                    }}
                   />
                   <div className={styles.imageOverlay}></div>
                 </div>
@@ -140,10 +170,10 @@ export default function DomainsPage() {
                 {/* Content */}
                 <div className={styles.cardContent}>
                   <h3 className={styles.domainTitle}>
-                    {domain.title}
+                    {domain.titre}
                   </h3>
                   <p className={styles.domainDescription}>
-                    {domain.description}
+                    {domain.description_courte}
                   </p>
                   
                   {/* Read More Button */}

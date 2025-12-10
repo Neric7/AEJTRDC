@@ -4,6 +4,7 @@ import {
   FileText, 
   Briefcase, 
   AlertTriangle,
+  FolderOpen,  // ← Pour les Domaines
   Users,
   Handshake,
   FileSpreadsheet,
@@ -41,6 +42,11 @@ const Sidebar = ({ isOpen, onToggle }) => {
       title: 'Actualités',
       icon: <FileText size={20} />,
       path: '/content/news',
+    },
+    {
+      title: 'Domaines',
+      icon: <FolderOpen size={20} />,
+      path: '/content/domains',
     },
     {
       title: 'Projets',

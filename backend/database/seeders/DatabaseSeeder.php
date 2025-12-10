@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             NewsSeeder::class,
             CommentSeeder::class,
             AdminSeeder::class,
+            DomainSeeder::class,
             // TeamSeeder::class,
             // PartnerSeeder::class,
         ]);
