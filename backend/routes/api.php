@@ -7,6 +7,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\AdminAuthController;
 use App\Http\Controllers\API\AdminNewsController;
 use App\Http\Controllers\API\DomainController;
+use App\Http\Controllers\API\PartnerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,10 +36,25 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/profile', [AuthController::class, 'updateProfile']);
     Route::put('/user/password', [AuthController::class, 'changePassword']);
     
-    // 🔒 Commentaires - PROTÉGÉS (nécessite authentification)
+    // 🔒 Commentaires - PROTÉGÉS
     Route::post('/news/{newsId}/comments', [CommentController::class, 'store']);
     Route::put('/comments/{id}', [CommentController::class, 'update']);
     Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+});
+
+// Routes publiques pour les domaines
+Route::prefix('domains')->group(function () {
+    Route::get('/', [DomainController::class, 'index']);
+    Route::get('/{id}', [DomainController::class, 'show']);
+    Route::get('/slug/{slug}', [DomainController::class, 'showBySlug']);
+    Route::get('/{id}/others', [DomainController::class, 'others']);
+});
+
+// 🌍 Routes publiques pour les partenaires (FRONTEND)
+Route::prefix('partners')->group(function () {
+    Route::get('/', [PartnerController::class, 'index']);
+    Route::get('/types', [PartnerController::class, 'types']);
+    Route::get('/{identifier}', [PartnerController::class, 'show']);
 });
 
 /*
@@ -47,8 +63,8 @@ Route::middleware('auth:sanctum')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-// Authentification admin
 Route::prefix('admin')->group(function () {
+    // Authentification admin
     Route::post('/login', [AdminAuthController::class, 'login']);
     
     // Routes protégées admin
@@ -67,9 +83,25 @@ Route::prefix('admin')->group(function () {
         Route::post('/news/{id}/image', [AdminNewsController::class, 'uploadImage']);
         
         // Gestion des commentaires (admin peut modérer)
-        Route::get('/comments', [CommentController::class, 'indexAll']); // Tous les commentaires
+        Route::get('/comments', [CommentController::class, 'indexAll']);
         Route::put('/comments/{id}/approve', [CommentController::class, 'approve']);
         Route::put('/comments/{id}/reject', [CommentController::class, 'reject']);
+        
+        // 🎯 DOMAINES D'INTERVENTION
+        Route::get('/domains', [DomainController::class, 'adminIndex']);
+        Route::get('/domains/{id}', [DomainController::class, 'adminShow']);
+        Route::post('/domains', [DomainController::class, 'store']);
+        Route::post('/domains/{id}', [DomainController::class, 'update']);
+        Route::delete('/domains/{id}', [DomainController::class, 'destroy']);
+        Route::post('/domains/{id}/toggle-status', [DomainController::class, 'toggleStatus']);
+        
+        // 🎯 PARTENAIRES
+        Route::get('/partners', [PartnerController::class, 'index']);
+        Route::get('/partners/{id}', [PartnerController::class, 'show']);
+        Route::post('/partners', [PartnerController::class, 'store']);
+        Route::put('/partners/{id}', [PartnerController::class, 'update']);
+        Route::delete('/partners/{id}', [PartnerController::class, 'destroy']);
+        Route::post('/partners/{id}/upload-logo', [PartnerController::class, 'uploadLogo']);
         
         // Dashboard stats
         Route::get('/dashboard/stats', function () {
@@ -148,33 +180,4 @@ Route::get('/list-storage', function () {
         'public_link' => public_path('storage/news'),
         'public_link_exists' => is_dir(public_path('storage/news')),
     ]);
-});
-
-// Routes publiques pour les domaines
-Route::prefix('domains')->group(function () {
-    Route::get('/', [DomainController::class, 'index']); // Liste tous les domaines
-    Route::get('/{id}', [DomainController::class, 'show']); // Récupérer un domaine par ID
-    Route::get('/slug/{slug}', [DomainController::class, 'showBySlug']); // Par slug
-    Route::get('/{id}/others', [DomainController::class, 'others']); // Autres domaines
-});
-
-// Routes protégées (Admin uniquement)
-Route::middleware(['auth:sanctum', 'admin'])->prefix('admin/domains')->group(function () {
-    Route::post('/', [DomainController::class, 'store']); // Créer
-    Route::put('/{id}', [DomainController::class, 'update']); // Mettre à jour
-    Route::delete('/{id}', [DomainController::class, 'destroy']); // Supprimer
-});
-
-// À AJOUTER dans routes/api.php dans la section Admin
-
-Route::middleware(['auth:sanctum', 'check.admin'])->prefix('admin')->group(function () {
-    // ... autres routes admin ...
-    
-    // 🎯 DOMAINES D'INTERVENTION
-    Route::get('/domains', [DomainController::class, 'adminIndex']);
-    Route::get('/domains/{id}', [DomainController::class, 'adminShow']);
-    Route::post('/domains', [DomainController::class, 'store']);
-    Route::post('/domains/{id}', [DomainController::class, 'update']); // POST pour FormData
-    Route::delete('/domains/{id}', [DomainController::class, 'destroy']);
-    Route::post('/domains/{id}/toggle-status', [DomainController::class, 'toggleStatus']);
 });

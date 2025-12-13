@@ -155,19 +155,6 @@ export const teamAPI = {
     }),
 };
 
-// ============ PARTENAIRES ============
-export const partnersAPI = {
-  getAll: (params) => api.get('/admin/partners', { params }),
-  getById: (id) => api.get(`/admin/partners/${id}`),
-  create: (data) => api.post('/admin/partners', data),
-  update: (id, data) => api.put(`/admin/partners/${id}`, data),
-  delete: (id) => api.delete(`/admin/partners/${id}`),
-  uploadLogo: (id, formData) => 
-    api.post(`/admin/partners/${id}/logo`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
-};
-
 // ============ RAPPORTS / TRANSPARENCE ============
 export const reportsAPI = {
   getAll: (params) => api.get('/admin/reports', { params }),
@@ -240,4 +227,23 @@ export const domainsAPI = {
     }),
   delete: (id) => api.delete(`/admin/domains/${id}`),
   toggleStatus: (id) => api.post(`/admin/domains/${id}/toggle-status`),
+};
+
+// Dans admin/src/services/adminApi.js
+
+export const partnersAPI = {
+  getAll: (params) => api.get('/admin/partners', { params }),
+  
+  getById: (id) => api.get(`/admin/partners/${id}`),
+  
+  create: (data) => api.post('/admin/partners', data),
+  
+  update: (id, data) => api.put(`/admin/partners/${id}`, data),
+  
+  delete: (id) => api.delete(`/admin/partners/${id}`),
+  
+  uploadLogo: (id, formData) => 
+    api.post(`/admin/partners/${id}/upload-logo`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }),
 };

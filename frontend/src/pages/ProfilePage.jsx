@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import Loader from '../components/common/Loader';
-import { FaUser, FaEnvelope, FaPhone, FaImage, FaEdit, FaLock, FaKey, FaShieldAlt, FaCheck, FaSave, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaImage, FaEdit, FaLock, FaKey, FaShieldAlt, FaCheck, FaSave, FaSignOutAlt, FaCamera, FaMapMarkerAlt, FaBriefcase } from 'react-icons/fa';
 import styles from './ProfilePage.module.css';
 
 export default function ProfilePage() {
   const { user, updateProfile, changePassword, logout } = useAuth();
   
-  const [activeTab, setActiveTab] = useState('profile'); // 'profile' ou 'security'
+  const [activeTab, setActiveTab] = useState('profile');
   
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
@@ -15,6 +15,7 @@ export default function ProfilePage() {
     phone: user?.phone || '',
     avatar: user?.avatar || '',
     bio: user?.bio || '',
+    location: user?.location || '',
   });
   
   const [passwordData, setPasswordData] = useState({
@@ -66,6 +67,7 @@ export default function ProfilePage() {
         name: profileData.name,
         phone: profileData.phone,
         bio: profileData.bio,
+        location: profileData.location,
         avatar: profileData.avatar || null,
       };
 
@@ -100,282 +102,372 @@ export default function ProfilePage() {
 
   return (
     <section className={styles.profileSection}>
-      <div className={styles.container}>
-        
-        {/* En-tête avec cover et avatar */}
-        <div className={styles.profileCover}>
-          <div className={styles.coverGradient}></div>
-          <div className={styles.avatarWrapper}>
-            {profileData.avatar ? (
-              <img src={profileData.avatar} alt={user.name} className={styles.avatarLarge} />
-            ) : (
-              <div className={styles.avatarLarge}>{initials}</div>
-            )}
-            <div className={styles.userInfo}>
-              <h1 className={styles.userName}>{user.name}</h1>
-              <p className={styles.userEmail}>{user.email}</p>
-              <span className={styles.roleBadge}>
-                {user.role === 'admin' ? (
-                  <>
-                    <FaShieldAlt /> Administrateur
-                  </>
-                ) : (
-                  <>
-                    <FaUser /> Utilisateur
-                  </>
-                )}
-              </span>
-            </div>
+      {/* Header */}
+      <header className={styles.header}>
+        <div className={styles.headerContainer}>
+          <div className={styles.logo}>
+            <div className={styles.logoIcon}>G</div>
+            <span className={styles.logoText}>Gridlines UI</span>
           </div>
-        </div>
-
-        {/* Navigation par onglets */}
-        <div className={styles.tabsContainer}>
-          <div className={styles.tabs}>
-            <button 
-              className={`${styles.tab} ${activeTab === 'profile' ? styles.tabActive : ''}`}
-              onClick={() => setActiveTab('profile')}
-            >
-              <FaUser className={styles.tabIcon} />
-              Profil
-            </button>
-            <button 
-              className={`${styles.tab} ${activeTab === 'security' ? styles.tabActive : ''}`}
-              onClick={() => setActiveTab('security')}
-            >
-              <FaLock className={styles.tabIcon} />
-              Sécurité
-            </button>
-          </div>
-          <button className={styles.logoutBtn} onClick={logout}>
-            <FaSignOutAlt /> Déconnexion
-          </button>
-        </div>
-
-        {/* Contenu des onglets */}
-        <div className={styles.tabContent}>
           
-          {/* Onglet Profil */}
-          {activeTab === 'profile' && (
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div>
-                  <h2 className={styles.cardTitle}>Informations personnelles</h2>
-                  <p className={styles.cardSubtitle}>Gérez vos informations de profil</p>
-                </div>
-              </div>
+          <div className={styles.headerActions}>
+            <button className={styles.iconButton}>
+              <div className={styles.iconPlaceholder}></div>
+            </button>
+            <button className={styles.iconButton}>
+              <div className={styles.iconPlaceholder}></div>
+              <span className={styles.notificationBadge}>2</span>
+            </button>
+            <div className={styles.userAvatar}></div>
+          </div>
+        </div>
+      </header>
 
-              {profileStatus.message && (
-                <div className={profileStatus.type === 'success' ? styles.alertSuccess : styles.alertError}>
-                  <span className={styles.alertIcon}>
-                    {profileStatus.type === 'success' ? <FaCheck /> : '⚠'}
-                  </span>
-                  {profileStatus.message}
-                </div>
-              )}
+      <div className={styles.container}>
+        <div className={styles.gridLayout}>
+          
+          {/* Sidebar gauche */}
+          <aside className={styles.sidebar}>
+            <div className={styles.sidebarHeader}>
+              <h3 className={styles.sidebarTitle}>PROFILE</h3>
+            </div>
+            
+            <nav className={styles.sidebarNav}>
+              <button 
+                onClick={() => setActiveTab('profile')}
+                className={`${styles.navButton} ${activeTab === 'profile' ? styles.navButtonActive : ''}`}
+              >
+                <FaUser className={styles.navIcon} />
+                <span>Edit Profile</span>
+              </button>
+              
+              <button 
+                onClick={() => setActiveTab('security')}
+                className={`${styles.navButton} ${activeTab === 'security' ? styles.navButtonActive : ''}`}
+              >
+                <FaLock className={styles.navIcon} />
+                <span>Password</span>
+              </button>
+            </nav>
 
-              <div className={styles.formWrapper}>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label htmlFor="name" className={styles.label}>
-                      <FaUser className={styles.labelIcon} />
-                      Nom complet
-                    </label>
+            <div className={styles.sidebarFooter}>
+              <h4 className={styles.sidebarTitle}>SECURE</h4>
+              <button onClick={logout} className={styles.logoutButton}>
+                <FaSignOutAlt className={styles.navIcon} />
+                <span>Logout</span>
+              </button>
+            </div>
+          </aside>
+
+          {/* Contenu principal */}
+          <main className={styles.mainContent}>
+            {activeTab === 'profile' && (
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <h2 className={styles.cardTitle}>Edit Profile</h2>
+                  </div>
+                </div>
+
+                {/* Section Avatar */}
+                <div className={styles.avatarSection}>
+                  <div className={styles.avatarWrapper}>
+                    <div className={styles.avatarContainer}>
+                      {profileData.avatar ? (
+                        <img src={profileData.avatar} alt={user.name} className={styles.avatar} />
+                      ) : (
+                        <div className={styles.avatarInitials}>{initials}</div>
+                      )}
+                      <div className={styles.avatarOverlay}>
+                        <FaCamera className={styles.cameraIcon} />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.avatarInfo}>
+                    <h3 className={styles.avatarInfoTitle}>Upload new photo</h3>
+                    <p className={styles.avatarInfoText}>At least 800×800 px recommended.</p>
+                    <p className={styles.avatarInfoText}>JPG or PNG is allowed</p>
+                  </div>
+                </div>
+
+                {profileStatus.message && (
+                  <div className={`${styles.alert} ${profileStatus.type === 'success' ? styles.alertSuccess : styles.alertError}`}>
+                    <span className={styles.alertIcon}>
+                      {profileStatus.type === 'success' ? <FaCheck /> : '⚠'}
+                    </span>
+                    {profileStatus.message}
+                  </div>
+                )}
+
+                <div className={styles.formSection}>
+                  <div className={styles.sectionHeader}>
+                    <h3 className={styles.sectionTitle}>Personal Info</h3>
+                    <button type="button" className={styles.editButton}>
+                      <FaEdit /> Edit
+                    </button>
+                  </div>
+
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label htmlFor="name" className={styles.label}>Full Name</label>
+                      <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        className={styles.input}
+                        value={profileData.name}
+                        onChange={handleProfileChange}
+                        placeholder="Jean Dupont"
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label htmlFor="email" className={styles.label}>Email</label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        className={styles.input}
+                        value={profileData.email}
+                        disabled
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label htmlFor="phone" className={styles.label}>Phone</label>
+                      <input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        className={styles.input}
+                        value={profileData.phone}
+                        onChange={handleProfileChange}
+                        placeholder="+33 6 12 34 56 78"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.formSection}>
+                  <div className={styles.sectionHeader}>
+                    <h3 className={styles.sectionTitle}>Location</h3>
+                    <button type="button" className={styles.editButton}>Cancel</button>
+                  </div>
+                  
+                  <div className={styles.formGroup} style={{ position: 'relative' }}>
+                    <FaMapMarkerAlt className={styles.inputIcon} />
                     <input
-                      id="name"
-                      name="name"
                       type="text"
-                      className={styles.input}
-                      value={profileData.name}
+                      name="location"
+                      value={profileData.location}
                       onChange={handleProfileChange}
-                      placeholder="Jean Dupont"
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label htmlFor="email" className={styles.label}>
-                      <FaEnvelope className={styles.labelIcon} />
-                      Adresse e-mail
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      className={`${styles.input} ${styles.inputDisabled}`}
-                      value={profileData.email}
-                      disabled
+                      placeholder="Enter your location"
+                      className={`${styles.input} ${styles.inputWithIcon}`}
                     />
                   </div>
                 </div>
 
-                <div className={styles.formRow}>
+                <div className={styles.formSection}>
+                  <div className={styles.sectionHeader}>
+                    <h3 className={styles.sectionTitle}>Bio</h3>
+                    <button type="button" className={styles.editButton}>
+                      <FaEdit /> Edit
+                    </button>
+                  </div>
+                  
                   <div className={styles.formGroup}>
-                    <label htmlFor="phone" className={styles.label}>
-                      <FaPhone className={styles.labelIcon} />
-                      Téléphone
-                    </label>
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      className={styles.input}
-                      value={profileData.phone}
+                    <textarea
+                      name="bio"
+                      value={profileData.bio}
                       onChange={handleProfileChange}
-                      placeholder="+33 6 12 34 56 78"
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label htmlFor="avatar" className={styles.label}>
-                      <FaImage className={styles.labelIcon} />
-                      URL Avatar
-                    </label>
-                    <input
-                      id="avatar"
-                      name="avatar"
-                      type="url"
-                      className={styles.input}
-                      value={profileData.avatar}
-                      onChange={handleProfileChange}
-                      placeholder="https://..."
+                      className={styles.textarea}
+                      placeholder="Write something about yourself..."
+                      rows={4}
                     />
                   </div>
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label htmlFor="bio" className={styles.label}>
-                    <FaEdit className={styles.labelIcon} />
-                    Bio
-                  </label>
-                  <textarea
-                    id="bio"
-                    name="bio"
-                    className={styles.textarea}
-                    value={profileData.bio}
-                    onChange={handleProfileChange}
-                    placeholder="Parlez-nous de vous..."
-                    rows={4}
-                  />
-                </div>
-
-                <div className={styles.formActions}>
-                  <button 
-                    onClick={handleProfileSubmit}
-                    className={styles.btnPrimary}
-                    disabled={profileLoading}
-                  >
-                    {profileLoading ? (
-                      <>
-                        <span className={styles.spinner}></span>
-                        Enregistrement...
-                      </>
-                    ) : (
-                      <>
-                        <FaSave />
-                        Enregistrer les modifications
-                      </>
-                    )}
-                  </button>
-                </div>
+                <button
+                  onClick={handleProfileSubmit}
+                  className={styles.btnPrimary}
+                  disabled={profileLoading}
+                >
+                  {profileLoading ? (
+                    <>
+                      <span className={styles.spinner}></span>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <FaSave />
+                      Save changes
+                    </>
+                  )}
+                </button>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Onglet Sécurité */}
-          {activeTab === 'security' && (
-            <div className={styles.card}>
-              <div className={styles.cardHeader}>
-                <div>
-                  <h2 className={styles.cardTitle}>Modifier le mot de passe</h2>
-                  <p className={styles.cardSubtitle}>Assurez-vous d'utiliser un mot de passe sécurisé</p>
-                </div>
-              </div>
-
-              {passwordStatus.message && (
-                <div className={passwordStatus.type === 'success' ? styles.alertSuccess : styles.alertError}>
-                  <span className={styles.alertIcon}>
-                    {passwordStatus.type === 'success' ? <FaCheck /> : '⚠'}
-                  </span>
-                  {passwordStatus.message}
-                </div>
-              )}
-
-              <div className={styles.formWrapper}>
-                <div className={styles.formGroup}>
-                  <label htmlFor="current_password" className={styles.label}>
-                    <FaKey className={styles.labelIcon} />
-                    Mot de passe actuel
-                  </label>
-                  <input
-                    id="current_password"
-                    name="current_password"
-                    type="password"
-                    className={styles.input}
-                    value={passwordData.current_password}
-                    onChange={handlePasswordChange}
-                    placeholder="••••••••"
-                  />
+            {activeTab === 'security' && (
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <h2 className={styles.cardTitle}>Change Password</h2>
+                    <p className={styles.cardSubtitle}>Ensure your account is using a strong password</p>
+                  </div>
                 </div>
 
-                <div className={styles.formRow}>
+                {passwordStatus.message && (
+                  <div className={`${styles.alert} ${passwordStatus.type === 'success' ? styles.alertSuccess : styles.alertError}`}>
+                    <span className={styles.alertIcon}>
+                      {passwordStatus.type === 'success' ? <FaCheck /> : '⚠'}
+                    </span>
+                    {passwordStatus.message}
+                  </div>
+                )}
+
+                <div className={styles.formSection}>
                   <div className={styles.formGroup}>
-                    <label htmlFor="password" className={styles.label}>
-                      <FaLock className={styles.labelIcon} />
-                      Nouveau mot de passe
-                    </label>
+                    <label htmlFor="current_password" className={styles.label}>Current Password</label>
                     <input
-                      id="password"
-                      name="password"
+                      id="current_password"
+                      name="current_password"
                       type="password"
                       className={styles.input}
-                      value={passwordData.password}
-                      onChange={handlePasswordChange}
-                      placeholder="••••••••"
-                      minLength={8}
-                    />
-                    <small className={styles.helpText}>Minimum 8 caractères</small>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label htmlFor="password_confirmation" className={styles.label}>
-                      <FaCheck className={styles.labelIcon} />
-                      Confirmer le mot de passe
-                    </label>
-                    <input
-                      id="password_confirmation"
-                      name="password_confirmation"
-                      type="password"
-                      className={styles.input}
-                      value={passwordData.password_confirmation}
+                      value={passwordData.current_password}
                       onChange={handlePasswordChange}
                       placeholder="••••••••"
                     />
                   </div>
+
+                  <div className={styles.formRow} style={{ gridTemplateColumns: '1fr 1fr', border: 'none', paddingBottom: 0 }}>
+                    <div className={styles.formGroup}>
+                      <label htmlFor="password" className={styles.label}>New Password</label>
+                      <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        className={styles.input}
+                        value={passwordData.password}
+                        onChange={handlePasswordChange}
+                        placeholder="••••••••"
+                        minLength={8}
+                      />
+                      <small className={styles.helpText}>Minimum 8 characters</small>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label htmlFor="password_confirmation" className={styles.label}>Confirm Password</label>
+                      <input
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        type="password"
+                        className={styles.input}
+                        value={passwordData.password_confirmation}
+                        onChange={handlePasswordChange}
+                        placeholder="••••••••"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div className={styles.formActions}>
-                  <button 
-                    onClick={handlePasswordSubmit}
-                    className={styles.btnPrimary}
-                    disabled={passwordLoading}
-                  >
-                    {passwordLoading ? (
-                      <>
-                        <span className={styles.spinner}></span>
-                        Mise à jour...
-                      </>
-                    ) : (
-                      <>
-                        <FaLock />
-                        Mettre à jour le mot de passe
-                      </>
-                    )}
-                  </button>
+                <button
+                  onClick={handlePasswordSubmit}
+                  className={styles.btnPrimary}
+                  disabled={passwordLoading}
+                >
+                  {passwordLoading ? (
+                    <>
+                      <span className={styles.spinner}></span>
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <FaLock />
+                      Update Password
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+          </main>
+
+          {/* Sidebar droite - Progression */}
+          <aside className={styles.progressSidebar}>
+            <div className={styles.progressHeader}>
+              <div className={styles.progressCircle}>
+                <svg className={styles.progressSvg}>
+                  <circle cx="64" cy="64" r="56" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+                  <circle 
+                    cx="64" 
+                    cy="64" 
+                    r="56" 
+                    fill="none" 
+                    stroke="#3b82f6" 
+                    strokeWidth="8"
+                    strokeDasharray="352"
+                    strokeDashoffset="211"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className={styles.progressValue}>40%</div>
+              </div>
+              <h3 className={styles.progressTitle}>Complete your profile</h3>
+            </div>
+
+            <div className={styles.progressList}>
+              <div className={styles.progressItem}>
+                <div className={styles.progressItemLeft}>
+                  <FaCheck className={styles.checkIcon} />
+                  <span className={styles.progressItemText}>Setup account</span>
                 </div>
+                <span className={styles.progressItemValue}>10%</span>
+              </div>
+              
+              <div className={styles.progressItem}>
+                <div className={styles.progressItemLeft}>
+                  <FaCheck className={styles.checkIcon} />
+                  <span className={styles.progressItemText}>Upload your photo</span>
+                </div>
+                <span className={styles.progressItemValue}>5%</span>
+              </div>
+              
+              <div className={styles.progressItem}>
+                <div className={styles.progressItemLeft}>
+                  <FaCheck className={styles.checkIcon} />
+                  <span className={styles.progressItemText}>Personal Info</span>
+                </div>
+                <span className={styles.progressItemValue}>10%</span>
+              </div>
+              
+              <div className={styles.progressItem}>
+                <div className={styles.progressItemLeft}>
+                  <div className={styles.checkboxIcon}></div>
+                  <span className={styles.progressItemText}>Location</span>
+                </div>
+                <span className={`${styles.progressItemValue} ${styles.progressItemValueActive}`}>+20%</span>
+              </div>
+              
+              <div className={styles.progressItem}>
+                <div className={styles.progressItemLeft}>
+                  <FaCheck className={styles.checkIcon} />
+                  <span className={styles.progressItemText}>Biography</span>
+                </div>
+                <span className={styles.progressItemValue}>15%</span>
               </div>
             </div>
-          )}
 
+            <div className={styles.progressActions}>
+              <button className={styles.actionButton}>
+                <FaBriefcase />
+                Tools
+              </button>
+              <button className={styles.actionButton}>
+                <FaSave />
+                Save
+              </button>
+            </div>
+          </aside>
         </div>
       </div>
     </section>

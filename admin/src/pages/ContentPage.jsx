@@ -21,6 +21,7 @@ import ProjectEditor from '../components/ContentEditor/ProjectEditor';
 import JobEditor from '../components/ContentEditor/JobEditor';
 import AlertEditor from '../components/ContentEditor/AlertEditor';
 import DomainEditor from '../components/ContentEditor/DomainEditor';
+import PartnerEditor from '../components/ContentEditor/PartnerEditor';
 
 const ContentPage = () => {
   const { type } = useParams();
@@ -77,10 +78,11 @@ const ContentPage = () => {
       columns: ['Nom', 'Poste', 'Email', 'Téléphone', 'Actions'],
       viewUrl: (item) => `${FRONTEND_URL}/about/team`,
     },
+    // Dans contentConfig, MODIFIER partners (ligne ~79)
     partners: {
       title: 'Partenaires',
       api: partnersAPI,
-      editor: null,
+      editor: PartnerEditor, // ← CHANGER null en PartnerEditor
       columns: ['Nom', 'Type', 'Site web', 'Statut', 'Actions'],
       viewUrl: (item) => `${FRONTEND_URL}/partners`,
     },
@@ -208,6 +210,47 @@ const ContentPage = () => {
             <td>{item.budget ? `${item.budget} $` : '-'}</td>
           </>
         );
+          // Ajouter ce case dans renderTableRow (après case 'projects')
+    case 'partners':
+      return (
+        <>
+          <td>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              {item.logo_url && (
+                <img 
+                  src={item.logo_url} 
+                  alt={item.name}
+                  style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '4px' }}
+                />
+              )}
+              <span>{item.name}</span>
+            </div>
+          </td>
+          <td>
+            <span className={`type-badge type-${item.type}`}>
+              {item.type === 'ong' ? 'ONG' : 
+              item.type === 'international' ? 'International' :
+              item.type === 'national' ? 'National' :
+              item.type === 'local' ? 'Local' :
+              item.type === 'gouvernemental' ? 'Gouvernemental' :
+              item.type === 'prive' ? 'Privé' : item.type}
+            </span>
+          </td>
+          <td>
+            {item.website ? (
+              <a href={item.website} target="_blank" rel="noopener noreferrer" className="link-website">
+                Visiter
+              </a>
+            ) : '-'}
+          </td>
+          <td>
+            <span className={`status-badge status-${item.status}`}>
+              {item.status === 'active' ? 'Actif' : 
+              item.status === 'inactive' ? 'Inactif' : 'En attente'}
+            </span>
+          </td>
+        </>
+      );
       default:
         return (
           <>

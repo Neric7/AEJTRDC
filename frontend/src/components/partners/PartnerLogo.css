@@ -1,104 +1,223 @@
-/* PartnerLogo.css */
 .partner-card {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 32px 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .partner-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    border-color: #3b82f6;
-  }
-  
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  height: 100%;
+  border: 1px solid #e2e8f0;
+}
+
+.partner-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  border-color: #cbd5e1;
+}
+
+.partner-card-content {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+}
+
+/* Logo container - BEAUCOUP PLUS GRAND ET VISIBLE */
+.partner-logo-container {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  position: relative;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2rem;
+  border: 2px solid #f1f5f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.partner-logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+.partner-card:hover .partner-logo-image {
+  transform: scale(1.08);
+}
+
+/* Placeholder plus grand et plus visible */
+.partner-logo-placeholder {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.partner-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.partner-type {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border-radius: 24px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.partner-type-international {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.partner-type-national {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.partner-type-local {
+  background: #fef3c7;
+  color: #a16207;
+  border: 1px solid #fcd34d;
+}
+
+.partner-type-gouvernemental {
+  background: #f3e8ff;
+  color: #7c3aed;
+  border: 1px solid #d8b4fe;
+}
+
+.partner-type-prive {
+  background: #ffe4e6;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+}
+
+.partner-type-ong {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.partner-description {
+  color: #64748b;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.partner-website-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #3b82f6;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.partner-website-link:hover {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.partner-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.partner-contact-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  padding: 0.25rem;
+}
+
+.partner-contact-item:hover {
+  color: #3b82f6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
   .partner-card-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    height: 100%;
+    padding: 2rem;
   }
-  
+
   .partner-logo-container {
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    flex-shrink: 0;
+    width: 160px;
+    height: 160px;
+    padding: 1.5rem;
   }
-  
-  .partner-logo-image {
-    max-height: 80px;
-    max-width: 160px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+
+  .partner-logo-placeholder {
+    width: 160px;
+    height: 160px;
+    font-size: 4rem;
   }
-  
+
   .partner-name {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 12px;
-    line-height: 1.4;
-    font-family: 'Inter', sans-serif;
+    font-size: 1.3rem;
   }
-  
+
   .partner-description {
-    font-size: 0.875rem;
-    color: #64748b;
-    line-height: 1.5;
-    margin-bottom: 16px;
-    flex-grow: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-size: 0.95rem;
   }
-  
-  .partner-website-link {
-    font-size: 0.875rem;
-    color: #3b82f6;
-    font-weight: 500;
-    text-decoration: none;
-    transition: color 0.2s ease;
-    flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .partner-card-content {
+    padding: 1.5rem;
   }
-  
-  .partner-website-link:hover {
-    color: #1e40af;
-    text-decoration: underline;
+
+  .partner-logo-container {
+    width: 140px;
+    height: 140px;
+    padding: 1rem;
   }
-  
-  /* Animation pour le chargement */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+
+  .partner-logo-placeholder {
+    width: 140px;
+    height: 140px;
+    font-size: 3.5rem;
   }
-  
-  .partner-card {
-    animation: fadeInUp 0.6s ease forwards;
+
+  .partner-name {
+    font-size: 1.2rem;
   }
-  
-  /* Délais d'animation pour chaque carte */
-  .partner-card:nth-child(1) { animation-delay: 0.1s; }
-  .partner-card:nth-child(2) { animation-delay: 0.2s; }
-  .partner-card:nth-child(3) { animation-delay: 0.3s; }
-  .partner-card:nth-child(4) { animation-delay: 0.4s; }
-  .partner-card:nth-child(5) { animation-delay: 0.5s; }
-  .partner-card:nth-child(6) { animation-delay: 0.6s; }
-  .partner-card:nth-child(7) { animation-delay: 0.7s; }
-  .partner-card:nth-child(8) { animation-delay: 0.8s; }
+}
