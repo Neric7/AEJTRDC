@@ -13,6 +13,7 @@ import {
   domainsAPI
 } from '../services/adminApi';
 import toast from 'react-hot-toast';
+import { useAlert } from '../context/AlertProvider'; // ← IMPORT DU HOOK
 import './ContentPage.css';
 
 // Importation des éditeurs
@@ -25,6 +26,7 @@ import PartnerEditor from '../components/ContentEditor/PartnerEditor';
 
 const ContentPage = () => {
   const { type } = useParams();
+  const { showDeleteConfirm } = useAlert(); // ← UTILISATION DU HOOK
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -42,6 +44,7 @@ const ContentPage = () => {
       editor: NewsEditor,
       columns: ['Titre', 'Catégorie', 'Statut', 'Date', 'Actions'],
       viewUrl: (item) => `${FRONTEND_URL}/news/${item.slug || item.id}`,
+      itemName: (item) => `l'actualité "${item.title}"`,
     },
     projects: {
       title: 'Projets',
@@ -49,13 +52,15 @@ const ContentPage = () => {
       editor: ProjectEditor,
       columns: ['Titre', 'Lieu', 'Statut', 'Budget', 'Actions'],
       viewUrl: (item) => `${FRONTEND_URL}/projects/${item.slug || item.id}`,
+      itemName: (item) => `le projet "${item.title}"`,
     },
     domains: {
       title: 'Domaines d\'intervention',
       api: domainsAPI,
       editor: DomainEditor,
       columns: ['Titre', 'Slug', 'Ordre', 'Statut', 'Actions'],
-      viewUrl: (item) => `${FRONTEND_URL}/domains/${item.id}`, // Utiliser ID au lieu de slug
+      viewUrl: (item) => `${FRONTEND_URL}/domains/${item.id}`,
+      itemName: (item) => `le domaine "${item.titre}"`,
     },
     jobs: {
       title: 'Offres d\'emploi',
@@ -63,6 +68,7 @@ const ContentPage = () => {
       editor: JobEditor,
       columns: ['Titre', 'Type', 'Lieu', 'Statut', 'Actions'],
       viewUrl: (item) => `${FRONTEND_URL}/careers`,
+      itemName: (item) => `l'offre "${item.title}"`,
     },
     alerts: {
       title: 'Alertes humanitaires',
@@ -70,6 +76,7 @@ const ContentPage = () => {
       editor: AlertEditor,
       columns: ['Titre', 'Priorité', 'Statut', 'Date', 'Actions'],
       viewUrl: (item) => `${FRONTEND_URL}/humanitarian`,
+      itemName: (item) => `l'alerte "${item.title}"`,
     },
     team: {
       title: 'Équipe',
@@ -77,14 +84,15 @@ const ContentPage = () => {
       editor: null,
       columns: ['Nom', 'Poste', 'Email', 'Téléphone', 'Actions'],
       viewUrl: (item) => `${FRONTEND_URL}/about/team`,
+      itemName: (item) => `${item.name}`,
     },
-    // Dans contentConfig, MODIFIER partners (ligne ~79)
     partners: {
       title: 'Partenaires',
       api: partnersAPI,
-      editor: PartnerEditor, // ← CHANGER null en PartnerEditor
+      editor: PartnerEditor,
       columns: ['Nom', 'Type', 'Site web', 'Statut', 'Actions'],
       viewUrl: (item) => `${FRONTEND_URL}/partners`,
+      itemName: (item) => `le partenaire "${item.name}"`,
     },
     reports: {
       title: 'Rapports',
@@ -92,6 +100,7 @@ const ContentPage = () => {
       editor: null,
       columns: ['Titre', 'Type', 'Année', 'Téléchargements', 'Actions'],
       viewUrl: (item) => `${FRONTEND_URL}/transparency/reports`,
+      itemName: (item) => `le rapport "${item.title}"`,
     },
     media: {
       title: 'Médias',
@@ -99,6 +108,7 @@ const ContentPage = () => {
       editor: null,
       columns: ['Nom', 'Type', 'Taille', 'Date', 'Actions'],
       viewUrl: null,
+      itemName: (item) => `le média "${item.name}"`,
     },
   };
 
@@ -141,13 +151,16 @@ const ContentPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
-      return;
-    }
+  // ✅ NOUVELLE FONCTION DE SUPPRESSION AVEC DIALOG PERSONNALISÉ
+  const handleDelete = async (item) => {
+    const itemName = config.itemName ? config.itemName(item) : 'cet élément';
+    
+    const confirmed = await showDeleteConfirm(itemName);
+    
+    if (!confirmed) return;
 
     try {
-      await config.api.delete(id);
+      await config.api.delete(item.id);
       toast.success('Élément supprimé avec succès');
       fetchItems();
     } catch (error) {
@@ -210,47 +223,46 @@ const ContentPage = () => {
             <td>{item.budget ? `${item.budget} $` : '-'}</td>
           </>
         );
-          // Ajouter ce case dans renderTableRow (après case 'projects')
-    case 'partners':
-      return (
-        <>
-          <td>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {item.logo_url && (
-                <img 
-                  src={item.logo_url} 
-                  alt={item.name}
-                  style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '4px' }}
-                />
-              )}
-              <span>{item.name}</span>
-            </div>
-          </td>
-          <td>
-            <span className={`type-badge type-${item.type}`}>
-              {item.type === 'ong' ? 'ONG' : 
-              item.type === 'international' ? 'International' :
-              item.type === 'national' ? 'National' :
-              item.type === 'local' ? 'Local' :
-              item.type === 'gouvernemental' ? 'Gouvernemental' :
-              item.type === 'prive' ? 'Privé' : item.type}
-            </span>
-          </td>
-          <td>
-            {item.website ? (
-              <a href={item.website} target="_blank" rel="noopener noreferrer" className="link-website">
-                Visiter
-              </a>
-            ) : '-'}
-          </td>
-          <td>
-            <span className={`status-badge status-${item.status}`}>
-              {item.status === 'active' ? 'Actif' : 
-              item.status === 'inactive' ? 'Inactif' : 'En attente'}
-            </span>
-          </td>
-        </>
-      );
+      case 'partners':
+        return (
+          <>
+            <td>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                {item.logo_url && (
+                  <img 
+                    src={item.logo_url} 
+                    alt={item.name}
+                    style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '4px' }}
+                  />
+                )}
+                <span>{item.name}</span>
+              </div>
+            </td>
+            <td>
+              <span className={`type-badge type-${item.type}`}>
+                {item.type === 'ong' ? 'ONG' : 
+                item.type === 'international' ? 'International' :
+                item.type === 'national' ? 'National' :
+                item.type === 'local' ? 'Local' :
+                item.type === 'gouvernemental' ? 'Gouvernemental' :
+                item.type === 'prive' ? 'Privé' : item.type}
+              </span>
+            </td>
+            <td>
+              {item.website ? (
+                <a href={item.website} target="_blank" rel="noopener noreferrer" className="link-website">
+                  Visiter
+                </a>
+              ) : '-'}
+            </td>
+            <td>
+              <span className={`status-badge status-${item.status}`}>
+                {item.status === 'active' ? 'Actif' : 
+                item.status === 'inactive' ? 'Inactif' : 'En attente'}
+              </span>
+            </td>
+          </>
+        );
       default:
         return (
           <>
@@ -349,7 +361,7 @@ const ContentPage = () => {
                         </button>
                         <button
                           className="action-btn btn-delete"
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => handleDelete(item)}
                           title="Supprimer"
                         >
                           <Trash2 size={18} />

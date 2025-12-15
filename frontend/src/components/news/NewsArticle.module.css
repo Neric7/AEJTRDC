@@ -235,7 +235,7 @@
     text-decoration: underline;
   }
   
-  /* Formulaire commentaire */
+  /* Formulaire commentaire principal */
   .commentForm {
     background: #FFFBEB;
     border: 2px solid #FDE68A;
@@ -249,6 +249,23 @@
     font-weight: 700;
     color: #92400E;
     margin: 0 0 20px 0;
+  }
+  
+  /* Formulaire de réponse (apparaît sous le commentaire) */
+  .replyForm {
+    background: #FEF3C7;
+    border: 2px solid #F59E0B;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+    margin-left: 57px;
+  }
+  
+  .replyForm h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #92400E;
+    margin: 0 0 15px 0;
   }
   
   .formUserInfo {
@@ -340,13 +357,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   }
   
-  .replyItem {
-    margin-left: 40px;
-    margin-top: 15px;
-    background: #FFFBEB;
-    border-left: 3px solid #F59E0B;
-  }
-  
   .commentHeader {
     display: flex;
     align-items: center;
@@ -385,17 +395,22 @@
   }
   
   .commentBody {
-    margin: 0 0 12px 0;
+    margin: 0 0 12px 57px;
     color: #4a5568;
     line-height: 1.7;
-    padding-left: 57px;
   }
   
-  .replyButton {
+  /* Actions du commentaire */
+  .commentActions {
+    display: flex;
+    gap: 12px;
     margin-left: 57px;
+  }
+  
+  .replyButton,
+  .showRepliesButton {
     padding: 6px 16px;
     background: transparent;
-    color: #F59E0B;
     border: 1px solid #FDE68A;
     border-radius: 20px;
     font-weight: 600;
@@ -404,13 +419,42 @@
     transition: all 0.3s ease;
   }
   
+  .replyButton {
+    color: #F59E0B;
+  }
+  
   .replyButton:hover {
     background: #FFFBEB;
     border-color: #F59E0B;
   }
   
+  .showRepliesButton {
+    color: #059669;
+    border-color: #D1FAE5;
+  }
+  
+  .showRepliesButton:hover {
+    background: #ECFDF5;
+    border-color: #059669;
+  }
+  
+  /* Réponses */
   .repliesContainer {
-    margin-top: 15px;
+    margin-top: 20px;
+    margin-left: 57px;
+    padding-left: 20px;
+    border-left: 3px solid #FDE68A;
+  }
+  
+  .replyItem {
+    padding: 20px;
+    background: #FFFBEB;
+    border-radius: 12px;
+    margin-bottom: 15px;
+  }
+  
+  .replyItem .commentBody {
+    margin-left: 57px;
   }
   
   /* Bouton "Voir plus" */
@@ -660,12 +704,23 @@
       padding: 25px;
     }
   
-    .commentForm {
+    .commentForm,
+    .replyForm {
       padding: 20px;
     }
   
-    .replyItem {
-      margin-left: 20px;
+    .replyForm {
+      margin-left: 0;
+    }
+  
+    .commentBody,
+    .commentActions {
+      margin-left: 0;
+    }
+  
+    .repliesContainer {
+      margin-left: 0;
+      padding-left: 15px;
     }
   
     .commentsSectionHeader {
@@ -700,14 +755,7 @@
       font-size: 1rem;
     }
   
-    .commentBody,
-    .replyButton {
-      padding-left: 0;
+    .replyItem .commentBody {
       margin-left: 0;
-    }
-  
-    .replyItem {
-      margin-left: 0;
-      padding-left: 15px;
     }
   }

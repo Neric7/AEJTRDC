@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import NewsGrid from '../components/news/NewsGrid';
 import NewsArticle from '../components/news/NewsArticle';
 import Loader from '../components/common/Loader';
+import { FaLock, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
 import styles from './NewsPage.module.css';
 
 export default function NewsPage() {
-  const { slug } = useParams(); // Récupérer le slug depuis l'URL
+  const { slug } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated, user, loading: authLoading } = useAuth();
   
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,29 +34,43 @@ export default function NewsPage() {
 
   // Charger un article spécifique si un slug est présent dans l'URL
   useEffect(() => {
+    // Attendre que authLoading soit terminé
+    if (authLoading) return;
+
     if (slug) {
       loadArticleBySlug(slug);
     } else {
       setSelectedArticle(null);
-      fetchNews();
+      if (isAuthenticated) {
+        fetchNews();
+      } else {
+        setLoading(false);
+      }
     }
-  }, [slug]);
+  }, [slug, isAuthenticated, authLoading]);
 
   // Charger les news quand on est sur la liste
   useEffect(() => {
-    if (!slug) {
+    if (authLoading) return;
+    
+    if (!slug && isAuthenticated) {
       fetchNews();
     }
-  }, [pagination.page, search, selectedTag]);
+  }, [pagination.page, search, selectedTag, isAuthenticated, authLoading]);
 
   const loadArticleBySlug = async (articleSlug) => {
+    // Vérifier l'authentification
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
 
       console.log('🔍 Loading article:', articleSlug);
 
-      // Essayer de charger par slug
       const response = await api.get(`/news/${articleSlug}`);
       
       if (response && response.data) {
@@ -64,7 +81,14 @@ export default function NewsPage() {
 
     } catch (err) {
       console.error('💥 Error loading article:', err);
-      setError('Article non trouvé');
+      
+      // Gérer les erreurs 401 (non authentifié)
+      if (err.response?.status === 401) {
+        setError('Vous devez être connecté pour lire cet article');
+      } else {
+        setError('Article non trouvé');
+      }
+      
       // Rediriger vers la liste après 2 secondes
       setTimeout(() => {
         navigate('/news');
@@ -130,10 +154,18 @@ export default function NewsPage() {
 
     } catch (err) {
       console.error('💥 Fetch error:', err);
-      const errorMessage = err.response?.data?.message 
-        || err.message 
-        || 'Erreur de connexion au serveur';
-      setError(errorMessage);
+      
+      // Gérer spécifiquement l'erreur 401
+      if (err.response?.status === 401) {
+        setError('Votre session a expiré. Veuillez vous reconnecter.');
+        // Optionnel : déconnecter l'utilisateur
+        // logout();
+      } else {
+        const errorMessage = err.response?.data?.message 
+          || err.message 
+          || 'Erreur de connexion au serveur';
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -150,12 +182,10 @@ export default function NewsPage() {
   };
 
   const handleArticleSelect = (articleSlugOrId) => {
-    // Naviguer vers l'URL de l'article
     navigate(`/news/${articleSlugOrId}`);
   };
 
   const handleBackToList = () => {
-    // Retourner à la liste des actualités
     navigate('/news');
   };
 
@@ -172,6 +202,73 @@ export default function NewsPage() {
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
   };
+
+  // 🔄 LOADING : Attendre l'initialisation de l'auth
+  if (authLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.wrapper}>
+          <div className={styles.loadingContainer}>
+            <Loader />
+            <p style={{ marginTop: '1rem', color: '#6b7280' }}>Vérification de votre session...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔒 NON AUTHENTIFIÉ : Afficher le message de restriction
+  if (!isAuthenticated) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.wrapper}>
+          <div className={styles.authRequired}>
+            <div className={styles.authRequiredCard}>
+              <div className={styles.lockIcon}>
+                <FaLock size={64} />
+              </div>
+              
+              <h2 className={styles.authRequiredTitle}>
+                Contenu Réservé aux Membres
+              </h2>
+              
+              <p className={styles.authRequiredText}>
+                Pour accéder aux actualités et rester informé de nos actions sur le terrain,
+                vous devez être connecté à votre compte.
+              </p>
+
+              <div className={styles.authRequiredBenefits}>
+                <h3>En vous connectant, vous pouvez :</h3>
+                <ul>
+                  <li>📰 Lire toutes nos actualités</li>
+                  <li>💬 Commenter et échanger</li>
+                  <li>📌 Sauvegarder vos articles favoris</li>
+                  <li>🔔 Recevoir des notifications</li>
+                </ul>
+              </div>
+
+              <div className={styles.authRequiredActions}>
+                <Link to="/login" className={styles.btnPrimary}>
+                  <FaSignInAlt />
+                  Se connecter
+                </Link>
+                <Link to="/register" className={styles.btnSecondary}>
+                  <FaUserPlus />
+                  Créer un compte
+                </Link>
+              </div>
+
+              <p className={styles.authRequiredFooter}>
+                Vous avez déjà un compte ? <Link to="/login">Connectez-vous</Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ AUTHENTIFIÉ : Afficher le contenu normalement
 
   // Si un article est sélectionné
   if (selectedArticle && selectedArticle.id) {
@@ -196,6 +293,11 @@ export default function NewsPage() {
           <p className={styles.subtitle}>
             Restez informé de nos dernières actions et projets sur le terrain
           </p>
+          {user && (
+            <p className={styles.welcomeText}>
+              Bienvenue, <strong>{user.name}</strong> 👋
+            </p>
+          )}
         </div>
 
         {/* Barre de recherche */}

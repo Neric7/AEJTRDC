@@ -18,9 +18,10 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
     message: ''
   });
   const [submittingComment, setSubmittingComment] = useState(false);
+  const [expandedReplies, setExpandedReplies] = useState({}); // Pour gérer l'affichage des réponses
 
   const COMMENTS_PER_PAGE = 5;
-  const MAX_RELATED_ARTICLES = 4; // ✅ Limité à 4
+  const MAX_RELATED_ARTICLES = 4;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -35,7 +36,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
     try {
       let related = [];
       
-      // 1️⃣ Essayer d'abord de récupérer par tag
       if (article.tags && article.tags.length > 0) {
         const tag = article.tags[0];
         try {
@@ -50,7 +50,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
         }
       }
       
-      // 2️⃣ Si pas assez d'articles via tag, utiliser tous les articles disponibles
       if (related.length < MAX_RELATED_ARTICLES && allNews.length > 0) {
         const otherArticles = allNews
           .filter(item => item.id !== article.id)
@@ -59,7 +58,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
         related = [...related, ...otherArticles];
       }
       
-      // 3️⃣ Si toujours rien, récupérer tous les articles depuis l'API
       if (related.length === 0) {
         try {
           const response = await api.get('/news');
@@ -73,7 +71,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
         }
       }
       
-      // 4️⃣ Trier par date (plus récent en premier) et limiter à 4
       const sortedRelated = related
         .sort((a, b) => new Date(b.published_at) - new Date(a.published_at))
         .slice(0, MAX_RELATED_ARTICLES);
@@ -162,14 +159,19 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
       return;
     }
     setReplyingTo(commentId);
-    setShowCommentForm(true);
     setCommentFormData({ message: '' });
   };
 
   const handleCancelReply = () => {
     setReplyingTo(null);
-    setShowCommentForm(false);
     setCommentFormData({ message: '' });
+  };
+
+  const toggleReplies = (commentId) => {
+    setExpandedReplies(prev => ({
+      ...prev,
+      [commentId]: !prev[commentId]
+    }));
   };
 
   const handleImageError = (e) => {
@@ -219,44 +221,115 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
   const hasMoreComments = comments.length > displayedComments;
   const totalComments = comments.length;
 
-  const renderComment = (comment, isReply = false) => (
-    <div 
-      key={comment.id} 
-      className={`${styles.commentItem} ${isReply ? styles.replyItem : ''}`}
-    >
-      <div className={styles.commentHeader}>
-        <div className={styles.commentAvatar}>
-          {getInitials(comment.name || comment.author)}
-        </div>
-        <div className={styles.commentMeta}>
-          <div className={styles.commentAuthor}>
-            {comment.name || comment.author || 'Anonyme'}
-          </div>
-          <div className={styles.commentDate}>
-            {formatDate(comment.created_at || comment.createdAt)}
-          </div>
-        </div>
-      </div>
-      <div className={styles.commentBody}>
-        {comment.message || comment.content || comment.text}
-      </div>
-      
-      {!isReply && isAuthenticated && (
-        <button
-          onClick={() => handleReplyClick(comment.id)}
-          className={styles.replyButton}
-        >
-          Répondre
-        </button>
-      )}
+  const renderComment = (comment) => {
+    const isReplying = replyingTo === comment.id;
+    const hasReplies = comment.replies && comment.replies.length > 0;
+    const repliesExpanded = expandedReplies[comment.id];
 
-      {!isReply && comment.replies && comment.replies.length > 0 && (
-        <div className={styles.repliesContainer}>
-          {comment.replies.map(reply => renderComment(reply, true))}
+    return (
+      <div key={comment.id} className={styles.commentItem}>
+        <div className={styles.commentHeader}>
+          <div className={styles.commentAvatar}>
+            {getInitials(comment.name || comment.author)}
+          </div>
+          <div className={styles.commentMeta}>
+            <div className={styles.commentAuthor}>
+              {comment.name || comment.author || 'Anonyme'}
+            </div>
+            <div className={styles.commentDate}>
+              {formatDate(comment.created_at || comment.createdAt)}
+            </div>
+          </div>
         </div>
-      )}
-    </div>
-  );
+        <div className={styles.commentBody}>
+          {comment.message || comment.content || comment.text}
+        </div>
+        
+        <div className={styles.commentActions}>
+          {isAuthenticated && (
+            <button
+              onClick={() => handleReplyClick(comment.id)}
+              className={styles.replyButton}
+            >
+              Répondre
+            </button>
+          )}
+          
+          {hasReplies && (
+            <button
+              onClick={() => toggleReplies(comment.id)}
+              className={styles.showRepliesButton}
+            >
+              {repliesExpanded ? 'Masquer' : `Afficher ${comment.replies.length}`} {comment.replies.length > 1 ? 'réponses' : 'réponse'}
+            </button>
+          )}
+        </div>
+
+        {/* Formulaire de réponse - apparaît ici */}
+        {isReplying && (
+          <div className={styles.replyForm}>
+            <h4>Répondre à {comment.name || comment.author}</h4>
+            <p className={styles.formUserInfo}>
+              Commenter en tant que <strong>{user?.name}</strong>
+            </p>
+            <textarea
+              name="message"
+              value={commentFormData.message}
+              onChange={handleCommentFormChange}
+              required
+              rows="4"
+              className={styles.textarea}
+              placeholder="Écrivez votre réponse..."
+            />
+            <div className={styles.formActions}>
+              <button
+                type="button"
+                onClick={handleCancelReply}
+                className={styles.cancelButton}
+                disabled={submittingComment}
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={handleCommentSubmit}
+                className={styles.submitButton}
+                disabled={submittingComment}
+              >
+                {submittingComment ? 'Publication...' : 'Publier'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Affichage des réponses */}
+        {hasReplies && repliesExpanded && (
+          <div className={styles.repliesContainer}>
+            {comment.replies.map(reply => (
+              <div key={reply.id} className={styles.replyItem}>
+                <div className={styles.commentHeader}>
+                  <div className={styles.commentAvatar}>
+                    {getInitials(reply.name || reply.author)}
+                  </div>
+                  <div className={styles.commentMeta}>
+                    <div className={styles.commentAuthor}>
+                      {reply.name || reply.author || 'Anonyme'}
+                    </div>
+                    <div className={styles.commentDate}>
+                      {formatDate(reply.created_at || reply.createdAt)}
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.commentBody}>
+                  {reply.message || reply.content || reply.text}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   if (!article) {
     return (
@@ -288,7 +361,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
         <main className={styles.mainContent}>
           {/* Article */}
           <article className={styles.articleCard}>
-            {/* Image hero */}
             {article.image && (
               <div className={styles.imageContainer}>
                 <img 
@@ -301,7 +373,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
               </div>
             )}
 
-            {/* Métadonnées */}
             <div className={styles.metadata}>
               {article.tags && article.tags.length > 0 && (
                 <div className={styles.tags}>
@@ -340,15 +411,12 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
               </div>
             </div>
 
-            {/* Titre */}
             <h1 className={styles.title}>{article.title}</h1>
 
-            {/* Extrait */}
             {article.excerpt && (
               <div className={styles.excerpt}>{article.excerpt}</div>
             )}
 
-            {/* Contenu */}
             <div className={styles.content}>
               <div dangerouslySetInnerHTML={{ 
                 __html: formatContent(article.content) 
@@ -375,7 +443,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
               )}
             </div>
 
-            {/* Message connexion */}
             {!isAuthenticated && (
               <div className={styles.loginPrompt}>
                 <p><strong>Vous devez être connecté pour commenter</strong></p>
@@ -387,43 +454,42 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
               </div>
             )}
 
-            {/* Formulaire */}
-            {showCommentForm && isAuthenticated && (
+            {/* Formulaire commentaire principal (en haut) */}
+            {showCommentForm && isAuthenticated && !replyingTo && (
               <div className={styles.commentForm}>
-                <h3>
-                  {replyingTo ? 'Répondre au commentaire' : 'Laisser un commentaire'}
-                </h3>
-                <div>
-                  <p className={styles.formUserInfo}>
-                    Commenter en tant que <strong>{user?.name}</strong>
-                  </p>
-                  <textarea
-                    name="message"
-                    value={commentFormData.message}
-                    onChange={handleCommentFormChange}
-                    required
-                    rows="5"
-                    className={styles.textarea}
-                    placeholder={replyingTo ? "Écrivez votre réponse..." : "Partagez votre commentaire..."}
-                  />
-                  <div className={styles.formActions}>
-                    <button
-                      type="button"
-                      onClick={handleCancelReply}
-                      className={styles.cancelButton}
-                      disabled={submittingComment}
-                    >
-                      Annuler
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCommentSubmit}
-                      className={styles.submitButton}
-                      disabled={submittingComment}
-                    >
-                      {submittingComment ? 'Publication...' : 'Publier'}
-                    </button>
-                  </div>
+                <h3>Laisser un commentaire</h3>
+                <p className={styles.formUserInfo}>
+                  Commenter en tant que <strong>{user?.name}</strong>
+                </p>
+                <textarea
+                  name="message"
+                  value={commentFormData.message}
+                  onChange={handleCommentFormChange}
+                  required
+                  rows="5"
+                  className={styles.textarea}
+                  placeholder="Partagez votre commentaire..."
+                />
+                <div className={styles.formActions}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCommentForm(false);
+                      setCommentFormData({ message: '' });
+                    }}
+                    className={styles.cancelButton}
+                    disabled={submittingComment}
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCommentSubmit}
+                    className={styles.submitButton}
+                    disabled={submittingComment}
+                  >
+                    {submittingComment ? 'Publication...' : 'Publier'}
+                  </button>
                 </div>
               </div>
             )}
@@ -438,7 +504,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
                 <>
                   {visibleComments.map(comment => renderComment(comment))}
                   
-                  {/* Bouton Voir plus */}
                   {hasMoreComments && (
                     <button 
                       onClick={handleLoadMoreComments}
@@ -492,7 +557,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
             </div>
           </div>
 
-          {/* CTA Card */}
           <div className={styles.ctaCard}>
             <h4 className={styles.ctaTitle}>Soutenez notre action</h4>
             <p className={styles.ctaText}>

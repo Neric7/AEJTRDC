@@ -19,12 +19,14 @@ use App\Http\Controllers\API\PartnerController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// News - Routes publiques
-Route::get('/news', [NewsController::class, 'index']);
-Route::get('/news/tag/{tag}', [NewsController::class, 'getByTag']);
-Route::get('/news/categories', [NewsController::class, 'categories']);
-Route::get('/news/tags', [NewsController::class, 'tags']);
-Route::get('/news/{id}', [NewsController::class, 'show']);
+// News - Routes PROTÉGÉES (nécessite connexion)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/news', [NewsController::class, 'index']);
+    Route::get('/news/tag/{tag}', [NewsController::class, 'getByTag']);
+    Route::get('/news/categories', [NewsController::class, 'categories']);
+    Route::get('/news/tags', [NewsController::class, 'tags']);
+    Route::get('/news/{id}', [NewsController::class, 'show']);
+});
 
 // Commentaires - Lecture publique UNIQUEMENT
 Route::get('/news/{newsId}/comments', [CommentController::class, 'index']);

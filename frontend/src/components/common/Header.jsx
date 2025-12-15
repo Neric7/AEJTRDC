@@ -49,12 +49,30 @@ export default function Header() {
 
   const { i18n } = useTranslation();
 
-  // Langues disponibles avec drapeaux emoji
+  // Langues disponibles avec drapeaux SVG
+  // Placez vos fichiers SVG dans: /src/assets/images/flags/
+  // Nommez-les: fr.svg, en.svg, sw.svg, ln.svg
   const languages = [
-    { code: 'fr', name: 'Français', flag: '🇨🇩' },
-    { code: 'en', name: 'English', flag: '🇨🇩' },
-    { code: 'sw', name: 'Swahili', flag: '🇨🇩' },
-    { code: 'ln', name: 'Lingala', flag: '🇨🇩' }
+    { 
+      code: 'fr', 
+      name: 'Français', 
+      flag: '/src/assets/images/flags/fr.svg' 
+    },
+    { 
+      code: 'en', 
+      name: 'English', 
+      flag: '/src/assets/images/flags/en.svg' 
+    },
+    { 
+      code: 'sw', 
+      name: 'Swahili', 
+      flag: '/src/assets/images/flags/globe.svg' 
+    },
+    { 
+      code: 'ln', 
+      name: 'Lingala', 
+      flag: '/src/assets/images/flags/globe.svg' 
+    }
   ];
 
   // Initialisation de la langue au chargement du composant
@@ -254,7 +272,7 @@ export default function Header() {
 
           {/* Boutons CTA Desktop */}
           <div className={styles.actions}>
-            {/* Sélecteur de langue */}
+            {/* Sélecteur de langue avec drapeaux SVG */}
             <div className={styles.langMenu} ref={langMenuRef}>
               <button
                 className={styles.langButton}
@@ -262,7 +280,11 @@ export default function Header() {
                 aria-label="Changer de langue"
                 title={currentLanguage?.name || 'Langue'}
               >
-                <span className={styles.flagEmoji}>{currentLanguage?.flag || '🌐'}</span>
+                <img 
+                  src={currentLanguage?.flag} 
+                  alt={currentLanguage?.name}
+                  className={styles.flagImage}
+                />
                 <FaChevronDown 
                   size={10} 
                   className={isLangMenuOpen ? styles.chevronRotated : ''}
@@ -276,7 +298,11 @@ export default function Header() {
                       className={`${styles.langDropdownItem} ${currentLang === lang.code ? styles.langDropdownItemActive : ''}`}
                       onClick={() => handleLanguageChange(lang.code)}
                     >
-                      <span className={styles.flagEmoji}>{lang.flag}</span>
+                      <img 
+                        src={lang.flag} 
+                        alt={lang.name}
+                        className={styles.flagImage}
+                      />
                       <span>{lang.name}</span>
                     </button>
                   ))}
@@ -387,7 +413,7 @@ export default function Header() {
         {/* Menu Mobile */}
         {isMenuOpen && (
           <div className={styles.mobileMenu}>
-            {/* Sélecteur de langue mobile */}
+            {/* Sélecteur de langue mobile avec SVG */}
             <div className={styles.mobileLangSection}>
               <span className={styles.mobileLangLabel}>Langue:</span>
               <div className={styles.mobileLangButtons}>
@@ -398,7 +424,11 @@ export default function Header() {
                     onClick={() => handleLanguageChange(lang.code)}
                     title={lang.name}
                   >
-                    <span className={styles.flagEmoji}>{lang.flag}</span>
+                    <img 
+                      src={lang.flag} 
+                      alt={lang.name}
+                      className={styles.flagImage}
+                    />
                     <span className={styles.mobileLangCode}>{lang.code.toUpperCase()}</span>
                   </button>
                 ))}

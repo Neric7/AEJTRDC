@@ -6,13 +6,38 @@ use App\Http\Controllers\Controller;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log; // Ajout pour utiliser Log::error au lieu de \Log::error
 
 class NewsController extends Controller
 {
+    /**
+     * NOTE IMPORTANTE DE CORRECTION:
+     * Le constructeur a été supprimé pour éviter les erreurs "Call to undefined method middleware()"
+     * et "Cannot call constructor".
+     * L'application des middlewares (comme auth:sanctum) doit désormais se faire
+     * dans le fichier de routage 'backend/routes/api.php'.
+     *
+     * Les méthodes 'index', 'show', 'getByTag' ont été modifiées pour vérifier si
+     * la requête a un utilisateur, en supposant qu'elles sont dans un groupe de routes
+     * protégé par le middleware 'auth:sanctum'.
+     */
+
     // Liste toutes les actualités avec pagination
     public function index(Request $request)
     {
         try {
+            // L'authentification est gérée par le middleware dans routes/api.php
+            // Cependant, nous vérifions toujours l'utilisateur pour l'inclure dans la réponse si nécessaire
+            $user = $request->user();
+
+            if (!$user) {
+                // Cette réponse est un filet de sécurité, mais le middleware devrait intercepter avant.
+                return response()->json([
+                    'message' => 'Authentification requise pour accéder à cette ressource.',
+                    'requires_auth' => true
+                ], 401);
+            }
+
             $pageSize = (int) $request->input('pageSize', 10);
             $limit = (int) $request->input('limit', 0);
             $category = $request->input('category');
@@ -53,11 +78,19 @@ class NewsController extends Controller
             }
 
             $news = $query->orderBy($sort, $order === 'asc' ? 'asc' : 'desc')
-                         ->paginate($pageSize);
+                          ->paginate($pageSize);
 
-            return response()->json($news);
+            // Ajouter des métadonnées utilisateur dans la réponse
+            $response = $news->toArray();
+            $response['user'] = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ];
+
+            return response()->json($response);
         } catch (\Exception $e) {
-            \Log::error('Error in NewsController@index: ' . $e->getMessage());
+            Log::error('Error in NewsController@index: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'message' => 'Erreur lors du chargement des actualités',
                 'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
@@ -66,10 +99,19 @@ class NewsController extends Controller
     }
 
     // Obtenir une actualité par ID ou slug
-    public function show($identifier)
+    public function show(Request $request, $identifier)
     {
         try {
-            // Vérifier si la table comments existe
+            $user = $request->user();
+            
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Authentification requise pour lire cette actualité.',
+                    'requires_auth' => true
+                ], 401);
+            }
+
+            // Le reste du code de 'show' est inchangé...
             $hasComments = Schema::hasTable('comments');
 
             $newsQuery = News::query();
@@ -118,6 +160,10 @@ class NewsController extends Controller
                 'views' => $news->views,
                 'created_at' => optional($news->created_at)->format('Y-m-d H:i:s'),
                 'comments' => [],
+                'viewer' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ],
             ];
 
             // Ajouter les commentaires si disponibles
@@ -146,8 +192,7 @@ class NewsController extends Controller
 
             return response()->json($response);
         } catch (\Exception $e) {
-            \Log::error('Error in NewsController@show: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
+            Log::error('Error in NewsController@show: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json([
                 'message' => 'Erreur lors du chargement de l\'actualité',
                 'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
@@ -156,17 +201,26 @@ class NewsController extends Controller
     }
 
     // Obtenir les actualités par tag
-    public function getByTag($tag)
+    public function getByTag(Request $request, $tag)
     {
         try {
+            $user = $request->user();
+            
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Authentification requise pour charger les actualités par tag.',
+                    'requires_auth' => true
+                ], 401);
+            }
+
             $news = News::where('status', 'published')
-                       ->whereJsonContains('tags', $tag)
-                       ->orderBy('published_at', 'desc')
-                       ->paginate(9);
+                         ->whereJsonContains('tags', $tag)
+                         ->orderBy('published_at', 'desc')
+                         ->paginate(9);
 
             return response()->json($news);
         } catch (\Exception $e) {
-            \Log::error('Error in NewsController@getByTag: ' . $e->getMessage());
+            Log::error('Error in NewsController@getByTag: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Erreur lors du chargement des actualités',
                 'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
@@ -174,7 +228,7 @@ class NewsController extends Controller
         }
     }
 
-    // Obtenir les catégories disponibles
+    // Obtenir les catégories disponibles (devrait être PUBLIC)
     public function categories()
     {
         try {
@@ -189,7 +243,7 @@ class NewsController extends Controller
 
             return response()->json(['categories' => $categories]);
         } catch (\Exception $e) {
-            \Log::error('Error in NewsController@categories: ' . $e->getMessage());
+            Log::error('Error in NewsController@categories: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Erreur lors du chargement des catégories',
                 'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
@@ -197,21 +251,21 @@ class NewsController extends Controller
         }
     }
 
-    // Obtenir les tags disponibles
+    // Obtenir les tags disponibles (devrait être PUBLIC)
     public function tags()
     {
         try {
             $allTags = News::where('status', 'published')
-                          ->whereNotNull('tags')
-                          ->get()
-                          ->pluck('tags')
-                          ->flatten()
-                          ->unique()
-                          ->values();
+                            ->whereNotNull('tags')
+                            ->get()
+                            ->pluck('tags')
+                            ->flatten()
+                            ->unique()
+                            ->values();
 
             return response()->json(['tags' => $allTags]);
         } catch (\Exception $e) {
-            \Log::error('Error in NewsController@tags: ' . $e->getMessage());
+            Log::error('Error in NewsController@tags: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Erreur lors du chargement des tags',
                 'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'

@@ -1,50 +1,76 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './ImageCarousel.module.css';
 
 export default function ImageCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const timerRef = useRef(null); // Pour stocker le timer
 
   const slides = [
     {
-      image: '/src/assets/images/carousel/activity-1.webp',
+      image: '/src/assets/images/carousel/protect.jpg',
       title: 'Protection de l\'enfance',
       description: 'Accompagnement des enfants travailleurs vers un avenir meilleur'
     },
     {
-      image: '/src/assets/images/carousel/activity-2.webp',
+      image: '/src/assets/images/carousel/education.jpg',
       title: 'Éducation et formation',
       description: 'Accès à l\'éducation pour tous les enfants de la RDC'
     },
     {
-      image: '/src/assets/images/carousel/activity-3.webp',
+      image: '/src/assets/images/carousel/sante.jpg',
       title: 'Santé communautaire',
       description: 'Des soins de santé accessibles pour les communautés vulnérables'
     },
     {
-      image: '/src/assets/images/carousel/activity-4.webp',
+      image: '/src/assets/images/carousel/insert.jpeg',
       title: 'Insertion socio-économique',
       description: 'Formation professionnelle et appui à l\'entrepreneuriat'
     }
   ];
 
-  useEffect(() => {
-    const timer = setInterval(() => {
+  // Fonction pour démarrer le timer
+  const startTimer = () => {
+    // Nettoyer l'ancien timer s'il existe
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+
+    // Créer un nouveau timer
+    timerRef.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
+  };
 
-    return () => clearInterval(timer);
+  // Démarrer le timer au montage du composant
+  useEffect(() => {
+    startTimer();
+
+    // Nettoyer le timer au démontage
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
   }, [slides.length]);
 
+  // Fonction pour changer de slide et réinitialiser le timer
+  const changeSlide = (newIndex) => {
+    setCurrentSlide(newIndex);
+    startTimer(); // Réinitialiser le timer
+  };
+
   const goToSlide = (index) => {
-    setCurrentSlide(index);
+    changeSlide(index);
   };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    const newIndex = (currentSlide + 1) % slides.length;
+    changeSlide(newIndex);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    const newIndex = (currentSlide - 1 + slides.length) % slides.length;
+    changeSlide(newIndex);
   };
 
   return (
