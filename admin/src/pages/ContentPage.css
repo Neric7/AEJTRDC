@@ -1,10 +1,11 @@
-/* Content Page Container */
+/* Content Page Container - FIX HEIGHT */
 .content-container {
-  padding: 2rem;
+  padding: 1.5rem;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Important: empêche le scroll global */
+  overflow: hidden; /* Empêche le scroll global */
+  box-sizing: border-box;
 }
 
 /* Header Section - RESTE FIXE */
@@ -12,13 +13,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   flex-shrink: 0; /* Empêche le header de rétrécir */
 }
 
 .content-header h1 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.875rem;
+  margin: 0 0 0.25rem 0;
+  font-size: 1.75rem;
   color: #1f2937;
 }
 
@@ -32,7 +33,7 @@
 .content-filters {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   flex-shrink: 0; /* Empêche les filtres de rétrécir */
 }
 
@@ -40,7 +41,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 1rem;
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -59,7 +60,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 1rem;
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -73,22 +74,23 @@
   background: transparent;
 }
 
-/* Card Container - SCROLLABLE */
+/* Card Container - PREND L'ESPACE RESTANT */
 .card {
   background: white;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   flex: 1; /* Prend tout l'espace restant */
+  min-height: 0; /* Important pour que flex fonctionne correctement */
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Important pour le scroll interne */
 }
 
-/* Table Container - ZONE SCROLLABLE */
+/* Table Container - SEULE ZONE SCROLLABLE */
 .table-container {
   flex: 1;
-  overflow-y: auto; /* Active le scroll vertical */
-  overflow-x: auto; /* Scroll horizontal si nécessaire */
+  overflow-y: auto; /* Active le scroll vertical uniquement ici */
+  overflow-x: auto; /* Scroll horizontal si tableau trop large */
 }
 
 /* Table */
@@ -98,24 +100,24 @@
 }
 
 .table thead {
-  position: sticky; /* Garde le header du tableau visible */
+  position: sticky; /* Garde le header du tableau visible pendant le scroll */
   top: 0;
   background: #f9fafb;
   z-index: 10;
 }
 
 .table thead th {
-  padding: 1rem;
+  padding: 0.85rem 1rem;
   text-align: left;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   color: #6b7280;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .table tbody td {
-  padding: 1rem;
+  padding: 0.85rem 1rem;
   font-size: 0.875rem;
   color: #1f2937;
   border-bottom: 1px solid #f3f4f6;
@@ -132,6 +134,7 @@
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .status-published {
@@ -172,6 +175,7 @@
   font-size: 0.75rem;
   font-weight: 500;
   text-transform: capitalize;
+  white-space: nowrap;
 }
 
 .type-ong {
@@ -208,14 +212,15 @@
 .action-buttons {
   display: flex;
   gap: 0.5rem;
+  justify-content: flex-end;
 }
 
 .action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -270,7 +275,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.65rem 1.25rem;
   background: #3b82f6;
   color: white;
   border: none;
@@ -279,6 +284,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .btn-primary:hover {
@@ -292,7 +298,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem;
+  padding: 3rem;
   color: #6b7280;
 }
 
@@ -314,9 +320,14 @@
 
 /* No Data */
 .no-data {
-  padding: 4rem;
+  padding: 3rem;
   text-align: center;
   color: #6b7280;
+}
+
+.no-data p {
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 /* Modal Overlay */
@@ -332,50 +343,18 @@
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .modal-content {
   width: 100%;
   max-width: 900px;
   max-height: 90vh;
-  overflow: hidden;
+  overflow-y: auto;
+  margin: auto;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .content-container {
-    padding: 1rem;
-  }
-
-  .content-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .content-filters {
-    flex-direction: column;
-  }
-
-  .search-box {
-    max-width: 100%;
-  }
-
-  .table {
-    font-size: 0.75rem;
-  }
-
-  .table thead th,
-  .table tbody td {
-    padding: 0.75rem 0.5rem;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-  }
-}
-
-/* Scrollbar personnalisée (optionnel mais joli) */
+/* Scrollbar personnalisée */
 .table-container::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -393,4 +372,94 @@
 
 .table-container::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .content-container {
+    padding: 1.25rem;
+  }
+
+  .content-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    padding: 1rem;
+    height: 100vh;
+  }
+
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .content-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .content-filters {
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .table {
+    font-size: 0.75rem;
+  }
+
+  .table thead th,
+  .table tbody td {
+    padding: 0.65rem 0.5rem;
+  }
+
+  .action-buttons {
+    gap: 0.35rem;
+  }
+
+  .action-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-container {
+    padding: 0.75rem;
+  }
+
+  .content-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .content-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .content-header p {
+    font-size: 0.8rem;
+  }
+
+  .table thead th {
+    font-size: 0.7rem;
+    padding: 0.5rem 0.35rem;
+  }
+
+  .table tbody td {
+    font-size: 0.7rem;
+    padding: 0.5rem 0.35rem;
+  }
+
+  .status-badge,
+  .type-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
 }

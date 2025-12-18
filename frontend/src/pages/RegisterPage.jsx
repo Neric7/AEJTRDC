@@ -61,7 +61,7 @@ export default function RegisterPage() {
       <div className={styles.leftPanel}>
         <div className={styles.logoSection}>
           <div className={styles.logoCircle}>
-            <img src="/logo.png" alt="AEJT-RDC" className={styles.logoImage} />
+            <img src="/src/assets/images/logo/logo.png" alt="AEJT-RDC" className={styles.logoImage} />
           </div>
         </div>
 
@@ -107,38 +107,42 @@ export default function RegisterPage() {
           {error && <div className={styles.error}>{error}</div>}
 
           <form onSubmit={handleSubmit} className={styles.form}>
-            <div className={styles.formGroup}>
-              <label htmlFor="name" className={styles.label}>
-                Nom complet
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                className={styles.input}
-                placeholder="Votre nom complet"
-                value={formData.name}
-                onChange={handleChange}
-              />
+            {/* Première ligne : Nom et Email */}
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="name" className={styles.label}>
+                  Nom complet
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  className={styles.input}
+                  placeholder="Votre nom complet"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="email" className={styles.label}>
+                  Adresse e-mail
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  className={styles.input}
+                  placeholder="exemple@email.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
-            <div className={styles.formGroup}>
-              <label htmlFor="email" className={styles.label}>
-                Adresse e-mail
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className={styles.input}
-                placeholder="exemple@email.com"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-
+            {/* Deuxième ligne : Téléphone */}
             <div className={styles.formGroup}>
               <label htmlFor="phone" className={styles.label}>
                 Téléphone <span className={styles.optional}>(optionnel)</span>
@@ -154,37 +158,40 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className={styles.formGroup}>
-              <label htmlFor="password" className={styles.label}>
-                Mot de passe
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                minLength={8}
-                className={styles.input}
-                placeholder="Minimum 8 caractères"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
+            {/* Troisième ligne : Mots de passe */}
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="password" className={styles.label}>
+                  Mot de passe
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  minLength={8}
+                  className={styles.input}
+                  placeholder="Minimum 8 caractères"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
 
-            <div className={styles.formGroup}>
-              <label htmlFor="password_confirmation" className={styles.label}>
-                Confirmer le mot de passe
-              </label>
-              <input
-                id="password_confirmation"
-                name="password_confirmation"
-                type="password"
-                required
-                className={styles.input}
-                placeholder="Retapez votre mot de passe"
-                value={formData.password_confirmation}
-                onChange={handleChange}
-              />
+              <div className={styles.formGroup}>
+                <label htmlFor="password_confirmation" className={styles.label}>
+                  Confirmer le mot de passe
+                </label>
+                <input
+                  id="password_confirmation"
+                  name="password_confirmation"
+                  type="password"
+                  required
+                  className={styles.input}
+                  placeholder="Retapez votre mot de passe"
+                  value={formData.password_confirmation}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
             <button type="submit" className={styles.submitBtn} disabled={submitting}>

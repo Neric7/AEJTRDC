@@ -45,7 +45,7 @@ export default function LoginPage() {
       <div className={styles.leftPanel}>
         <div className={styles.logoSection}>
           <div className={styles.logoCircle}>
-            <img src="/logo.png" alt="AEJT-RDC" className={styles.logoImage} />
+            <img src="/src/assets/images/logo/logo.png" alt="AEJT-RDC" className={styles.logoImage} />
           </div>
         </div>
 
