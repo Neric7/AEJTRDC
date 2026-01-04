@@ -28,10 +28,12 @@ class DomainController extends Controller
             ->map(function ($domain) {
                 return [
                     'id' => $domain->id,
+                    'name' => $domain->titre,  // ✅ Alias pour compatibilité frontend
                     'titre' => $domain->titre,
                     'slug' => $domain->slug,
                     'image' => $domain->image_url,
                     'description_courte' => $domain->description_courte,
+                    'description' => $domain->description_courte,  // ✅ Alias
                     'icon' => $domain->icon,
                     'ordre' => $domain->ordre,
                 ];
@@ -61,10 +63,12 @@ class DomainController extends Controller
             'success' => true,
             'data' => [
                 'id' => $domain->id,
+                'name' => $domain->titre,  // ✅ Alias
                 'titre' => $domain->titre,
                 'slug' => $domain->slug,
                 'image' => $domain->image_url,
                 'description_courte' => $domain->description_courte,
+                'description' => $domain->description_courte,  // ✅ Alias
                 'contenu' => $domain->contenu,
                 'icon' => $domain->icon,
             ]
@@ -89,10 +93,12 @@ class DomainController extends Controller
             'success' => true,
             'data' => [
                 'id' => $domain->id,
+                'name' => $domain->titre,  // ✅ Alias
                 'titre' => $domain->titre,
                 'slug' => $domain->slug,
                 'image' => $domain->image_url,
                 'description_courte' => $domain->description_courte,
+                'description' => $domain->description_courte,  // ✅ Alias
                 'contenu' => $domain->contenu,
                 'icon' => $domain->icon,
             ]
@@ -111,8 +117,10 @@ class DomainController extends Controller
             ->map(function ($domain) {
                 return [
                     'id' => $domain->id,
+                    'name' => $domain->titre,  // ✅ Alias
                     'titre' => $domain->titre,
                     'slug' => $domain->slug,
+                    'icon' => $domain->icon,
                 ];
             });
 
@@ -139,10 +147,12 @@ class DomainController extends Controller
             ->map(function ($domain) {
                 return [
                     'id' => $domain->id,
+                    'name' => $domain->titre,  // ✅ Alias
                     'titre' => $domain->titre,
                     'slug' => $domain->slug,
                     'image' => $domain->image_url,
                     'description_courte' => $domain->description_courte,
+                    'description' => $domain->description_courte,  // ✅ Alias
                     'contenu' => $domain->contenu,
                     'icon' => $domain->icon,
                     'ordre' => $domain->ordre,
@@ -176,10 +186,12 @@ class DomainController extends Controller
             'success' => true,
             'data' => [
                 'id' => $domain->id,
+                'name' => $domain->titre,  // ✅ Alias
                 'titre' => $domain->titre,
                 'slug' => $domain->slug,
                 'image' => $domain->image_url,
                 'description_courte' => $domain->description_courte,
+                'description' => $domain->description_courte,  // ✅ Alias
                 'contenu' => $domain->contenu,
                 'icon' => $domain->icon,
                 'ordre' => $domain->ordre,
@@ -224,7 +236,13 @@ class DomainController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Domaine créé avec succès',
-            'data' => $domain
+            'data' => [
+                'id' => $domain->id,
+                'name' => $domain->titre,  // ✅ Alias
+                'titre' => $domain->titre,
+                'slug' => $domain->slug,
+                'icon' => $domain->icon,
+            ]
         ], 201);
     }
 
@@ -275,7 +293,13 @@ class DomainController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Domaine mis à jour avec succès',
-            'data' => $domain
+            'data' => [
+                'id' => $domain->id,
+                'name' => $domain->titre,  // ✅ Alias
+                'titre' => $domain->titre,
+                'slug' => $domain->slug,
+                'icon' => $domain->icon,
+            ]
         ]);
     }
 

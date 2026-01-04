@@ -16,8 +16,10 @@ class DatabaseSeeder extends Seeder
             CommentSeeder::class,
             AdminSeeder::class,
             DomainSeeder::class,
+            ProjectSeeder::class,
+            JobSeeder::class,
+            PartnerSeeder::class,
             // TeamSeeder::class,
-            // PartnerSeeder::class,
         ]);
         
         $this->command->info('Database seeded successfully!');

@@ -385,3 +385,86 @@ code {
   --gray-600: #4b5563;
   --gray-700: #374151;
 }
+
+/* ============================================
+   AJOUTS POUR JOBEDITOR
+   À ajouter à la fin de Editor.css
+   ============================================ */
+
+/* Champs dynamiques (requirements, responsibilities) */
+.dynamic-field {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  align-items: flex-start;
+}
+
+.dynamic-field .form-input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.dynamic-field-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.btn-icon:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-icon.btn-danger {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-icon.btn-danger:hover:not(:disabled) {
+  background: #fecaca;
+  color: #b91c1c;
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Amélioration responsive pour champs dynamiques */
+@media (max-width: 768px) {
+  .dynamic-field {
+    flex-direction: column;
+  }
+
+  .dynamic-field-actions {
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .btn-icon {
+    width: 100%;
+    justify-content: center;
+  }
+}

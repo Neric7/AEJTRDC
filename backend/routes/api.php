@@ -6,8 +6,14 @@ use App\Http\Controllers\API\CommentController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\AdminAuthController;
 use App\Http\Controllers\API\AdminNewsController;
+use App\Http\Controllers\API\AdminProjectController;
 use App\Http\Controllers\API\DomainController;
 use App\Http\Controllers\API\PartnerController;
+use App\Http\Controllers\API\ProjectController;
+use App\Http\Controllers\API\DashboardController;
+use App\Http\Controllers\API\VolunteerController;
+use App\Http\Controllers\API\AdminJobController;
+use App\Http\Controllers\API\JobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +32,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/news/categories', [NewsController::class, 'categories']);
     Route::get('/news/tags', [NewsController::class, 'tags']);
     Route::get('/news/{id}', [NewsController::class, 'show']);
+});
+
+// 🎯 PROJECTS - Routes PROTÉGÉES (nécessite connexion)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/projects', [ProjectController::class, 'index']);
+    Route::get('/projects/featured', [ProjectController::class, 'featured']);
+    Route::get('/projects/statuses', [ProjectController::class, 'statuses']);
+    Route::get('/projects/domain/{domainId}', [ProjectController::class, 'getByDomain']);
+    Route::get('/projects/{identifier}', [ProjectController::class, 'show']);
 });
 
 // Commentaires - Lecture publique UNIQUEMENT
@@ -59,6 +74,9 @@ Route::prefix('partners')->group(function () {
     Route::get('/{identifier}', [PartnerController::class, 'show']);
 });
 
+// 🙋 Route publique pour soumettre une candidature bénévole (FRONTEND)
+Route::post('/volunteers', [VolunteerController::class, 'store']);
+
 /*
 |--------------------------------------------------------------------------
 | API Routes - Admin
@@ -74,7 +92,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout']);
         Route::get('/user', [AdminAuthController::class, 'user']);
         
-        // Gestion des actualités
+        // ========== GESTION DES ACTUALITÉS ==========
         Route::get('/news', [AdminNewsController::class, 'index']);
         Route::get('/news/{id}', [AdminNewsController::class, 'show']);
         Route::post('/news', [AdminNewsController::class, 'store']);
@@ -84,12 +102,25 @@ Route::prefix('admin')->group(function () {
         Route::post('/news/{id}/unpublish', [AdminNewsController::class, 'unpublish']);
         Route::post('/news/{id}/image', [AdminNewsController::class, 'uploadImage']);
         
-        // Gestion des commentaires (admin peut modérer)
+        // ========== GESTION DES PROJETS (Admin) ==========
+        Route::get('/projects', [AdminProjectController::class, 'index']);
+        Route::get('/projects/statistics', [AdminProjectController::class, 'statistics']);
+        Route::get('/projects/{id}', [AdminProjectController::class, 'show']);
+        Route::post('/projects', [AdminProjectController::class, 'store']);
+        Route::put('/projects/{id}', [AdminProjectController::class, 'update']);
+        Route::delete('/projects/{id}', [AdminProjectController::class, 'destroy']);
+        Route::post('/projects/{id}/publish', [AdminProjectController::class, 'publish']);
+        Route::post('/projects/{id}/unpublish', [AdminProjectController::class, 'unpublish']);
+        Route::post('/projects/{id}/toggle-featured', [AdminProjectController::class, 'toggleFeatured']);
+        Route::post('/projects/{id}/image', [AdminProjectController::class, 'uploadImage']);
+        Route::post('/projects/{id}/images', [AdminProjectController::class, 'uploadImages']);
+        
+        // ========== GESTION DES COMMENTAIRES ==========
         Route::get('/comments', [CommentController::class, 'indexAll']);
         Route::put('/comments/{id}/approve', [CommentController::class, 'approve']);
         Route::put('/comments/{id}/reject', [CommentController::class, 'reject']);
         
-        // 🎯 DOMAINES D'INTERVENTION
+        // ========== DOMAINES D'INTERVENTION ==========
         Route::get('/domains', [DomainController::class, 'adminIndex']);
         Route::get('/domains/{id}', [DomainController::class, 'adminShow']);
         Route::post('/domains', [DomainController::class, 'store']);
@@ -97,7 +128,7 @@ Route::prefix('admin')->group(function () {
         Route::delete('/domains/{id}', [DomainController::class, 'destroy']);
         Route::post('/domains/{id}/toggle-status', [DomainController::class, 'toggleStatus']);
         
-        // 🎯 PARTENAIRES
+        // ========== PARTENAIRES ==========
         Route::get('/partners', [PartnerController::class, 'index']);
         Route::get('/partners/{id}', [PartnerController::class, 'show']);
         Route::post('/partners', [PartnerController::class, 'store']);
@@ -105,81 +136,50 @@ Route::prefix('admin')->group(function () {
         Route::delete('/partners/{id}', [PartnerController::class, 'destroy']);
         Route::post('/partners/{id}/upload-logo', [PartnerController::class, 'uploadLogo']);
         
-        // Dashboard stats
-        Route::get('/dashboard/stats', function () {
-            return response()->json([
-                'projects' => 12,
-                'news' => \App\Models\News::count(),
-                'domains' => \App\Models\Domain::count(),
-                'volunteers' => 87,
-                'donations' => 15420,
-                'activeAlerts' => 2,
-            ]);
-        });
+        // ========== BÉNÉVOLES ==========
+        Route::get('/volunteers', [VolunteerController::class, 'index']);
+        Route::get('/volunteers/stats', [VolunteerController::class, 'stats']);
+        Route::get('/volunteers/{id}', [VolunteerController::class, 'show']);
+        Route::put('/volunteers/{id}/status', [VolunteerController::class, 'updateStatus']);
+        Route::delete('/volunteers/{id}', [VolunteerController::class, 'destroy']);
         
-        Route::get('/dashboard/activities', function () {
-            return response()->json([
-                ['description' => 'Nouvelle actualité publiée', 'time' => 'Il y a 2 heures'],
-                ['description' => 'Projet mis à jour', 'time' => 'Il y a 5 heures'],
-                ['description' => 'Nouveau don reçu: 500€', 'time' => 'Il y a 1 jour'],
-                ['description' => 'Nouveau bénévole inscrit', 'time' => 'Il y a 2 jours'],
-            ]);
-        });
+        // ========== DASHBOARD STATS ==========
+        Route::get('/dashboard/stats', [DashboardController::class, 'getStats']);
+        Route::get('/dashboard/activities', [DashboardController::class, 'getRecentActivities']);
     });
 });
 
 /*
 |--------------------------------------------------------------------------
-| Routes de test (à supprimer en production)
+| JOBS - Routes PUBLIQUES (Frontend)
 |--------------------------------------------------------------------------
 */
-Route::get('/test-storage', function () {
-    $results = [
-        'storage_link_exists' => is_link(public_path('storage')),
-        'storage_path' => storage_path('app/public'),
-        'public_path' => public_path('storage'),
-        'app_url' => config('app.url'),
-        'test_file_exists' => file_exists(storage_path('app/public/news')),
-    ];
-    
-    if (!file_exists(storage_path('app/public/news'))) {
-        mkdir(storage_path('app/public/news'), 0755, true);
-    }
-    
-    file_put_contents(
-        storage_path('app/public/news/test.txt'),
-        'Test file created at ' . now()
-    );
-    
-    $results['test_file_created'] = file_exists(storage_path('app/public/news/test.txt'));
-    $results['test_url'] = url('storage/news/test.txt');
-    
-    return response()->json($results);
+
+// Routes publiques pour consulter les offres d'emploi
+Route::prefix('jobs')->group(function () {
+    Route::get('/', [JobController::class, 'index']);
+    Route::get('/featured', [JobController::class, 'featured']);
+    Route::get('/types', [JobController::class, 'types']);
+    Route::get('/open', [JobController::class, 'open']); // Offres ouvertes aux candidatures
+    Route::get('/{identifier}', [JobController::class, 'show']); // Par ID ou slug
 });
 
-Route::get('/serve-test', function () {
-    $path = storage_path('app/public/news/test.txt');
-    
-    if (!file_exists($path)) {
-        return response()->json(['error' => 'File not found'], 404);
-    }
-    
-    return response()->file($path);
-});
+/*
+|--------------------------------------------------------------------------
+| JOBS - Routes ADMIN (BackOffice)
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/list-storage', function () {
-    $files = [];
-    $path = storage_path('app/public/news');
+Route::prefix('admin')->middleware(['auth:sanctum', 'check.admin'])->group(function () {
     
-    if (is_dir($path)) {
-        $files = array_diff(scandir($path), ['.', '..']);
-    }
+    // ========== GESTION DES OFFRES D'EMPLOI ==========
+    Route::get('/jobs', [AdminJobController::class, 'index']);
+    Route::get('/jobs/statistics', [AdminJobController::class, 'statistics']);
+    Route::get('/jobs/{id}', [AdminJobController::class, 'show']);
+    Route::post('/jobs', [AdminJobController::class, 'store']);
+    Route::put('/jobs/{id}', [AdminJobController::class, 'update']);
+    Route::delete('/jobs/{id}', [AdminJobController::class, 'destroy']);
+    Route::post('/jobs/{id}/publish', [AdminJobController::class, 'publish']);
+    Route::post('/jobs/{id}/close', [AdminJobController::class, 'close']);
     
-    return response()->json([
-        'path' => $path,
-        'exists' => is_dir($path),
-        'files' => array_values($files),
-        'public_link' => public_path('storage/news'),
-        'public_link_exists' => is_dir(public_path('storage/news')),
-    ]);
 });

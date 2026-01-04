@@ -3,6 +3,7 @@ import {
   TrendingUp, 
   Users, 
   FileText, 
+  Handshake,
   Briefcase,
   DollarSign,
   AlertTriangle,
@@ -75,6 +76,13 @@ const DashboardPage = () => {
       value: stats?.volunteers || 0,
       icon: <Users size={24} />,
       color: '#f59e0b',
+      change: '+25%',
+    },
+    {
+      title: 'Partenaires',
+      value: stats?.partners || 0,
+      icon: <Handshake size={24} />,
+      color: '#ec4899',
       change: '+25%',
     },
     {

@@ -4,47 +4,38 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Domain;
+use App\Models\Partner;
+use App\Models\Project;
 use App\Models\News;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    /**
-     * Récupérer les statistiques du dashboard
-     */
     public function getStats()
     {
         try {
             $stats = [
-                'domains' => Domain::count(), // ✅ Nombre total de domaines
-                'projects' => 12, // À remplacer par Project::count() si vous avez le modèle
-                'news' => News::where('status', 'published')->count(), // ✅ Actualités publiées
-                'volunteers' => 87, // À adapter selon votre modèle
-                'donations' => 15420, // À adapter selon votre modèle
-                'activeAlerts' => 0, // À adapter selon votre modèle
+                'domains' => Domain::count(),
+                'projects' => Project::count(),
+                'news' => News::where('status', 'published')->count(),
+                'volunteers' => 87,
+                'partners' => Partner::count(),
+                'donations' => 15420,
+                'activeAlerts' => 0,
             ];
 
-            return response()->json([
-                'success' => true,
-                'data' => $stats
-            ]);
+            // Retournez directement les stats, pas dans un wrapper
+            return response()->json($stats);
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors du chargement des statistiques',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
-    /**
-     * Récupérer les activités récentes
-     */
     public function getRecentActivities()
     {
         try {
-            // Pour l'instant, données de démonstration
-            // Plus tard, vous pourrez créer un modèle Activity pour tracker les actions
             $activities = [
                 [
                     'description' => 'Nouveau domaine créé',
@@ -68,14 +59,10 @@ class DashboardController extends Controller
                 ],
             ];
 
-            return response()->json([
-                'success' => true,
-                'data' => $activities
-            ]);
+            // Retournez directement les activités
+            return response()->json($activities);
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors du chargement des activités',
                 'error' => $e->getMessage()
             ], 500);
         }

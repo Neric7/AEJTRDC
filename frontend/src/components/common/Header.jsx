@@ -9,7 +9,6 @@ import {
   FaNewspaper, 
   FaHandsHelping, 
   FaChartLine, 
-  FaGlobeAfrica, 
   FaInfoCircle, 
   FaUser,
   FaEnvelope,
@@ -29,7 +28,8 @@ import {
   FaMapMarkedAlt,
   FaUserTie,
   FaSignInAlt,
-  FaUserPlus
+  FaUserPlus,
+  FaGlobeAfrica
 } from 'react-icons/fa';
 import styles from './Header.module.css';
 import { useAuth } from '../../context/AuthContext';
@@ -49,9 +49,6 @@ export default function Header() {
 
   const { i18n } = useTranslation();
 
-  // Langues disponibles avec drapeaux SVG
-  // Placez vos fichiers SVG dans: /src/assets/images/flags/
-  // Nommez-les: fr.svg, en.svg, sw.svg, ln.svg
   const languages = [
     { 
       code: 'fr', 
@@ -75,7 +72,6 @@ export default function Header() {
     }
   ];
 
-  // Initialisation de la langue au chargement du composant
   useEffect(() => {
     if (!i18n || typeof i18n.changeLanguage !== 'function') {
       console.warn('i18n not properly initialized');
@@ -135,6 +131,7 @@ export default function Header() {
     }
   };
 
+  // Menu réorganisé et simplifié (6 items principaux au lieu de 9)
   const menuItems = [
     {
       label: 'Accueil',
@@ -153,12 +150,20 @@ export default function Header() {
       submenu: [
         { label: 'Domaines d\'intervention', href: '/domains', icon: FaBullseye },
         { label: 'Projets', href: '/projects', icon: FaProjectDiagram },
+        { label: 'Espace humanitaire', href: '/humanitarian', icon: FaGlobeAfrica },
       ]
     },
     {
-      label: 'Partenaires',
-      href: '/partners',
-      icon: FaHandshake,
+      label: 'Organisation',
+      href: '#',
+      icon: FaInfoCircle,
+      submenu: [
+        { label: 'À propos', href: '/about/history', icon: FaBook },
+        { label: 'Mission & Vision', href: '/about/mission', icon: FaEye },
+        { label: 'Notre équipe', href: '/about/team', icon: FaUserTie },
+        { label: 'Zones d\'intervention', href: '/about/zones', icon: FaMapMarkedAlt },
+        { label: 'Partenaires', href: '/partners', icon: FaHandshake },
+      ]
     },
     {
       label: 'Transparence',
@@ -167,34 +172,19 @@ export default function Header() {
       submenu: [
         { label: 'Rapports d\'activités', href: '/transparency/reports', icon: FaFileAlt },
         { label: 'Rapports financiers', href: '/transparency/financial', icon: FaMoneyBillWave },
-        { label: 'Politiques internes', href: '/transparency/policies', icon: FaGavel },
         { label: 'Gouvernance', href: '/transparency/governance', icon: FaUsers },
-        { label: 'Carrières', href: '/careers', icon: FaBriefcase },
-        { label: 'Bénévolat', href: '/volunteer', icon: FaHandHoldingHeart },
+        { label: 'Politiques internes', href: '/transparency/policies', icon: FaGavel },
       ]
     },
     {
-      label: 'Espace humanitaire',
-      href: '/humanitarian',
-      icon: FaGlobeAfrica,
-    },
-    {
-      label: 'À propos',
+      label: 'Nous rejoindre',
       href: '#',
-      icon: FaInfoCircle,
+      icon: FaUsers,
       submenu: [
-        { label: 'Notre histoire', href: '/about/history', icon: FaBook },
-        { label: 'Mission & Vision & Valeurs', href: '/about/mission', icon: FaEye },
-        { label: 'Objectifs', href: '/about/objectives', icon: FaHeart },
-        { label: 'Listes partenaires', href: '/about/partenaires', icon: FaListUl },
-        { label: 'Zones d\'intervention', href: '/about/zones', icon: FaMapMarkedAlt },
-        { label: 'Notre équipe', href: '/about/team', icon: FaUserTie },
+        { label: 'Offres d\'emploi', href: '/careers', icon: FaBriefcase },
+        { label: 'Devenir bénévole', href: '/volunteer', icon: FaHandHoldingHeart },
+        { label: 'Contact', href: '/contact', icon: FaEnvelope },
       ]
-    },
-    {
-      label: 'Contact',
-      href: '/contact',
-      icon: FaEnvelope,
     },
   ];
 

@@ -2,7 +2,9 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
-// Configuration Axios
+// ============================================================
+// CONFIGURATION AXIOS
+// ============================================================
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -38,7 +40,9 @@ api.interceptors.response.use(
   }
 );
 
-// ============ AUTHENTIFICATION ============
+// ============================================================
+// AUTHENTIFICATION
+// ============================================================
 export const authAPI = {
   login: async (credentials) => {
     try {
@@ -73,7 +77,6 @@ export const authAPI = {
       const response = await api.get('/admin/user');
       return response.data;
     } catch (error) {
-      // Si erreur, vérifier le localStorage
       const user = localStorage.getItem('admin_user');
       return user ? JSON.parse(user) : null;
     }
@@ -84,28 +87,40 @@ export const authAPI = {
   },
 };
 
-// ============ DASHBOARD / STATISTIQUES ============
+// ============================================================
+// DASHBOARD / STATISTIQUES
+// ============================================================
 export const dashboardAPI = {
   getStats: () => api.get('/admin/dashboard/stats'),
   getRecentActivities: () => api.get('/admin/dashboard/activities'),
 };
 
-// ============ PROJETS ============
+// ============================================================
+// PROJETS
+// ============================================================
 export const projectsAPI = {
   getAll: (params) => api.get('/admin/projects', { params }),
   getById: (id) => api.get(`/admin/projects/${id}`),
+  getStatistics: () => api.get('/admin/projects/statistics'),
   create: (data) => api.post('/admin/projects', data),
   update: (id, data) => api.put(`/admin/projects/${id}`, data),
   delete: (id) => api.delete(`/admin/projects/${id}`),
   publish: (id) => api.post(`/admin/projects/${id}/publish`),
   unpublish: (id) => api.post(`/admin/projects/${id}/unpublish`),
+  toggleFeatured: (id) => api.post(`/admin/projects/${id}/toggle-featured`),
   uploadImage: (id, formData) => 
     api.post(`/admin/projects/${id}/image`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
+  uploadImages: (id, formData) => 
+    api.post(`/admin/projects/${id}/images`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
 };
 
-// ============ ACTUALITÉS ============
+// ============================================================
+// ACTUALITÉS
+// ============================================================
 export const newsAPI = {
   getAll: (params) => api.get('/admin/news', { params }),
   getById: (id) => api.get(`/admin/news/${id}`),
@@ -120,100 +135,9 @@ export const newsAPI = {
     }),
 };
 
-// ============ OFFRES D'EMPLOI ============
-export const jobsAPI = {
-  getAll: (params) => api.get('/admin/jobs', { params }),
-  getById: (id) => api.get(`/admin/jobs/${id}`),
-  create: (data) => api.post('/admin/jobs', data),
-  update: (id, data) => api.put(`/admin/jobs/${id}`, data),
-  delete: (id) => api.delete(`/admin/jobs/${id}`),
-  publish: (id) => api.post(`/admin/jobs/${id}/publish`),
-  close: (id) => api.post(`/admin/jobs/${id}/close`),
-};
-
-// ============ ALERTES HUMANITAIRES ============
-export const alertsAPI = {
-  getAll: (params) => api.get('/admin/alerts', { params }),
-  getById: (id) => api.get(`/admin/alerts/${id}`),
-  create: (data) => api.post('/admin/alerts', data),
-  update: (id, data) => api.put(`/admin/alerts/${id}`, data),
-  delete: (id) => api.delete(`/admin/alerts/${id}`),
-  activate: (id) => api.post(`/admin/alerts/${id}/activate`),
-  deactivate: (id) => api.post(`/admin/alerts/${id}/deactivate`),
-};
-
-// ============ ÉQUIPE ============
-export const teamAPI = {
-  getAll: (params) => api.get('/admin/team', { params }),
-  getById: (id) => api.get(`/admin/team/${id}`),
-  create: (data) => api.post('/admin/team', data),
-  update: (id, data) => api.put(`/admin/team/${id}`, data),
-  delete: (id) => api.delete(`/admin/team/${id}`),
-  uploadPhoto: (id, formData) => 
-    api.post(`/admin/team/${id}/photo`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
-};
-
-// ============ RAPPORTS / TRANSPARENCE ============
-export const reportsAPI = {
-  getAll: (params) => api.get('/admin/reports', { params }),
-  getById: (id) => api.get(`/admin/reports/${id}`),
-  create: (data) => api.post('/admin/reports', data),
-  update: (id, data) => api.put(`/admin/reports/${id}`, data),
-  delete: (id) => api.delete(`/admin/reports/${id}`),
-  uploadDocument: (id, formData) => 
-    api.post(`/admin/reports/${id}/document`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
-};
-
-// ============ MÉDIAS ============
-export const mediaAPI = {
-  getAll: (params) => api.get('/admin/media', { params }),
-  upload: (formData) => 
-    api.post('/admin/media/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
-  delete: (id) => api.delete(`/admin/media/${id}`),
-};
-
-// ============ UTILISATEURS ============
-export const usersAPI = {
-  getAll: (params) => api.get('/admin/users', { params }),
-  getById: (id) => api.get(`/admin/users/${id}`),
-  create: (data) => api.post('/admin/users', data),
-  update: (id, data) => api.put(`/admin/users/${id}`, data),
-  delete: (id) => api.delete(`/admin/users/${id}`),
-  toggleStatus: (id) => api.post(`/admin/users/${id}/toggle-status`),
-};
-
-// ============ CONTACTS / MESSAGES ============
-export const contactsAPI = {
-  getAll: (params) => api.get('/admin/contacts', { params }),
-  getById: (id) => api.get(`/admin/contacts/${id}`),
-  markAsRead: (id) => api.post(`/admin/contacts/${id}/read`),
-  delete: (id) => api.delete(`/admin/contacts/${id}`),
-};
-
-// ============ DONS ============
-export const donationsAPI = {
-  getAll: (params) => api.get('/admin/donations', { params }),
-  getById: (id) => api.get(`/admin/donations/${id}`),
-  getStats: () => api.get('/admin/donations/stats'),
-};
-
-// ============ VOLONTAIRES ============
-export const volunteersAPI = {
-  getAll: (params) => api.get('/admin/volunteers', { params }),
-  getById: (id) => api.get(`/admin/volunteers/${id}`),
-  updateStatus: (id, status) => 
-    api.put(`/admin/volunteers/${id}/status`, { status }),
-};
-
-export default api;
-
-// ============ DOMAINES D'INTERVENTION ============
+// ============================================================
+// DOMAINES D'INTERVENTION
+// ============================================================
 export const domainsAPI = {
   getAll: (params) => api.get('/admin/domains', { params }),
   getById: (id) => api.get(`/admin/domains/${id}`),
@@ -229,21 +153,139 @@ export const domainsAPI = {
   toggleStatus: (id) => api.post(`/admin/domains/${id}/toggle-status`),
 };
 
-// Dans admin/src/services/adminApi.js
-
+// ============================================================
+// PARTENAIRES
+// ============================================================
 export const partnersAPI = {
   getAll: (params) => api.get('/admin/partners', { params }),
-  
   getById: (id) => api.get(`/admin/partners/${id}`),
-  
   create: (data) => api.post('/admin/partners', data),
-  
   update: (id, data) => api.put(`/admin/partners/${id}`, data),
-  
   delete: (id) => api.delete(`/admin/partners/${id}`),
-  
   uploadLogo: (id, formData) => 
     api.post(`/admin/partners/${id}/upload-logo`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     }),
 };
+
+// ============================================================
+// OFFRES D'EMPLOI
+// ============================================================
+export const jobsAPI = {
+  getAll: (params) => api.get('/admin/jobs', { params }),
+  getById: (id) => api.get(`/admin/jobs/${id}`),
+  create: (data) => api.post('/admin/jobs', data),
+  update: (id, data) => api.put(`/admin/jobs/${id}`, data),
+  delete: (id) => api.delete(`/admin/jobs/${id}`),
+  publish: (id) => api.post(`/admin/jobs/${id}/publish`),
+  close: (id) => api.post(`/admin/jobs/${id}/close`),
+};
+
+// ============================================================
+// ALERTES HUMANITAIRES
+// ============================================================
+export const alertsAPI = {
+  getAll: (params) => api.get('/admin/alerts', { params }),
+  getById: (id) => api.get(`/admin/alerts/${id}`),
+  create: (data) => api.post('/admin/alerts', data),
+  update: (id, data) => api.put(`/admin/alerts/${id}`, data),
+  delete: (id) => api.delete(`/admin/alerts/${id}`),
+  activate: (id) => api.post(`/admin/alerts/${id}/activate`),
+  deactivate: (id) => api.post(`/admin/alerts/${id}/deactivate`),
+};
+
+// ============================================================
+// ÉQUIPE
+// ============================================================
+export const teamAPI = {
+  getAll: (params) => api.get('/admin/team', { params }),
+  getById: (id) => api.get(`/admin/team/${id}`),
+  create: (data) => api.post('/admin/team', data),
+  update: (id, data) => api.put(`/admin/team/${id}`, data),
+  delete: (id) => api.delete(`/admin/team/${id}`),
+  uploadPhoto: (id, formData) => 
+    api.post(`/admin/team/${id}/photo`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+};
+
+// ============================================================
+// RAPPORTS / TRANSPARENCE
+// ============================================================
+export const reportsAPI = {
+  getAll: (params) => api.get('/admin/reports', { params }),
+  getById: (id) => api.get(`/admin/reports/${id}`),
+  create: (data) => api.post('/admin/reports', data),
+  update: (id, data) => api.put(`/admin/reports/${id}`, data),
+  delete: (id) => api.delete(`/admin/reports/${id}`),
+  uploadDocument: (id, formData) => 
+    api.post(`/admin/reports/${id}/document`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+};
+
+// ============================================================
+// MÉDIAS
+// ============================================================
+export const mediaAPI = {
+  getAll: (params) => api.get('/admin/media', { params }),
+  upload: (formData) => 
+    api.post('/admin/media/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  delete: (id) => api.delete(`/admin/media/${id}`),
+};
+
+// ============================================================
+// UTILISATEURS
+// ============================================================
+export const usersAPI = {
+  getAll: (params) => api.get('/admin/users', { params }),
+  getById: (id) => api.get(`/admin/users/${id}`),
+  create: (data) => api.post('/admin/users', data),
+  update: (id, data) => api.put(`/admin/users/${id}`, data),
+  delete: (id) => api.delete(`/admin/users/${id}`),
+  toggleStatus: (id) => api.post(`/admin/users/${id}/toggle-status`),
+};
+
+// ============================================================
+// CONTACTS / MESSAGES
+// ============================================================
+export const contactsAPI = {
+  getAll: (params) => api.get('/admin/contacts', { params }),
+  getById: (id) => api.get(`/admin/contacts/${id}`),
+  markAsRead: (id) => api.post(`/admin/contacts/${id}/read`),
+  delete: (id) => api.delete(`/admin/contacts/${id}`),
+};
+
+// ============================================================
+// DONS
+// ============================================================
+export const donationsAPI = {
+  getAll: (params) => api.get('/admin/donations', { params }),
+  getById: (id) => api.get(`/admin/donations/${id}`),
+  getStats: () => api.get('/admin/donations/stats'),
+};
+
+// ============================================================
+// VOLONTAIRES
+// ============================================================
+export const volunteersAPI = {
+  getAll: (params) => api.get('/admin/volunteers', { params }),
+  getById: (id) => api.get(`/admin/volunteers/${id}`),
+  updateStatus: (id, status) => 
+    api.put(`/admin/volunteers/${id}/status`, { status }),
+};
+
+// ============================================================
+// COMMENTAIRES (Admin peut modérer)
+// ============================================================
+export const commentsAPI = {
+  getAll: (params) => api.get('/admin/comments', { params }),
+  approve: (id) => api.put(`/admin/comments/${id}/approve`),
+  reject: (id) => api.put(`/admin/comments/${id}/reject`),
+  delete: (id) => api.delete(`/admin/comments/${id}`),
+};
+
+// Export par défaut de l'instance axios configurée
+export default api;

@@ -6,9 +6,9 @@ import { ScrollToTop } from './hooks/useScrollToTop';
 import Header from './components/common/Header'
 import Footer from './components/common/Footer'
 import History from './components/about/History'
-import MissionVisionValeurs from './components/about/MissionVisionValeurs.jsx'
+import MissionVisionValeurs from './components/about/MissionVisionValeurs'
 import Objectives from './components/about/Objectives'
-import DomaineDetail from './components/details_domains/DomaineDetail.jsx'
+import DomaineDetail from './components/details_domains/DomaineDetail'
 
 // Pages
 import HomePage from './pages/HomePage'
@@ -17,11 +17,13 @@ import NewsPage from './pages/NewsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
-import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
-import NotFoundPage from './pages/NotFoundPage.jsx'
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import NotFoundPage from './pages/NotFoundPage'
 import PartnersPage from './pages/PartnersPage';
 import DomainsPage from './pages/DomainsPage';
 import ProjectsPage from './pages/ProjectsPage';
+import CareersPage from './pages/CareersPage';
+import JobsPage from './pages/JobsPage';
 
 function App() {
   return (
@@ -44,6 +46,12 @@ function App() {
             {/* Actualités */}
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news/:slug" element={<NewsPage />} />
+
+            {/* Bénévolat */}
+            <Route path="/volunteer" element={<CareersPage />} />
+
+            {/* Offres d'emploi */}
+            <Route path="/careers" element={<JobsPage />} />
 
             {/* Auth */}
             <Route path="/login" element={<LoginPage />} />

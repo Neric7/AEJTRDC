@@ -81,7 +81,7 @@ export default function CTASection() {
                 <a href="#donate" className={`${styles.actionButton} ${styles.donateButton}`}>
                   Faire un don
                 </a>
-                <a href="#join" className={`${styles.actionButton} ${styles.joinButton}`}>
+                <a href="/volunteer" className={`${styles.actionButton} ${styles.joinButton}`}>
                   Rejoindre nos actions
                 </a>
                 <a href="/contact" className={`${styles.actionButton} ${styles.contactButton}`}>

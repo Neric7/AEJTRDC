@@ -104,4 +104,14 @@ export function setCachedAuthCheck(promise) {
   lastAuthCheck = Date.now();
 }
 
+// Offres d'emploi
+export const jobsAPI = {
+  getAll: (params) => api.get('/jobs', { params }),
+  getById: (id) => api.get(`/jobs/${id}`),
+  getFeatured: () => api.get('/jobs/featured'),
+  getOpen: () => api.get('/jobs/open'),
+  getTypes: () => api.get('/jobs/types'),
+};
+
 export default api;
+

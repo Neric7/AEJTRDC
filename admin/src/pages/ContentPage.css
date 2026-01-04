@@ -463,3 +463,46 @@
     padding: 0.2rem 0.5rem;
   }
 }
+
+/* ============================================
+   AJOUTS POUR LES BADGES JOBS
+   À ajouter à la fin de ContentPage.css
+   ============================================ */
+
+/* Badges pour les types de contrat */
+.type-badge.type-cdi {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.type-badge.type-cdd {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.type-badge.type-stage {
+  background: #fed7aa;
+  color: #92400e;
+}
+
+.type-badge.type-freelance {
+  background: #e9d5ff;
+  color: #6b21a8;
+}
+
+/* Badge statut fermé pour les jobs */
+.status-badge.status-closed {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Badge vedette inline */
+.badge-featured {
+  background: #fbbf24;
+  color: #78350f;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 8px;
+}

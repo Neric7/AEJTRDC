@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Button from '../common/Button';
 import { IoRestaurant, IoLibrary, IoWater, IoMedical } from 'react-icons/io5';
 import styles from './HeroBanner.module.css';
 
@@ -52,10 +51,10 @@ export default function HeroBanner() {
         setIsTransitioning(false);
       }, TRANSITION_OUT_DURATION);
       
-    }, SLIDE_DURATION); // Chaque slide dure 7 secondes (7000ms)
+    }, SLIDE_DURATION);
 
     return () => clearInterval(interval);
-  }, []); // Le tableau de dépendances vide assure que cela ne s'exécute qu'une fois
+  }, []);
 
   const getCurrentSlideText = () => {
     const slide = slides[currentSlide];
@@ -93,8 +92,12 @@ export default function HeroBanner() {
               Toutes les cinq secondes, un enfant en Afrique souffre de malnutrition et de maladies évitables — vous pouvez aider à changer cela.
             </p>
             <div className={styles.buttonGroup}>
-              <Button className={styles.primaryButton}>Faire un don</Button>
-              <Button className={styles.secondaryButton}>Découvrir →</Button>
+              <a href="/donate" className={styles.primaryButton}>
+                Faire un don
+              </a>
+              <a href="/about/mission" className={styles.secondaryButton}>
+                Découvrir →
+              </a>
             </div>
           </div>
 

@@ -263,6 +263,46 @@ const ContentPage = () => {
             </td>
           </>
         );
+        // ============================================
+// À AJOUTER dans votre renderTableRow() dans ContentPage.jsx
+// Après le case 'partners': et avant default:
+// ============================================
+
+case 'jobs':
+  return (
+    <>
+      <td>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {item.title}
+          {item.featured && (
+            <span style={{ 
+              background: '#fbbf24', 
+              color: '#78350f', 
+              padding: '2px 8px', 
+              borderRadius: '4px', 
+              fontSize: '0.75rem',
+              fontWeight: '600'
+            }}>
+              ★ Vedette
+            </span>
+          )}
+        </div>
+      </td>
+      <td>
+        <span className={`type-badge type-${item.type?.toLowerCase()}`}>
+          {item.type}
+        </span>
+      </td>
+      <td>{item.location}</td>
+      <td>
+        <span className={`status-badge status-${item.status}`}>
+          {item.status === 'published' ? 'Publié' : 
+           item.status === 'draft' ? 'Brouillon' : 
+           item.status === 'closed' ? 'Fermé' : 'Archivé'}
+        </span>
+      </td>
+    </>
+  );
       default:
         return (
           <>
