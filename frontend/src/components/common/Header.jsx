@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Button from './Button';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import ConfirmModal from './ConfirmModal';
 import { 
   FaUserCircle, 
   FaChevronDown, 
@@ -23,7 +24,6 @@ import {
   FaHandHoldingHeart,
   FaBook,
   FaEye,
-  FaHeart,
   FaListUl,
   FaMapMarkedAlt,
   FaUserTie,
@@ -44,6 +44,8 @@ export default function Header() {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState('fr');
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const userMenuRef = useRef(null);
   const langMenuRef = useRef(null);
 
@@ -128,6 +130,38 @@ export default function Header() {
       await i18n.changeLanguage(langCode);
     } catch (error) {
       console.error('Erreur lors du changement de langue:', error);
+    }
+  };
+
+  // Générer les initiales de l'utilisateur
+  const getUserInitials = () => {
+    if (!user?.name) return 'U';
+    return user.name
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(word => word[0])
+      .join('')
+      .toUpperCase();
+  };
+
+  // Gestion de la déconnexion
+  const handleLogout = () => {
+    setIsUserMenuOpen(false);
+    setIsMenuOpen(false);
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      navigate('/');
+    } catch (err) {
+      console.error('Erreur lors de la déconnexion:', err);
+    } finally {
+      setIsLoggingOut(false);
+      setShowLogoutModal(false);
     }
   };
 
@@ -300,7 +334,7 @@ export default function Header() {
               )}
             </div>
 
-            {/* Menu utilisateur */}
+            {/* Menu utilisateur avec avatar */}
             {isAuthenticated ? (
               <div className={styles.userMenu} ref={userMenuRef}>
                 <button
@@ -310,7 +344,18 @@ export default function Header() {
                   aria-expanded={isUserMenuOpen}
                   title={user?.name}
                 >
-                  <FaUserCircle size={24} />
+                  {/* Avatar ou initiales */}
+                  {user?.avatar ? (
+                    <img 
+                      src={user.avatar} 
+                      alt={user.name}
+                      className={styles.userAvatar}
+                    />
+                  ) : (
+                    <div className={styles.userAvatarFallback}>
+                      {getUserInitials()}
+                    </div>
+                  )}
                   <FaChevronDown 
                     size={12} 
                     className={isUserMenuOpen ? styles.chevronRotated : ''}
@@ -333,11 +378,7 @@ export default function Header() {
                     </button>
                     <button
                       className={styles.dropdownItem}
-                      onClick={async () => {
-                        setIsUserMenuOpen(false);
-                        await logout();
-                        navigate('/');
-                      }}
+                      onClick={handleLogout}
                     >
                       <FaSignInAlt className={styles.dropdownIcon} />
                       <span>Déconnexion</span>
@@ -478,11 +519,27 @@ export default function Header() {
               );
             })}
 
-            {/* CTA Mobile */}
+            {/* CTA Mobile avec avatar */}
             <div className={styles.mobileCta}>
               {isAuthenticated ? (
                 <div className={styles.mobileAuth}>
-                  <p className={styles.mobileUser}>Connecté en tant que <strong>{user?.name}</strong></p>
+                  {/* Avatar mobile */}
+                  <div className={styles.mobileUserInfo}>
+                    {user?.avatar ? (
+                      <img 
+                        src={user.avatar} 
+                        alt={user.name}
+                        className={styles.mobileUserAvatar}
+                      />
+                    ) : (
+                      <div className={styles.mobileUserAvatarFallback}>
+                        {getUserInitials()}
+                      </div>
+                    )}
+                    <p className={styles.mobileUser}>
+                      Connecté en tant que <strong>{user?.name}</strong>
+                    </p>
+                  </div>
                   <Link
                     to="/profile"
                     className={styles.secondaryBtn}
@@ -492,11 +549,7 @@ export default function Header() {
                   </Link>
                   <button
                     className={styles.primaryBtn}
-                    onClick={async () => {
-                      await logout();
-                      setIsMenuOpen(false);
-                      navigate('/');
-                    }}
+                    onClick={handleLogout}
                   >
                     Déconnexion
                   </button>
@@ -529,6 +582,19 @@ export default function Header() {
           </div>
         )}
       </nav>
+
+      {/* Modal de confirmation de déconnexion */}
+      <ConfirmModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={confirmLogout}
+        title="Se déconnecter ?"
+        message="Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte."
+        confirmText="Se déconnecter"
+        cancelText="Annuler"
+        variant="logout"
+        loading={isLoggingOut}
+      />
     </header>
   );
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -95,13 +96,61 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:30',
             'bio' => 'nullable|string|max:2000',
-            'avatar' => 'nullable|url|max:2048',
+            'location' => 'nullable|string|max:255',
         ]);
 
         $user->update($validated);
 
         return response()->json([
             'message' => 'Profil mis à jour avec succès',
+            'user' => $this->formatUser($user->refresh()),
+        ]);
+    }
+
+    /**
+     * Upload avatar
+     */
+    public function uploadAvatar(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048', // 2MB max
+        ]);
+
+        // Supprimer l'ancien avatar si existe
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        // Stocker le nouveau avatar
+        $path = $request->file('avatar')->store('avatars', 'public');
+
+        // Mettre à jour l'utilisateur
+        $user->update(['avatar' => $path]);
+
+        return response()->json([
+            'message' => 'Avatar uploadé avec succès',
+            'user' => $this->formatUser($user->refresh()),
+            'avatar_url' => Storage::url($path),
+        ]);
+    }
+
+    /**
+     * Supprimer avatar
+     */
+    public function deleteAvatar(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        $user->update(['avatar' => null]);
+
+        return response()->json([
+            'message' => 'Avatar supprimé avec succès',
             'user' => $this->formatUser($user->refresh()),
         ]);
     }
@@ -136,9 +185,10 @@ class AuthController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'avatar' => $user->avatar,
+            'avatar' => $user->avatar ? Storage::url($user->avatar) : null,
             'phone' => $user->phone,
             'bio' => $user->bio,
+            'location' => $user->location ?? null,
             'role' => $user->role,
             'is_active' => (bool) $user->is_active,
             'created_at' => optional($user->created_at)->toIso8601String(),
@@ -146,4 +196,3 @@ class AuthController extends Controller
         ];
     }
 }
-

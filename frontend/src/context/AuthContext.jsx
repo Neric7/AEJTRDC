@@ -1,13 +1,15 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, useRef } from 'react';
 import api from '../services/api';
-import * as authService from '../services/auth';
 import {
   changePassword as changePasswordRequest,
+  deleteAvatar as deleteAvatarRequest,
   fetchCurrentUser,
   login as loginRequest,
   logout as logoutRequest,
   register as registerRequest,
   updateProfile as updateProfileRequest,
+  uploadAvatar as uploadAvatarRequest,
+  invalidateUserCache,
 } from '../services/auth';
 
 const AuthContext = createContext({
@@ -20,6 +22,8 @@ const AuthContext = createContext({
   register: async () => {},
   logout: async () => {},
   updateProfile: async () => {},
+  uploadAvatar: async () => {},
+  deleteAvatar: async () => {},
   changePassword: async () => {},
   refreshUser: async () => {},
 });
@@ -46,17 +50,11 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const initAuth = async () => {
-      // Empêcher les appels multiples
-      if (isInitialized.current) {
-        return;
-      }
-      
+      if (isInitialized.current) return;
       isInitialized.current = true;
       
-      // Récupérer le token du localStorage
       const storedToken = localStorage.getItem('authToken');
       
-      // Pas de token = pas connecté
       if (!storedToken) {
         setAuthHeader(null);
         setUser(null);
@@ -64,10 +62,8 @@ export function AuthProvider({ children }) {
         return;
       }
       
-      // Token présent, configurer le header
       setAuthHeader(storedToken);
       
-      // Charger l'utilisateur depuis le cache
       const cachedUser = localStorage.getItem('cachedUser');
       if (cachedUser) {
         try {
@@ -79,7 +75,6 @@ export function AuthProvider({ children }) {
         }
       }
       
-      // Vérifier le token avec l'API
       if (!isFetchingUser.current) {
         isFetchingUser.current = true;
         
@@ -90,8 +85,6 @@ export function AuthProvider({ children }) {
           localStorage.setItem('cachedUser', JSON.stringify(userData));
         } catch (err) {
           console.error('Token invalide ou expiré:', err.message);
-          
-          // Nettoyer tout si le token est invalide
           setToken(null);
           setUser(null);
           localStorage.removeItem('authToken');
@@ -107,7 +100,7 @@ export function AuthProvider({ children }) {
     };
 
     initAuth();
-  }, []); // Exécuter une seule fois au montage
+  }, []);
 
   const handleAuthResponse = useCallback((data) => {
     const nextUser = data.user || null;
@@ -191,9 +184,48 @@ export function AuthProvider({ children }) {
         const userData = data.user || data;
         setUser(userData);
         localStorage.setItem('cachedUser', JSON.stringify(userData));
+        invalidateUserCache(); // Invalider le cache
         return data;
       } catch (err) {
         const message = extractError(err, 'Mise à jour impossible');
+        setError(message);
+        throw new Error(message);
+      }
+    },
+    []
+  );
+
+  const uploadAvatar = useCallback(
+    async (file) => {
+      try {
+        setError(null);
+        const data = await uploadAvatarRequest(file);
+        const userData = data.user || data;
+        setUser(userData);
+        localStorage.setItem('cachedUser', JSON.stringify(userData));
+        invalidateUserCache(); // Invalider le cache
+        return data;
+      } catch (err) {
+        const message = extractError(err, 'Upload impossible');
+        setError(message);
+        throw new Error(message);
+      }
+    },
+    []
+  );
+
+  const deleteAvatar = useCallback(
+    async () => {
+      try {
+        setError(null);
+        const data = await deleteAvatarRequest();
+        const userData = data.user || data;
+        setUser(userData);
+        localStorage.setItem('cachedUser', JSON.stringify(userData));
+        invalidateUserCache(); // Invalider le cache
+        return data;
+      } catch (err) {
+        const message = extractError(err, 'Suppression impossible');
         setError(message);
         throw new Error(message);
       }
@@ -217,10 +249,7 @@ export function AuthProvider({ children }) {
 
   const refreshUser = useCallback(async () => {
     if (!token) return null;
-    
-    if (isFetchingUser.current) {
-      return user;
-    }
+    if (isFetchingUser.current) return user;
     
     try {
       isFetchingUser.current = true;
@@ -248,11 +277,13 @@ export function AuthProvider({ children }) {
       register,
       logout,
       updateProfile,
+      uploadAvatar,
+      deleteAvatar,
       changePassword,
       refreshUser,
       setError,
     }),
-    [changePassword, error, loading, login, logout, refreshUser, register, updateProfile, user, token]
+    [changePassword, deleteAvatar, error, loading, login, logout, refreshUser, register, updateProfile, uploadAvatar, user, token]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

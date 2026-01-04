@@ -21,8 +21,9 @@ class User extends Authenticatable
         'avatar',
         'phone',
         'bio',
-        'role',       // admin / user / etc.
-        'is_active',  // true / false
+        'location',   // Ajouté
+        'role',
+        'is_active',
     ];
 
     /**
