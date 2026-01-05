@@ -57,7 +57,7 @@ export default function ProfilePage() {
   const calculateProgress = () => {
     if (!user) return 0;
     
-    let progress = 10; // Account setup
+    let progress = 10; // Création du compte
     
     if (user.avatar) progress += 20;
     if (user.name) progress += 15;
@@ -71,11 +71,11 @@ export default function ProfilePage() {
   const progress = calculateProgress();
 
   const getProgressItems = () => [
-    { label: 'Setup account', completed: true, value: 10 },
-    { label: 'Upload your photo', completed: !!user?.avatar, value: 20 },
-    { label: 'Personal Info', completed: !!(user?.name && user?.phone), value: 15 },
-    { label: 'Location', completed: !!user?.location, value: 20 },
-    { label: 'Biography', completed: !!(user?.bio && user.bio.length > 20), value: 20 },
+    { label: 'Créer un compte', completed: true, value: 10 },
+    { label: 'Ajouter une photo', completed: !!user?.avatar, value: 20 },
+    { label: 'Informations personnelles', completed: !!(user?.name && user?.phone), value: 15 },
+    { label: 'Localisation', completed: !!user?.location, value: 20 },
+    { label: 'Biographie', completed: !!(user?.bio && user.bio.length > 20), value: 20 },
   ];
 
   if (!user) {
@@ -264,7 +264,7 @@ export default function ProfilePage() {
           {/* Sidebar gauche */}
           <aside className={styles.sidebar}>
             <div className={styles.sidebarHeader}>
-              <h3 className={styles.sidebarTitle}>PROFILE</h3>
+              <h3 className={styles.sidebarTitle}>PROFIL</h3>
             </div>
             
             <nav className={styles.sidebarNav}>
@@ -273,7 +273,7 @@ export default function ProfilePage() {
                 className={`${styles.navButton} ${activeTab === 'profile' ? styles.navButtonActive : ''}`}
               >
                 <FaUser className={styles.navIcon} />
-                <span>Edit Profile</span>
+                <span>Modifier le profil</span>
               </button>
               
               <button 
@@ -281,15 +281,15 @@ export default function ProfilePage() {
                 className={`${styles.navButton} ${activeTab === 'security' ? styles.navButtonActive : ''}`}
               >
                 <FaLock className={styles.navIcon} />
-                <span>Password</span>
+                <span>Mot de passe</span>
               </button>
             </nav>
 
             <div className={styles.sidebarFooter}>
-              <h4 className={styles.sidebarTitle}>SECURE</h4>
+              <h4 className={styles.sidebarTitle}>SÉCURITÉ</h4>
               <button onClick={handleLogout} className={styles.logoutButton}>
                 <FaSignOutAlt className={styles.navIcon} />
-                <span>Logout</span>
+                <span>Se déconnecter</span>
               </button>
             </div>
           </aside>
@@ -300,7 +300,7 @@ export default function ProfilePage() {
               <div className={styles.card}>
                 <div className={styles.cardHeader}>
                   <div>
-                    <h2 className={styles.cardTitle}>Edit Profile</h2>
+                    <h2 className={styles.cardTitle}>Modifier le profil</h2>
                   </div>
                 </div>
 
@@ -317,7 +317,7 @@ export default function ProfilePage() {
                     
                     <div className={styles.avatarContainer} onClick={handleAvatarClick}>
                       {avatarPreview ? (
-                        <img src={avatarPreview} alt="Preview" className={styles.avatar} />
+                        <img src={avatarPreview} alt="Aperçu" className={styles.avatar} />
                       ) : user.avatar ? (
                         <img src={user.avatar} alt={user.name} className={styles.avatar} />
                       ) : (
@@ -352,7 +352,7 @@ export default function ProfilePage() {
                             fontWeight: 600,
                           }}
                         >
-                          <FaCheck /> Upload
+                          <FaCheck /> Télécharger
                         </button>
                         <button
                           onClick={cancelAvatarPreview}
@@ -367,7 +367,7 @@ export default function ProfilePage() {
                             fontWeight: 600,
                           }}
                         >
-                          <FaTimes /> Cancel
+                          <FaTimes /> Annuler
                         </button>
                       </div>
                     )}
@@ -390,15 +390,15 @@ export default function ProfilePage() {
                           gap: '0.5rem',
                         }}
                       >
-                        <FaTrash /> Delete
+                        <FaTrash /> Supprimer
                       </button>
                     )}
                   </div>
                   
                   <div className={styles.avatarInfo}>
-                    <h3 className={styles.avatarInfoTitle}>Upload new photo</h3>
-                    <p className={styles.avatarInfoText}>At least 800×800 px recommended.</p>
-                    <p className={styles.avatarInfoText}>JPG, PNG or WEBP is allowed (Max 2MB)</p>
+                    <h3 className={styles.avatarInfoTitle}>Télécharger une nouvelle photo</h3>
+                    <p className={styles.avatarInfoText}>Au moins 800×800 px recommandé.</p>
+                    <p className={styles.avatarInfoText}>JPG, PNG ou WEBP autorisé (Max 2 Mo)</p>
                   </div>
                 </div>
 
@@ -414,12 +414,12 @@ export default function ProfilePage() {
                 <form onSubmit={handleProfileSubmit}>
                   <div className={styles.formSection}>
                     <div className={styles.sectionHeader}>
-                      <h3 className={styles.sectionTitle}>Personal Info</h3>
+                      <h3 className={styles.sectionTitle}>Informations personnelles</h3>
                     </div>
 
                     <div className={styles.formRow}>
                       <div className={styles.formGroup}>
-                        <label htmlFor="name" className={styles.label}>Full Name *</label>
+                        <label htmlFor="name" className={styles.label}>Nom complet *</label>
                         <input
                           id="name"
                           name="name"
@@ -445,7 +445,7 @@ export default function ProfilePage() {
                       </div>
 
                       <div className={styles.formGroup}>
-                        <label htmlFor="phone" className={styles.label}>Phone</label>
+                        <label htmlFor="phone" className={styles.label}>Téléphone</label>
                         <input
                           id="phone"
                           name="phone"
@@ -461,7 +461,7 @@ export default function ProfilePage() {
 
                   <div className={styles.formSection}>
                     <div className={styles.sectionHeader}>
-                      <h3 className={styles.sectionTitle}>Location</h3>
+                      <h3 className={styles.sectionTitle}>Localisation</h3>
                     </div>
                     
                     <div className={styles.formGroup} style={{ position: 'relative' }}>
@@ -471,7 +471,7 @@ export default function ProfilePage() {
                         name="location"
                         value={profileData.location}
                         onChange={handleProfileChange}
-                        placeholder="Enter your location"
+                        placeholder="Entrez votre localisation"
                         className={`${styles.input} ${styles.inputWithIcon}`}
                       />
                     </div>
@@ -479,7 +479,7 @@ export default function ProfilePage() {
 
                   <div className={styles.formSection}>
                     <div className={styles.sectionHeader}>
-                      <h3 className={styles.sectionTitle}>Bio</h3>
+                      <h3 className={styles.sectionTitle}>Biographie</h3>
                     </div>
                     
                     <div className={styles.formGroup}>
@@ -488,11 +488,11 @@ export default function ProfilePage() {
                         value={profileData.bio}
                         onChange={handleProfileChange}
                         className={styles.textarea}
-                        placeholder="Write something about yourself..."
+                        placeholder="Écrivez quelque chose sur vous..."
                         rows={4}
                       />
                       <small className={styles.helpText}>
-                        {profileData.bio.length} / 2000 characters
+                        {profileData.bio.length} / 2000 caractères
                       </small>
                     </div>
                   </div>
@@ -505,12 +505,12 @@ export default function ProfilePage() {
                     {profileLoading ? (
                       <>
                         <span className={styles.spinner}></span>
-                        Saving...
+                        Enregistrement...
                       </>
                     ) : (
                       <>
                         <FaSave />
-                        Save changes
+                        Enregistrer les modifications
                       </>
                     )}
                   </button>
@@ -522,8 +522,8 @@ export default function ProfilePage() {
               <div className={styles.card}>
                 <div className={styles.cardHeader}>
                   <div>
-                    <h2 className={styles.cardTitle}>Change Password</h2>
-                    <p className={styles.cardSubtitle}>Ensure your account is using a strong password</p>
+                    <h2 className={styles.cardTitle}>Changer le mot de passe</h2>
+                    <p className={styles.cardSubtitle}>Assurez-vous que votre compte utilise un mot de passe fort</p>
                   </div>
                 </div>
 
@@ -539,7 +539,7 @@ export default function ProfilePage() {
                 <form onSubmit={handlePasswordSubmit}>
                   <div className={styles.formSection}>
                     <div className={styles.formGroup}>
-                      <label htmlFor="current_password" className={styles.label}>Current Password *</label>
+                      <label htmlFor="current_password" className={styles.label}>Mot de passe actuel *</label>
                       <input
                         id="current_password"
                         name="current_password"
@@ -554,7 +554,7 @@ export default function ProfilePage() {
 
                     <div className={styles.formRow} style={{ gridTemplateColumns: '1fr 1fr', border: 'none', paddingBottom: 0 }}>
                       <div className={styles.formGroup}>
-                        <label htmlFor="password" className={styles.label}>New Password *</label>
+                        <label htmlFor="password" className={styles.label}>Nouveau mot de passe *</label>
                         <input
                           id="password"
                           name="password"
@@ -566,11 +566,11 @@ export default function ProfilePage() {
                           minLength={8}
                           required
                         />
-                        <small className={styles.helpText}>Minimum 8 characters</small>
+                        <small className={styles.helpText}>Minimum 8 caractères</small>
                       </div>
 
                       <div className={styles.formGroup}>
-                        <label htmlFor="password_confirmation" className={styles.label}>Confirm Password *</label>
+                        <label htmlFor="password_confirmation" className={styles.label}>Confirmer le mot de passe *</label>
                         <input
                           id="password_confirmation"
                           name="password_confirmation"
@@ -593,12 +593,12 @@ export default function ProfilePage() {
                     {passwordLoading ? (
                       <>
                         <span className={styles.spinner}></span>
-                        Updating...
+                        Mise à jour...
                       </>
                     ) : (
                       <>
                         <FaLock />
-                        Update Password
+                        Mettre à jour le mot de passe
                       </>
                     )}
                   </button>
@@ -628,7 +628,7 @@ export default function ProfilePage() {
                 </svg>
                 <div className={styles.progressValue}>{progress}%</div>
               </div>
-              <h3 className={styles.progressTitle}>Complete your profile</h3>
+              <h3 className={styles.progressTitle}>Complétez votre profil</h3>
             </div>
 
             <div className={styles.progressList}>
@@ -647,17 +647,6 @@ export default function ProfilePage() {
                   </span>
                 </div>
               ))}
-            </div>
-
-            <div className={styles.progressActions}>
-              <button className={styles.actionButton}>
-                <FaBriefcase />
-                Tools
-              </button>
-              <button onClick={handleProfileSubmit} className={styles.actionButton} disabled={profileLoading}>
-                <FaSave />
-                Save
-              </button>
             </div>
           </aside>
         </div>
