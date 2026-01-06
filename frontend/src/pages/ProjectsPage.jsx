@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import ProjectGrid from '../components/projects/ProjectGrid';
 import ProjectFilter from '../components/projects/ProjectFilter';
 import ProjectDetail from '../components/projects/ProjectDetail';
 import TestimonySection from '../components/projects/TestimonySection';
+import LoginRequiredMessage from '../components/common/LoginRequiredMessage';
 import api from '../services/api';
 import './ProjectsPage.css';
 
 export default function ProjectsPage() {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -18,10 +21,14 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Charger tous les projets au montage
+  // Charger tous les projets au montage (seulement si authentifié)
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    if (isAuthenticated) {
+      fetchProjects();
+    } else if (!authLoading) {
+      setLoading(false);
+    }
+  }, [isAuthenticated, authLoading]);
 
   // Filtrer les projets quand les filtres changent
   useEffect(() => {
@@ -115,7 +122,7 @@ export default function ProjectsPage() {
     }
   };
 
-  // Témoignages (à déplacer dans une API ou base de données plus tard)
+  // Témoignages
   const testimonies = [
     {
       name: 'Marie Lukusa',
@@ -134,19 +141,39 @@ export default function ProjectsPage() {
     }
   ];
 
-  if (loading) {
+  // Si en cours de vérification d'authentification
+  if (authLoading || loading) {
     return (
       <div className="projects-page">
         <div className="projects-container">
           <div className="loading-state">
             <div className="spinner"></div>
-            <p>Chargement des projets...</p>
+            <p>Chargement...</p>
           </div>
         </div>
       </div>
     );
   }
 
+  // Si non authentifié, afficher le message de connexion requise
+  if (!isAuthenticated) {
+    return (
+      <div className="projects-page">
+        <div className="projects-header">
+          <h1>Nos Projets</h1>
+          <p className="projects-subtitle">
+            Découvrez nos initiatives pour améliorer la vie des enfants et des jeunes travailleurs
+          </p>
+        </div>
+        <LoginRequiredMessage 
+          title="Connexion requise"
+          message="Pour consulter nos projets et suivre leur évolution, veuillez vous connecter à votre compte."
+        />
+      </div>
+    );
+  }
+
+  // Si erreur de chargement
   if (error) {
     return (
       <div className="projects-page">
@@ -167,6 +194,7 @@ export default function ProjectsPage() {
     );
   }
 
+  // Contenu normal si authentifié
   return (
     <div className="projects-page">
       <div className="projects-container">

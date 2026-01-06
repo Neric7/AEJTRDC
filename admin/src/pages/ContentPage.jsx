@@ -10,10 +10,11 @@ import {
   partnersAPI,
   reportsAPI,
   mediaAPI,
-  domainsAPI
+  domainsAPI,
+  volunteersAPI  // ← AJOUT DE L'API BÉNÉVOLES
 } from '../services/adminApi';
 import toast from 'react-hot-toast';
-import { useAlert } from '../context/AlertProvider'; // ← IMPORT DU HOOK
+import { useAlert } from '../context/AlertProvider';
 import './ContentPage.css';
 
 // Importation des éditeurs
@@ -23,10 +24,11 @@ import JobEditor from '../components/ContentEditor/JobEditor';
 import AlertEditor from '../components/ContentEditor/AlertEditor';
 import DomainEditor from '../components/ContentEditor/DomainEditor';
 import PartnerEditor from '../components/ContentEditor/PartnerEditor';
+import VolunteerExaminer from '../components/ContentEditor/VolunteerExaminer'; // ← AJOUT
 
 const ContentPage = () => {
   const { type } = useParams();
-  const { showDeleteConfirm } = useAlert(); // ← UTILISATION DU HOOK
+  const { showDeleteConfirm } = useAlert();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -110,6 +112,15 @@ const ContentPage = () => {
       viewUrl: null,
       itemName: (item) => `le média "${item.name}"`,
     },
+    // ← NOUVELLE SECTION BÉNÉVOLES
+    volunteers: {
+      title: 'Bénévoles',
+      api: volunteersAPI,
+      editor: VolunteerExaminer,
+      columns: ['Nom complet', 'Email', 'Téléphone', 'Domaine', 'Disponibilité', 'Statut', 'Date', 'Actions'],
+      viewUrl: null,
+      itemName: (item) => `la candidature de "${item.full_name}"`,
+    },
   };
 
   const config = contentConfig[type] || contentConfig.news;
@@ -151,7 +162,6 @@ const ContentPage = () => {
     }
   };
 
-  // ✅ NOUVELLE FONCTION DE SUPPRESSION AVEC DIALOG PERSONNALISÉ
   const handleDelete = async (item) => {
     const itemName = config.itemName ? config.itemName(item) : 'cet élément';
     
@@ -180,6 +190,29 @@ const ContentPage = () => {
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
+  // Fonction pour les labels de disponibilité
+  const getAvailabilityLabel = (availability) => {
+    const map = {
+      full_time: 'Temps plein',
+      part_time: 'Temps partiel',
+      weekends: 'Week-ends',
+      flexible: 'Flexible'
+    };
+    return map[availability] || availability;
+  };
+
+  // Fonction pour les badges de statut
+  const getStatusBadge = (status) => {
+    const statusMap = {
+      pending: { label: 'En attente', class: 'status-draft' },
+      accepted: { label: 'Accepté', class: 'status-published' },
+      rejected: { label: 'Rejeté', class: 'status-archived' },
+      in_progress: { label: 'En cours', class: 'status-active' }
+    };
+    const statusInfo = statusMap[status] || { label: status, class: '' };
+    return <span className={`status-badge ${statusInfo.class}`}>{statusInfo.label}</span>;
+  };
 
   // Fonction pour afficher les données selon le type
   const renderTableRow = (item) => {
@@ -263,46 +296,57 @@ const ContentPage = () => {
             </td>
           </>
         );
-        // ============================================
-// À AJOUTER dans votre renderTableRow() dans ContentPage.jsx
-// Après le case 'partners': et avant default:
-// ============================================
 
-case 'jobs':
-  return (
-    <>
-      <td>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {item.title}
-          {item.featured && (
-            <span style={{ 
-              background: '#fbbf24', 
-              color: '#78350f', 
-              padding: '2px 8px', 
-              borderRadius: '4px', 
-              fontSize: '0.75rem',
-              fontWeight: '600'
-            }}>
-              ★ Vedette
-            </span>
-          )}
-        </div>
-      </td>
-      <td>
-        <span className={`type-badge type-${item.type?.toLowerCase()}`}>
-          {item.type}
-        </span>
-      </td>
-      <td>{item.location}</td>
-      <td>
-        <span className={`status-badge status-${item.status}`}>
-          {item.status === 'published' ? 'Publié' : 
-           item.status === 'draft' ? 'Brouillon' : 
-           item.status === 'closed' ? 'Fermé' : 'Archivé'}
-        </span>
-      </td>
-    </>
-  );
+      case 'jobs':
+        return (
+          <>
+            <td>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {item.title}
+                {item.featured && (
+                  <span style={{ 
+                    background: '#fbbf24', 
+                    color: '#78350f', 
+                    padding: '2px 8px', 
+                    borderRadius: '4px', 
+                    fontSize: '0.75rem',
+                    fontWeight: '600'
+                  }}>
+                    ★ Vedette
+                  </span>
+                )}
+              </div>
+            </td>
+            <td>
+              <span className={`type-badge type-${item.type?.toLowerCase()}`}>
+                {item.type}
+              </span>
+            </td>
+            <td>{item.location}</td>
+            <td>
+              <span className={`status-badge status-${item.status}`}>
+                {item.status === 'published' ? 'Publié' : 
+                 item.status === 'draft' ? 'Brouillon' : 
+                 item.status === 'closed' ? 'Fermé' : 'Archivé'}
+              </span>
+            </td>
+          </>
+        );
+
+      // ← NOUVEAU CAS POUR LES BÉNÉVOLES
+      case 'volunteers':
+        return (
+          <>
+            <td style={{ fontWeight: 600 }}>{item.full_name}</td>
+            <td>{item.email}</td>
+            <td>{item.phone}</td>
+            <td>{item.interest_domain || 'Non spécifié'}</td>
+            <td>{getAvailabilityLabel(item.availability)}</td>
+            <td>{getStatusBadge(item.status)}</td>
+            <td>{new Date(item.created_at).toLocaleDateString('fr-FR')}</td>
+          </>
+        );
+
       default:
         return (
           <>
@@ -326,10 +370,13 @@ case 'jobs':
           <h1>{config.title}</h1>
           <p>Gérez vos {config.title.toLowerCase()}</p>
         </div>
-        <button className="btn btn-primary" onClick={handleAdd}>
-          <Plus size={20} />
-          Ajouter
-        </button>
+        {/* Masquer le bouton "Ajouter" pour les bénévoles */}
+        {type !== 'volunteers' && (
+          <button className="btn btn-primary" onClick={handleAdd}>
+            <Plus size={20} />
+            Ajouter
+          </button>
+        )}
       </div>
 
       <div className="content-filters">
@@ -351,9 +398,20 @@ case 'jobs':
               onChange={(e) => setFilterStatus(e.target.value)}
             >
               <option value="all">Tous</option>
-              <option value="published">Publié</option>
-              <option value="draft">Brouillon</option>
-              <option value="archived">Archivé</option>
+              {type === 'volunteers' ? (
+                <>
+                  <option value="pending">En attente</option>
+                  <option value="in_progress">En cours</option>
+                  <option value="accepted">Accepté</option>
+                  <option value="rejected">Rejeté</option>
+                </>
+              ) : (
+                <>
+                  <option value="published">Publié</option>
+                  <option value="draft">Brouillon</option>
+                  <option value="archived">Archivé</option>
+                </>
+              )}
             </select>
           </div>
         )}
@@ -385,19 +443,21 @@ case 'jobs':
                     {renderTableRow(item)}
                     <td>
                       <div className="action-buttons">
-                        <button
-                          className="action-btn btn-view"
-                          onClick={() => handleView(item)}
-                          title="Voir sur le site"
-                        >
-                          <ExternalLink size={18} />
-                        </button>
+                        {type !== 'volunteers' && config.viewUrl && (
+                          <button
+                            className="action-btn btn-view"
+                            onClick={() => handleView(item)}
+                            title="Voir sur le site"
+                          >
+                            <ExternalLink size={18} />
+                          </button>
+                        )}
                         <button
                           className="action-btn btn-edit"
                           onClick={() => handleEdit(item)}
-                          title="Modifier"
+                          title={type === 'volunteers' ? 'Examiner' : 'Modifier'}
                         >
-                          <Edit size={18} />
+                          {type === 'volunteers' ? <Eye size={18} /> : <Edit size={18} />}
                         </button>
                         <button
                           className="action-btn btn-delete"
@@ -423,6 +483,7 @@ case 'jobs':
             {config.editor && (
               <config.editor
                 item={selectedItem}
+                volunteer={selectedItem} // Pour VolunteerExaminer
                 onSave={handleSave}
                 onCancel={() => setShowEditor(false)}
               />

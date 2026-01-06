@@ -4,8 +4,9 @@ import {
   FileText, 
   Briefcase, 
   AlertTriangle,
-  FolderOpen,  // ← Pour les Domaines
+  FolderOpen,
   Users,
+  UserPlus,      // ← Icône pour Bénévoles
   Handshake,
   FileSpreadsheet,
   Image,
@@ -67,6 +68,11 @@ const Sidebar = ({ isOpen, onToggle }) => {
       title: 'Équipe',
       icon: <Users size={20} />,
       path: '/content/team',
+    },
+    {
+      title: 'Bénévoles',           // ← NOUVEAU
+      icon: <UserPlus size={20} />,  // ← NOUVEAU
+      path: '/content/volunteers',   // ← NOUVEAU
     },
     {
       title: 'Partenaires',

@@ -1,8 +1,6 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import api from '../../services/api';
 import './VolunteerForm.css';
-
-const API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL + '/api' || 'http://localhost:8000/api';
 
 const VolunteerForm = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +21,30 @@ const VolunteerForm = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // 🆕 Charger les infos de l'utilisateur connecté
+  useEffect(() => {
+    loadUserData();
+  }, []);
+
+  const loadUserData = async () => {
+    try {
+      const response = await api.get('/user');
+      const userData = response.data;
+      setUser(userData);
+      
+      // Pré-remplir le formulaire avec les données de l'utilisateur
+      setFormData(prev => ({
+        ...prev,
+        first_name: userData.first_name || '',
+        last_name: userData.last_name || '',
+        email: userData.email || '',
+        phone: userData.phone || '',
+      }));
+    } catch (error) {
+      console.error('Erreur chargement utilisateur:', error);
+    }
+  };
 
   const availabilityOptions = [
     { value: 'full_time', label: 'Temps plein' },
@@ -45,13 +67,12 @@ const VolunteerForm = () => {
     'Autre',
   ];
 
+  // 🆕 Charger les candidatures (désactivé temporairement pour éviter l'erreur)
+  // On chargera après la soumission réussie
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error for this field
+    setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -60,9 +81,8 @@ const VolunteerForm = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validation du fichier
       const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const maxSize = 5 * 1024 * 1024;
 
       if (!validTypes.includes(file.type)) {
         setErrors(prev => ({ ...prev, cv: 'Le CV doit être au format PDF, DOC ou DOCX' }));
@@ -81,46 +101,26 @@ const VolunteerForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setLoading(true);
     setErrors({});
 
     try {
       const formDataToSend = new FormData();
       
-      // Ajouter tous les champs
       Object.keys(formData).forEach(key => {
         formDataToSend.append(key, formData[key]);
       });
 
-      // Ajouter le CV si présent
       if (cvFile) {
         formDataToSend.append('cv', cvFile);
       }
 
-      const response = await axios.post(`${API_URL}/volunteers`, formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      await api.post('/volunteers', formDataToSend, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       setSuccess(true);
-      // Réinitialiser le formulaire
-      setFormData({
-        first_name: '',
-        last_name: '',
-        email: '',
-        phone: '',
-        address: '',
-        city: '',
-        country: 'Congo',
-        interest_domain: '',
-        skills: '',
-        availability: 'flexible',
-        message: '',
-      });
-      setCvFile(null);
-
-      // Scroll to top to show success message
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } catch (error) {
@@ -130,7 +130,7 @@ const VolunteerForm = () => {
         setErrors(error.response.data.errors);
       } else {
         setErrors({ 
-          general: error.response?.data?.message || 'Une erreur est survenue. Veuillez réessayer.' 
+          general: error.response?.data?.message || 'Une erreur est survenue.' 
         });
       }
     } finally {
@@ -138,28 +138,54 @@ const VolunteerForm = () => {
     }
   };
 
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      pending: { label: 'En attente', className: 'status-pending', icon: '⏳' },
+      accepted: { label: 'Acceptée', className: 'status-accepted', icon: '✅' },
+      rejected: { label: 'Rejetée', className: 'status-rejected', icon: '❌' },
+      in_progress: { label: 'En cours', className: 'status-progress', icon: '🔄' }
+    };
+
+    const config = statusConfig[status] || statusConfig.pending;
+    return (
+      <span className={`status-badge ${config.className}`}>
+        {config.icon} {config.label}
+      </span>
+    );
+  };
+
+  // 🆕 Affichage simple - pas de suivi multiple pour l'instant
+  // Message de succès après envoi
   if (success) {
     return (
       <div className="volunteer-success">
         <div className="success-icon">✓</div>
         <h2>Candidature envoyée avec succès !</h2>
         <p>Merci pour votre intérêt à rejoindre notre équipe de bénévoles.</p>
-        <p>Nous examinerons votre candidature et vous contacterons dans les plus brefs délais.</p>
-        <button 
-          className="btn-primary"
-          onClick={() => setSuccess(false)}
-        >
-          Envoyer une autre candidature
-        </button>
+        <div className="success-actions">
+          <button 
+            className="btn-primary"
+            onClick={() => window.location.href = '/my-applications'}
+          >
+            📋 Voir mes candidatures
+          </button>
+          <button 
+            className="btn-secondary"
+            onClick={() => window.location.reload()}
+          >
+            ➕ Nouvelle candidature
+          </button>
+        </div>
       </div>
     );
   }
 
+  // Formulaire de candidature
   return (
     <div className="volunteer-form-container">
       <div className="volunteer-form-header">
         <h2>Devenir Bénévole</h2>
-        <p>Rejoignez notre équipe et faites la différence dans la vie de ceux qui en ont besoin</p>
+        <p>Rejoignez notre équipe et faites la différence</p>
       </div>
 
       {errors.general && (
@@ -169,7 +195,6 @@ const VolunteerForm = () => {
       )}
 
       <form onSubmit={handleSubmit} className="volunteer-form">
-        {/* Informations personnelles */}
         <div className="form-section">
           <h3>Informations personnelles</h3>
           
@@ -183,9 +208,7 @@ const VolunteerForm = () => {
                 value={formData.first_name}
                 onChange={handleChange}
                 required
-                className={errors.first_name ? 'error' : ''}
               />
-              {errors.first_name && <span className="error-message">{errors.first_name[0]}</span>}
             </div>
 
             <div className="form-group">
@@ -197,9 +220,7 @@ const VolunteerForm = () => {
                 value={formData.last_name}
                 onChange={handleChange}
                 required
-                className={errors.last_name ? 'error' : ''}
               />
-              {errors.last_name && <span className="error-message">{errors.last_name[0]}</span>}
             </div>
           </div>
 
@@ -213,9 +234,13 @@ const VolunteerForm = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className={errors.email ? 'error' : ''}
+                disabled
+                className="disabled-field"
+                title="L'email est celui de votre compte et ne peut pas être modifié"
               />
-              {errors.email && <span className="error-message">{errors.email[0]}</span>}
+              <span className="info-text">
+                ℹ️ L'email de votre compte (non modifiable)
+              </span>
             </div>
 
             <div className="form-group">
@@ -228,9 +253,7 @@ const VolunteerForm = () => {
                 onChange={handleChange}
                 required
                 placeholder="+243 XXX XXX XXX"
-                className={errors.phone ? 'error' : ''}
               />
-              {errors.phone && <span className="error-message">{errors.phone[0]}</span>}
             </div>
           </div>
 
@@ -267,22 +290,21 @@ const VolunteerForm = () => {
               value={formData.address}
               onChange={handleChange}
               rows="2"
-              placeholder="Votre adresse complète"
             />
           </div>
         </div>
 
-        {/* Compétences et disponibilité */}
         <div className="form-section">
           <h3>Compétences et Disponibilité</h3>
 
           <div className="form-group">
-            <label htmlFor="interest_domain">Domaine d'intérêt</label>
+            <label htmlFor="interest_domain">Domaine d'intérêt *</label>
             <select
               id="interest_domain"
               name="interest_domain"
               value={formData.interest_domain}
               onChange={handleChange}
+              required
             >
               <option value="">Sélectionnez un domaine</option>
               {interestDomains.map(domain => (
@@ -299,7 +321,7 @@ const VolunteerForm = () => {
               value={formData.skills}
               onChange={handleChange}
               rows="3"
-              placeholder="Décrivez vos compétences, formations, expériences pertinentes..."
+              placeholder="Décrivez vos compétences..."
             />
           </div>
 
@@ -328,14 +350,12 @@ const VolunteerForm = () => {
               name="cv"
               accept=".pdf,.doc,.docx"
               onChange={handleFileChange}
-              className={errors.cv ? 'error' : ''}
             />
             {cvFile && <span className="file-name">📄 {cvFile.name}</span>}
             {errors.cv && <span className="error-message">{errors.cv}</span>}
           </div>
         </div>
 
-        {/* Message de motivation */}
         <div className="form-section">
           <h3>Message de motivation</h3>
           
@@ -349,10 +369,10 @@ const VolunteerForm = () => {
               rows="6"
               required
               placeholder="Parlez-nous de vos motivations... (minimum 50 caractères)"
-              className={errors.message ? 'error' : ''}
             />
-            <span className="char-count">{formData.message.length} / 50 minimum</span>
-            {errors.message && <span className="error-message">{errors.message[0]}</span>}
+            <span className={`char-count ${formData.message.length < 50 ? 'text-red' : 'text-green'}`}>
+              {formData.message.length} / 50 minimum
+            </span>
           </div>
         </div>
 
@@ -360,7 +380,7 @@ const VolunteerForm = () => {
           <button 
             type="submit" 
             className="btn-submit"
-            disabled={loading}
+            disabled={loading || formData.message.length < 50}
           >
             {loading ? 'Envoi en cours...' : 'Envoyer ma candidature'}
           </button>

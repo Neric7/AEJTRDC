@@ -17,52 +17,15 @@ use App\Http\Controllers\API\JobController;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes - Frontend Public
+| API Routes - Frontend PUBLIC (NON PROTÉGÉES)
 |--------------------------------------------------------------------------
 */
 
-// Authentification utilisateurs
+// Authentification utilisateurs (PUBLIC)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// News - Routes PROTÉGÉES (nécessite connexion)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/news', [NewsController::class, 'index']);
-    Route::get('/news/tag/{tag}', [NewsController::class, 'getByTag']);
-    Route::get('/news/categories', [NewsController::class, 'categories']);
-    Route::get('/news/tags', [NewsController::class, 'tags']);
-    Route::get('/news/{id}', [NewsController::class, 'show']);
-});
-
-// 🎯 PROJECTS - Routes PROTÉGÉES (nécessite connexion)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/projects', [ProjectController::class, 'index']);
-    Route::get('/projects/featured', [ProjectController::class, 'featured']);
-    Route::get('/projects/statuses', [ProjectController::class, 'statuses']);
-    Route::get('/projects/domain/{domainId}', [ProjectController::class, 'getByDomain']);
-    Route::get('/projects/{identifier}', [ProjectController::class, 'show']);
-});
-
-// Commentaires - Lecture publique UNIQUEMENT
-Route::get('/news/{newsId}/comments', [CommentController::class, 'index']);
-
-// Routes protégées utilisateurs
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'user']);
-    Route::put('/user/profile', [AuthController::class, 'updateProfile']);
-
-    Route::post('/user/avatar', [AuthController::class, 'uploadAvatar']);
-    Route::delete('/user/avatar', [AuthController::class, 'deleteAvatar']);
-    Route::put('/user/password', [AuthController::class, 'changePassword']);
-    
-    // 🔒 Commentaires - PROTÉGÉS
-    Route::post('/news/{newsId}/comments', [CommentController::class, 'store']);
-    Route::put('/comments/{id}', [CommentController::class, 'update']);
-    Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
-});
-
-// Routes publiques pour les domaines
+// Domaines - Routes PUBLIQUES
 Route::prefix('domains')->group(function () {
     Route::get('/', [DomainController::class, 'index']);
     Route::get('/{id}', [DomainController::class, 'show']);
@@ -70,19 +33,73 @@ Route::prefix('domains')->group(function () {
     Route::get('/{id}/others', [DomainController::class, 'others']);
 });
 
-// 🌍 Routes publiques pour les partenaires (FRONTEND)
+// Partenaires - Routes PUBLIQUES
 Route::prefix('partners')->group(function () {
     Route::get('/', [PartnerController::class, 'index']);
     Route::get('/types', [PartnerController::class, 'types']);
     Route::get('/{identifier}', [PartnerController::class, 'show']);
 });
 
-// 🙋 Route publique pour soumettre une candidature bénévole (FRONTEND)
-Route::post('/volunteers', [VolunteerController::class, 'store']);
+// Commentaires - Lecture publique UNIQUEMENT
+Route::get('/news/{newsId}/comments', [CommentController::class, 'index']);
+
+// Remplacez l'ancienne route par celle-ci :
+Route::post('/volunteers/user-applications', [VolunteerController::class, 'getUserApplications']);
 
 /*
 |--------------------------------------------------------------------------
-| API Routes - Admin
+| API Routes - Frontend PROTÉGÉES (CONNEXION OBLIGATOIRE) 🔒
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth:sanctum')->group(function () {
+    
+    // ========== AUTHENTIFICATION ==========
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/user/profile', [AuthController::class, 'updateProfile']);
+    Route::post('/user/avatar', [AuthController::class, 'uploadAvatar']);
+    Route::delete('/user/avatar', [AuthController::class, 'deleteAvatar']);
+    Route::put('/user/password', [AuthController::class, 'changePassword']);
+    
+    // ========== NEWS (PROTÉGÉES) 🔒 ==========
+    Route::get('/news', [NewsController::class, 'index']);
+    Route::get('/news/tag/{tag}', [NewsController::class, 'getByTag']);
+    Route::get('/news/categories', [NewsController::class, 'categories']);
+    Route::get('/news/tags', [NewsController::class, 'tags']);
+    Route::get('/news/{id}', [NewsController::class, 'show']);
+    
+    // ========== COMMENTAIRES (PROTÉGÉS) 🔒 ==========
+    Route::post('/news/{newsId}/comments', [CommentController::class, 'store']);
+    Route::put('/comments/{id}', [CommentController::class, 'update']);
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
+    
+    // ========== PROJETS (PROTÉGÉS) 🔒 ==========
+    Route::prefix('projects')->group(function () {
+        Route::get('/', [ProjectController::class, 'index']);
+        Route::get('/featured', [ProjectController::class, 'featured']);
+        Route::get('/statuses', [ProjectController::class, 'statuses']);
+        Route::get('/domain/{domainId}', [ProjectController::class, 'getByDomain']);
+        Route::get('/{identifier}', [ProjectController::class, 'show']);
+    });
+    
+    // ========== OFFRES D'EMPLOI (PROTÉGÉES) 🔒 ==========
+    Route::prefix('jobs')->group(function () {
+        Route::get('/', [JobController::class, 'index']);
+        Route::get('/featured', [JobController::class, 'featured']);
+        Route::get('/types', [JobController::class, 'types']);
+        Route::get('/open', [JobController::class, 'open']);
+        Route::get('/{identifier}', [JobController::class, 'show']);
+    });
+    
+    // ========== CANDIDATURE BÉNÉVOLE (PROTÉGÉE) 🔒 ==========
+    Route::post('/volunteers', [VolunteerController::class, 'store']);
+    Route::get('/volunteers/my-applications', [VolunteerController::class, 'myApplications']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| API Routes - Admin BackOffice
 |--------------------------------------------------------------------------
 */
 
@@ -143,46 +160,22 @@ Route::prefix('admin')->group(function () {
         Route::get('/volunteers', [VolunteerController::class, 'index']);
         Route::get('/volunteers/stats', [VolunteerController::class, 'stats']);
         Route::get('/volunteers/{id}', [VolunteerController::class, 'show']);
+        Route::put('/volunteers/{id}', [VolunteerController::class, 'update']);
         Route::put('/volunteers/{id}/status', [VolunteerController::class, 'updateStatus']);
         Route::delete('/volunteers/{id}', [VolunteerController::class, 'destroy']);
+        
+        // ========== GESTION DES OFFRES D'EMPLOI ==========
+        Route::get('/jobs', [AdminJobController::class, 'index']);
+        Route::get('/jobs/statistics', [AdminJobController::class, 'statistics']);
+        Route::get('/jobs/{id}', [AdminJobController::class, 'show']);
+        Route::post('/jobs', [AdminJobController::class, 'store']);
+        Route::put('/jobs/{id}', [AdminJobController::class, 'update']);
+        Route::delete('/jobs/{id}', [AdminJobController::class, 'destroy']);
+        Route::post('/jobs/{id}/publish', [AdminJobController::class, 'publish']);
+        Route::post('/jobs/{id}/close', [AdminJobController::class, 'close']);
         
         // ========== DASHBOARD STATS ==========
         Route::get('/dashboard/stats', [DashboardController::class, 'getStats']);
         Route::get('/dashboard/activities', [DashboardController::class, 'getRecentActivities']);
     });
-});
-
-/*
-|--------------------------------------------------------------------------
-| JOBS - Routes PUBLIQUES (Frontend)
-|--------------------------------------------------------------------------
-*/
-
-// Routes publiques pour consulter les offres d'emploi
-Route::prefix('jobs')->group(function () {
-    Route::get('/', [JobController::class, 'index']);
-    Route::get('/featured', [JobController::class, 'featured']);
-    Route::get('/types', [JobController::class, 'types']);
-    Route::get('/open', [JobController::class, 'open']); // Offres ouvertes aux candidatures
-    Route::get('/{identifier}', [JobController::class, 'show']); // Par ID ou slug
-});
-
-/*
-|--------------------------------------------------------------------------
-| JOBS - Routes ADMIN (BackOffice)
-|--------------------------------------------------------------------------
-*/
-
-Route::prefix('admin')->middleware(['auth:sanctum', 'check.admin'])->group(function () {
-    
-    // ========== GESTION DES OFFRES D'EMPLOI ==========
-    Route::get('/jobs', [AdminJobController::class, 'index']);
-    Route::get('/jobs/statistics', [AdminJobController::class, 'statistics']);
-    Route::get('/jobs/{id}', [AdminJobController::class, 'show']);
-    Route::post('/jobs', [AdminJobController::class, 'store']);
-    Route::put('/jobs/{id}', [AdminJobController::class, 'update']);
-    Route::delete('/jobs/{id}', [AdminJobController::class, 'destroy']);
-    Route::post('/jobs/{id}/publish', [AdminJobController::class, 'publish']);
-    Route::post('/jobs/{id}/close', [AdminJobController::class, 'close']);
-    
 });

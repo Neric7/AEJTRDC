@@ -268,13 +268,46 @@ export const donationsAPI = {
 };
 
 // ============================================================
-// VOLONTAIRES
+// BÉNÉVOLES / VOLONTAIRES
 // ============================================================
 export const volunteersAPI = {
+  // Récupérer toutes les candidatures avec filtres optionnels
   getAll: (params) => api.get('/admin/volunteers', { params }),
+  
+  // Récupérer une candidature spécifique
   getById: (id) => api.get(`/admin/volunteers/${id}`),
+  
+  // Récupérer les statistiques des candidatures
+  getStats: () => api.get('/admin/volunteers/stats'),
+  
+  // Mettre à jour une candidature (statut, notes, message)
+  update: (id, data) => api.put(`/admin/volunteers/${id}`, data),
+  
+  // Mettre à jour uniquement le statut
   updateStatus: (id, status) => 
     api.put(`/admin/volunteers/${id}/status`, { status }),
+  
+  // Accepter une candidature
+  accept: (id, data) => 
+    api.post(`/admin/volunteers/${id}/accept`, data),
+  
+  // Rejeter une candidature
+  reject: (id, data) => 
+    api.post(`/admin/volunteers/${id}/reject`, data),
+  
+  // Supprimer une candidature
+  delete: (id) => api.delete(`/admin/volunteers/${id}`),
+  
+  // Envoyer un email au candidat
+  sendEmail: (id, data) => 
+    api.post(`/admin/volunteers/${id}/send-email`, data),
+  
+  // Exporter les candidatures (CSV, Excel)
+  export: (params) => 
+    api.get('/admin/volunteers/export', { 
+      params,
+      responseType: 'blob' 
+    }),
 };
 
 // ============================================================

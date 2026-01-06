@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { 
   FiMapPin, 
   FiBriefcase, 
@@ -14,10 +15,12 @@ import {
   FiX,
   FiEye
 } from 'react-icons/fi';
-import { jobsAPI } from '../services/api'; // ← Import de l'API
+import { jobsAPI } from '../services/api';
+import LoginRequiredMessage from '../components/common/LoginRequiredMessage';
 import './JobsPage.css';
 
 const JobsPage = () => {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -25,38 +28,37 @@ const JobsPage = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [error, setError] = useState(null);
 
-  // ✅ RÉCUPÉRATION DES OFFRES DEPUIS L'API
+  // RÉCUPÉRATION DES OFFRES (seulement si authentifié)
   useEffect(() => {
-    fetchJobs();
-  }, [filter]);
+    if (isAuthenticated) {
+      fetchJobs();
+    } else if (!authLoading) {
+      setLoading(false);
+    }
+  }, [filter, isAuthenticated, authLoading]);
 
   const fetchJobs = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      // Paramètres selon le filtre
       const params = {
         pageSize: 50,
-        ...(filter !== 'all' && { type: filter.toUpperCase() }) // CDI, CDD, STAGE
+        ...(filter !== 'all' && { type: filter.toUpperCase() })
       };
 
       const response = await jobsAPI.getAll(params);
-      
-      // Adapter selon la structure de votre réponse API
       const jobsData = response.data.data || response.data;
       setJobs(jobsData);
       
     } catch (error) {
       console.error('Erreur lors du chargement des offres:', error);
       setError('Impossible de charger les offres. Veuillez réessayer.');
-      // toast.error('Erreur lors du chargement des offres'); // Si vous utilisez toast
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ FORMATER LA DATE DEADLINE
   const formatDeadline = (deadline) => {
     if (!deadline) return null;
     return new Date(deadline).toLocaleDateString('fr-FR', {
@@ -66,23 +68,47 @@ const JobsPage = () => {
     });
   };
 
-  // ✅ VÉRIFIER SI UNE OFFRE EST EXPIRÉE
   const isExpired = (deadline) => {
     if (!deadline) return false;
     return new Date(deadline) < new Date();
   };
 
-  if (loading) {
+  // Si en cours de vérification d'authentification
+  if (authLoading || loading) {
     return (
       <div className="jobs-page">
         <div className="loading">
           <div className="spinner"></div>
-          <p>Chargement des offres...</p>
+          <p>Chargement...</p>
         </div>
       </div>
     );
   }
 
+  // Si non authentifié, afficher le message de connexion requise
+  if (!isAuthenticated) {
+    return (
+      <div className="jobs-page">
+        <section className="jobs-hero">
+          <div className="hero-background">
+            <div className="hero-circle hero-circle-1"></div>
+            <div className="hero-circle hero-circle-2"></div>
+          </div>
+          <div className="container">
+            <h1>Offres d'Emploi & Stages</h1>
+            <p>Rejoignez notre équipe et participez à notre mission humanitaire</p>
+          </div>
+        </section>
+
+        <LoginRequiredMessage 
+          title="Connexion requise"
+          message="Pour consulter nos offres d'emploi et postuler, veuillez vous connecter à votre compte."
+        />
+      </div>
+    );
+  }
+
+  // Si erreur de chargement
   if (error) {
     return (
       <div className="jobs-page">
@@ -97,6 +123,7 @@ const JobsPage = () => {
     );
   }
 
+  // Contenu normal si authentifié
   return (
     <div className="jobs-page">
       {/* HERO */}
@@ -179,14 +206,12 @@ const JobsPage = () => {
                     >
                       <div className="job-card-border"></div>
                       
-                      {/* Badge vedette */}
                       {job.featured && (
                         <div className="featured-badge">
                           ★ En vedette
                         </div>
                       )}
                       
-                      {/* Badge expiré */}
                       {expired && (
                         <div className="expired-badge">
                           Offre expirée

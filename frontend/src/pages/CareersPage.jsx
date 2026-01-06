@@ -1,10 +1,25 @@
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { FaHeart, FaSeedling, FaHandshake, FaBullseye } from 'react-icons/fa';
 import VolunteerForm from '../components/careers/VolunteerForm';
+import LoginRequiredMessage from '../components/common/LoginRequiredMessage';
 import './CareersPage.css';
 
 const CareersPage = () => {
-  const [activeTab, setActiveTab] = useState('form'); // form, process
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const [activeTab, setActiveTab] = useState('form');
+
+  // Pendant le chargement de l'authentification
+  if (authLoading) {
+    return (
+      <div className="careers-page">
+        <div className="loading">
+          <div className="spinner"></div>
+          <p>Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="careers-page">
@@ -81,7 +96,7 @@ const CareersPage = () => {
                 <div className="testimonials-grid">
                   <div className="testimonial-card">
                     <div className="testimonial-photo">
-                      <img src="/images/volunteers/volunteer1.jpg" alt="Marie" />
+                      <div className="photo-placeholder">👤</div>
                     </div>
                     <p className="testimonial-text">
                       "Mon expérience en tant que bénévole a été transformatrice. J'ai appris beaucoup et j'ai surtout vu l'impact concret de nos actions."
@@ -92,7 +107,7 @@ const CareersPage = () => {
                   </div>
                   <div className="testimonial-card">
                     <div className="testimonial-photo">
-                      <img src="/images/volunteers/volunteer2.jpg" alt="Jean" />
+                      <div className="photo-placeholder">👤</div>
                     </div>
                     <p className="testimonial-text">
                       "Faire partie de cette équipe m'a permis de mettre mes compétences au service d'une cause qui me tient à cœur."
@@ -103,7 +118,7 @@ const CareersPage = () => {
                   </div>
                   <div className="testimonial-card">
                     <div className="testimonial-photo">
-                      <img src="/images/volunteers/volunteer3.jpg" alt="Sophie" />
+                      <div className="photo-placeholder">👤</div>
                     </div>
                     <p className="testimonial-text">
                       "Une expérience humaine incroyable qui donne du sens à ma vie quotidienne."
@@ -115,7 +130,16 @@ const CareersPage = () => {
                 </div>
               </section>
 
-          <VolunteerForm />
+              {/* SI AUTHENTIFIÉ: Formulaire - SINON: Message de connexion */}
+              {isAuthenticated ? (
+                <VolunteerForm />
+              ) : (
+                <LoginRequiredMessage 
+                  title="Connexion requise pour candidater"
+                  message="Pour soumettre votre candidature de bénévolat, vous devez d'abord créer un compte ou vous connecter."
+                  showRegister={true}
+                />
+              )}
             </div>
           )}
 
@@ -123,72 +147,108 @@ const CareersPage = () => {
           {activeTab === 'process' && (
             <div className="tab-content">
               <section className="process-section">
-            <h2>Processus de Candidature</h2>
-            
-            <div className="process-steps">
-              <div className="process-step">
-                <div className="step-number">1</div>
-                <div className="step-content">
-                  <h3>Soumission de candidature</h3>
-                  <p>Remplissez le formulaire ci-dessus avec vos informations et votre CV. Assurez-vous de bien détailler vos motivations et compétences.</p>
+                <h2>Processus de Candidature</h2>
+                
+                <div className="process-steps">
+                  <div className="process-step">
+                    <div className="step-number">1</div>
+                    <div className="step-content">
+                      <h3>Soumission de candidature</h3>
+                      <p>Remplissez le formulaire ci-dessus avec vos informations et votre CV. Assurez-vous de bien détailler vos motivations et compétences.</p>
+                    </div>
+                  </div>
+
+                  <div className="process-step">
+                    <div className="step-number">2</div>
+                    <div className="step-content">
+                      <h3>Examen du dossier</h3>
+                      <p>Notre équipe examine votre candidature dans un délai de 5 à 7 jours ouvrables. Nous étudions attentivement chaque profil.</p>
+                    </div>
+                  </div>
+
+                  <div className="process-step">
+                    <div className="step-number">3</div>
+                    <div className="step-content">
+                      <h3>Entretien</h3>
+                      <p>Si votre profil correspond à nos besoins, nous vous contactons pour un entretien (en personne ou par visioconférence).</p>
+                    </div>
+                  </div>
+
+                  <div className="process-step">
+                    <div className="step-number">4</div>
+                    <div className="step-content">
+                      <h3>Formation et intégration</h3>
+                      <p>Les bénévoles retenus bénéficient d'une formation d'orientation et d'un accompagnement pour bien démarrer leur mission.</p>
+                    </div>
+                  </div>
+
+                  <div className="process-step">
+                    <div className="step-number">5</div>
+                    <div className="step-content">
+                      <h3>Début de la mission</h3>
+                      <p>Vous commencez votre engagement avec nous et faites partie de notre équipe engagée pour le changement.</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div className="process-step">
-                <div className="step-number">2</div>
-                <div className="step-content">
-                  <h3>Examen du dossier</h3>
-                  <p>Notre équipe examine votre candidature dans un délai de 5 à 7 jours ouvrables. Nous étudions attentivement chaque profil.</p>
+                <div className="requirements-section">
+                  <h3>Ce que nous recherchons</h3>
+                  <ul className="requirements-list">
+                    <li>✓ Engagement et motivation pour notre mission</li>
+                    <li>✓ Esprit d'équipe et capacité d'adaptation</li>
+                    <li>✓ Compétences pertinentes dans votre domaine</li>
+                    <li>✓ Disponibilité régulière (selon la mission)</li>
+                    <li>✓ Respect de nos valeurs et de notre code de conduite</li>
+                  </ul>
                 </div>
-              </div>
 
-              <div className="process-step">
-                <div className="step-number">3</div>
-                <div className="step-content">
-                  <h3>Entretien</h3>
-                  <p>Si votre profil correspond à nos besoins, nous vous contactons pour un entretien (en personne ou par visioconférence).</p>
+                <div className="contact-info">
+                  <h3>Questions ?</h3>
+                  <p>Pour toute question sur le processus de candidature, contactez-nous à :</p>
+                  <p><strong>Email:</strong> benevolat@aejtrdc.org</p>
+                  <p><strong>Téléphone:</strong> +243 XXX XXX XXX</p>
                 </div>
-              </div>
-
-              <div className="process-step">
-                <div className="step-number">4</div>
-                <div className="step-content">
-                  <h3>Formation et intégration</h3>
-                  <p>Les bénévoles retenus bénéficient d'une formation d'orientation et d'un accompagnement pour bien démarrer leur mission.</p>
-                </div>
-              </div>
-
-              <div className="process-step">
-                <div className="step-number">5</div>
-                <div className="step-content">
-                  <h3>Début de la mission</h3>
-                  <p>Vous commencez votre engagement avec nous et faites partie de notre équipe engagée pour le changement.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="requirements-section">
-              <h3>Ce que nous recherchons</h3>
-              <ul className="requirements-list">
-                <li>✓ Engagement et motivation pour notre mission</li>
-                <li>✓ Esprit d'équipe et capacité d'adaptation</li>
-                <li>✓ Compétences pertinentes dans votre domaine</li>
-                <li>✓ Disponibilité régulière (selon la mission)</li>
-                <li>✓ Respect de nos valeurs et de notre code de conduite</li>
-              </ul>
-            </div>
-
-            <div className="contact-info">
-              <h3>Questions ?</h3>
-              <p>Pour toute question sur le processus de candidature, contactez-nous à :</p>
-              <p><strong>Email:</strong> benevolat@aejtrdc.org</p>
-              <p><strong>Téléphone:</strong> +243 XXX XXX XXX</p>
-            </div>
-          </section>
+              </section>
             </div>
           )}
         </div>
       </div>
+
+      <style>{`
+        .loading {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-height: 60vh;
+          gap: 1rem;
+        }
+
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 4px solid #f3f4f6;
+          border-top-color: #667eea;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
+        .photo-placeholder {
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 40px;
+          color: white;
+        }
+      `}</style>
     </div>
   );
 };
