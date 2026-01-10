@@ -195,21 +195,6 @@ export const alertsAPI = {
 };
 
 // ============================================================
-// ÉQUIPE
-// ============================================================
-export const teamAPI = {
-  getAll: (params) => api.get('/admin/team', { params }),
-  getById: (id) => api.get(`/admin/team/${id}`),
-  create: (data) => api.post('/admin/team', data),
-  update: (id, data) => api.put(`/admin/team/${id}`, data),
-  delete: (id) => api.delete(`/admin/team/${id}`),
-  uploadPhoto: (id, formData) => 
-    api.post(`/admin/team/${id}/photo`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
-};
-
-// ============================================================
 // RAPPORTS / TRANSPARENCE
 // ============================================================
 export const reportsAPI = {
@@ -322,3 +307,109 @@ export const commentsAPI = {
 
 // Export par défaut de l'instance axios configurée
 export default api;
+
+// À ajouter dans admin/src/services/adminApi.js
+
+// ============================================================
+// ÉQUIPE / TEAM  
+// ============================================================
+export const teamAPI = {
+  getAll: (params) => api.get('/admin/team', { params }),
+  getById: (id) => api.get(`/admin/team/${id}`),
+  getStatistics: () => api.get('/admin/team/statistics'),
+  
+  create: (data) => {
+    const formData = new FormData();
+    
+    // Champs requis - toujours envoyer
+    const requiredFields = ['full_name', 'email', 'category', 'position'];
+    requiredFields.forEach(key => {
+      if (data[key] !== null && data[key] !== undefined) {
+        formData.append(key, data[key]);
+      }
+    });
+    
+    // Champs optionnels - envoyer seulement si non vides
+    const optionalFields = ['role', 'phone', 'bio', 'display_order'];
+    optionalFields.forEach(key => {
+      if (data[key] !== null && data[key] !== undefined && data[key] !== '') {
+        formData.append(key, data[key]);
+      }
+    });
+    
+    // Boolean is_active
+    if (data.is_active !== undefined) {
+      formData.append('is_active', data.is_active ? '1' : '0');
+    }
+    
+    // Social links
+    if (data.social_links && Object.keys(data.social_links).length > 0) {
+      formData.append('social_links', JSON.stringify(data.social_links));
+    }
+    
+    // Photo file
+    if (data.photo instanceof File) {
+      formData.append('photo', data.photo);
+    }
+    
+    return api.post('/admin/team', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  
+  update: (id, data) => {
+    const formData = new FormData();
+    
+    // Champs requis - toujours envoyer
+    const requiredFields = ['full_name', 'email', 'category', 'position'];
+    requiredFields.forEach(key => {
+      if (data[key] !== null && data[key] !== undefined) {
+        formData.append(key, data[key]);
+      }
+    });
+    
+    // Champs optionnels - envoyer seulement si non vides
+    const optionalFields = ['role', 'phone', 'bio', 'display_order'];
+    optionalFields.forEach(key => {
+      if (data[key] !== null && data[key] !== undefined && data[key] !== '') {
+        formData.append(key, data[key]);
+      }
+    });
+    
+    // Boolean is_active
+    if (data.is_active !== undefined) {
+      formData.append('is_active', data.is_active ? '1' : '0');
+    }
+    
+    // Social links
+    if (data.social_links && Object.keys(data.social_links).length > 0) {
+      formData.append('social_links', JSON.stringify(data.social_links));
+    }
+    
+    // Photo file - seulement si c'est un nouveau fichier
+    if (data.photo instanceof File) {
+      formData.append('photo', data.photo);
+    }
+    
+    // Utiliser POST avec _method pour Laravel
+    formData.append('_method', 'PUT');
+    
+    return api.post(`/admin/team/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  
+  delete: (id) => api.delete(`/admin/team/${id}`),
+  toggleStatus: (id) => api.post(`/admin/team/${id}/toggle-status`),
+  reorder: (members) => api.post('/admin/team/reorder', { members }),
+  
+  uploadPhoto: (id, photoFile) => {
+    const formData = new FormData();
+    formData.append('photo', photoFile);
+    return api.post(`/admin/team/${id}/upload-photo`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  
+  deletePhoto: (id) => api.delete(`/admin/team/${id}/photo`)
+};

@@ -42,7 +42,11 @@ class PartnerController extends Controller
 
             // Filtrer par recherche
             if ($search) {
-                $query->search($search);
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%")
+                      ->orWhere('website', 'like', "%{$search}%");
+                });
             }
 
             // Filtrer les partenaires mis en avant
@@ -50,7 +54,10 @@ class PartnerController extends Controller
                 $query->where('featured', filter_var($featured, FILTER_VALIDATE_BOOLEAN));
             }
 
-            $partners = $query->ordered()->paginate($pageSize);
+            // Ordonner par ordre puis par nom
+            $query->orderBy('order', 'asc')->orderBy('name', 'asc');
+
+            $partners = $query->paginate($pageSize);
 
             return response()->json($partners);
         } catch (\Exception $e) {
@@ -275,6 +282,77 @@ class PartnerController extends Controller
                 'message' => 'Erreur lors du chargement des types',
                 'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
             ], 500);
+        }
+    }
+
+    /**
+     * Liste admin (sans pagination pour compatibilité avec adminApi.js)
+     */
+    public function adminIndex(Request $request)
+    {
+        try {
+            $type = $request->input('type');
+            $search = $request->input('search');
+            $status = $request->input('status');
+
+            $query = Partner::query();
+
+            // Filtrer par statut
+            if ($status && $status !== 'all') {
+                $query->where('status', $status);
+            }
+
+            // Filtrer par type
+            if ($type) {
+                $query->where('type', $type);
+            }
+
+            // Filtrer par recherche
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%")
+                      ->orWhere('website', 'like', "%{$search}%");
+                });
+            }
+
+            // Ordonner par ordre puis par nom
+            $partners = $query->orderBy('order', 'asc')
+                             ->orderBy('name', 'asc')
+                             ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $partners
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error in PartnerController@adminIndex: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors du chargement des partenaires',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+            ], 500);
+        }
+    }
+
+    /**
+     * Afficher un partenaire (admin)
+     */
+    public function adminShow($id)
+    {
+        try {
+            $partner = Partner::findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'data' => $partner
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error in PartnerController@adminShow: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Partenaire introuvable'
+            ], 404);
         }
     }
 }

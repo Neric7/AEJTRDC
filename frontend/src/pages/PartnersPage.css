@@ -3,10 +3,10 @@
   background: #f8fafc;
 }
 
-/* Hero Section */
+/* Hero Section - Plus compact */
 .partners-hero {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 6rem 2rem 4rem;
+  padding: 4rem 2rem 3rem;
   color: white;
 }
 
@@ -18,35 +18,35 @@
 
 .hero-badge {
   display: inline-block;
-  padding: 0.5rem 1.5rem;
+  padding: 0.4rem 1.25rem;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 1px;
-  margin-bottom: 1.5rem;
+  letter-spacing: 0.8px;
+  margin-bottom: 1rem;
 }
 
 .hero-title {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 800;
   line-height: 1.2;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .hero-description {
-  font-size: 1.125rem;
-  line-height: 1.8;
-  max-width: 700px;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 650px;
   margin: 0 auto;
   opacity: 0.95;
 }
 
-/* Filters Section */
+/* Filters Section - Plus compact */
 .partners-filters {
   background: white;
   border-bottom: 1px solid #e2e8f0;
-  padding: 1.5rem 2rem;
+  padding: 1rem 2rem;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -57,13 +57,13 @@
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .filter-btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.625rem 1.25rem;
   border: 2px solid #e2e8f0;
   background: white;
   color: #64748b;
@@ -71,7 +71,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .filter-btn:hover {
@@ -88,7 +88,7 @@
 
 /* Content Section */
 .partners-content {
-  padding: 4rem 2rem;
+  padding: 2.5rem 2rem;
 }
 
 .partners-container {
@@ -98,26 +98,26 @@
 
 .partner-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-bottom: 4rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
 }
 
 /* Recognition Section */
 .partners-recognition {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 3rem;
-  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
   text-align: center;
-  margin-top: 4rem;
+  margin-top: 3rem;
 }
 
 .recognition-text {
-  font-size: 1.25rem;
-  line-height: 1.8;
+  font-size: 1.05rem;
+  line-height: 1.7;
   color: white;
   font-style: italic;
-  max-width: 800px;
+  max-width: 750px;
   margin: 0 auto;
 }
 
@@ -127,14 +127,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 3rem 2rem;
   gap: 1rem;
 }
 
 .spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #e2e8f0;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
   border-top-color: #667eea;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -150,18 +150,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
-  gap: 1.5rem;
+  padding: 3rem 2rem;
+  gap: 1.25rem;
 }
 
 .error-message {
   color: #ef4444;
-  font-size: 1.125rem;
+  font-size: 1rem;
   text-align: center;
 }
 
 .retry-btn {
-  padding: 0.75rem 2rem;
+  padding: 0.625rem 1.75rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
@@ -169,6 +169,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.3s ease;
+  font-size: 0.9rem;
 }
 
 .retry-btn:hover {
@@ -178,39 +179,39 @@
 /* Empty State */
 .empty-container {
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 3rem 2rem;
   color: #64748b;
-  font-size: 1.125rem;
+  font-size: 1rem;
 }
 
 /* Responsive */
 @media (max-width: 1024px) {
   .partner-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
   }
 }
 
 @media (max-width: 768px) {
   .partners-hero {
-    padding: 4rem 1.5rem 3rem;
+    padding: 3rem 1.5rem 2.5rem;
   }
 
   .hero-title {
-    font-size: 1.875rem;
+    font-size: 1.625rem;
   }
 
   .hero-description {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   .partners-filters {
-    padding: 1rem;
+    padding: 0.875rem 1rem;
   }
 
   .filter-btn {
-    font-size: 0.85rem;
-    padding: 0.625rem 1.25rem;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
   }
 
   .partners-content {
@@ -218,15 +219,41 @@
   }
 
   .partner-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
   }
 
   .partners-recognition {
-    padding: 2rem 1.5rem;
+    padding: 1.75rem 1.5rem;
   }
 
   .recognition-text {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .partners-hero {
+    padding: 2.5rem 1rem 2rem;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+  }
+
+  .hero-description {
+    font-size: 0.875rem;
+  }
+
+  .partner-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .partners-recognition {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .recognition-text {
+    font-size: 0.9rem;
   }
 }

@@ -78,7 +78,7 @@ export default function CTASection() {
               
               {/* Boutons d'appel à l'action */}
               <div className={styles.actionButtons}>
-                <a href="#donate" className={`${styles.actionButton} ${styles.donateButton}`}>
+                <a href="/donate" className={`${styles.actionButton} ${styles.donateButton}`}>
                   Faire un don
                 </a>
                 <a href="/volunteer" className={`${styles.actionButton} ${styles.joinButton}`}>
@@ -94,9 +94,9 @@ export default function CTASection() {
           {/* CENTRE - Compteur "17" vertical */}
           <div className={styles.centerContent}>
             <div className={styles.yearsNumber}>{yearsCount}</div>
-            <div className={styles.yearsTextWrapper}>
-              <span className={styles.yearsOf}>Years of</span>
-              <span className={styles.yearsExperience}>Experience</span>
+            <div className={styles.yearsTextWrapper}> 
+              <span className={styles.yearsOf}>Années</span>
+              <span className={styles.yearsExperience}>d’expérience</span>
             </div>
           </div>
 

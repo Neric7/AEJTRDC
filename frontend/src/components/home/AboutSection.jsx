@@ -40,7 +40,6 @@ export default function AboutSection() {
           
           {/* Colonne image */}
           <div className={styles.imageColumn}>
-            <div className={styles.imageGlow}></div>
             <div className={styles.imageContainer}>
               <div className={styles.imageWrapper}>
                 <img 

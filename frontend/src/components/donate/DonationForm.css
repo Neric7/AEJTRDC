@@ -1,0 +1,293 @@
+/* Donation Form Styles */
+.donation-form-container {
+    width: 100%;
+  }
+  
+  .form-header {
+    margin-bottom: 32px;
+  }
+  
+  .form-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+  
+  .form-header p {
+    color: #64748b;
+    font-size: 0.875rem;
+  }
+  
+  .donation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  
+  /* Form Sections */
+  .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .section-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+  
+  /* Amount Selection */
+  .amount-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  
+  .amount-btn {
+    padding: 16px;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: #1e293b;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .amount-btn:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+  
+  .amount-btn.selected {
+    background: #0B2B5B;
+    color: white;
+    border-color: #0B2B5B;
+    transform: scale(1.05);
+  }
+  
+  .custom-amount-wrapper {
+    margin-top: 8px;
+  }
+  
+  .input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .input-icon {
+    position: absolute;
+    left: 16px;
+    color: #64748b;
+    font-size: 1rem;
+    pointer-events: none;
+  }
+  
+  .textarea-icon {
+    top: 16px;
+  }
+  
+  .custom-amount-input {
+    width: 100%;
+    padding: 14px 16px 14px 40px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #1e293b;
+    transition: all 0.3s ease;
+  }
+  
+  .custom-amount-input:focus {
+    outline: none;
+    border-color: #0B2B5B;
+    box-shadow: 0 0 0 3px rgba(11, 43, 91, 0.1);
+  }
+  
+  /* Form Inputs */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  @media (min-width: 640px) {
+    .form-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .input-with-icon input,
+  .input-with-icon textarea {
+    width: 100%;
+    padding: 14px 16px 14px 40px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #1e293b;
+    font-family: inherit;
+    transition: all 0.3s ease;
+  }
+  
+  .input-with-icon textarea {
+    padding-top: 14px;
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .input-with-icon input:focus,
+  .input-with-icon textarea:focus {
+    outline: none;
+    border-color: #0B2B5B;
+    box-shadow: 0 0 0 3px rgba(11, 43, 91, 0.1);
+  }
+  
+  .input-with-icon input.error,
+  .input-with-icon textarea.error {
+    border-color: #ef4444;
+  }
+  
+  .input-with-icon input::placeholder,
+  .input-with-icon textarea::placeholder {
+    color: #94a3b8;
+  }
+  
+  .error-message {
+    color: #ef4444;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  /* Checkboxes */
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 8px 0;
+  }
+  
+  .checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #0B2B5B;
+  }
+  
+  .checkbox-label span {
+    color: #475569;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  
+  /* Summary */
+  .donation-summary {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px dashed #cbd5e1;
+  }
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    color: #64748b;
+    font-size: 0.875rem;
+  }
+  
+  .summary-row:not(:last-child) {
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .summary-row.total {
+    font-size: 1.125rem;
+    color: #1e293b;
+    padding-top: 16px;
+  }
+  
+  .summary-row strong {
+    color: #1e293b;
+    font-weight: 600;
+  }
+  
+  .summary-row.total strong {
+    color: #0B2B5B;
+    font-size: 1.5rem;
+  }
+  
+  /* Submit Button */
+  .submit-btn {
+    width: 100%;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #FDB913, #f59e0b);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.125rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(253, 185, 19, 0.3);
+  }
+  
+  .submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(253, 185, 19, 0.4);
+  }
+  
+  .submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Form Note */
+  .form-note {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    margin-top: -16px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 640px) {
+    .amount-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  
+    .submit-btn {
+      font-size: 1rem;
+      padding: 14px 24px;
+    }
+  }

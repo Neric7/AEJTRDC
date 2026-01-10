@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Plus, Search, Filter, Edit, Trash2, Eye, ExternalLink } from 'lucide-react';
+import { Plus, Search, Filter, Edit, Trash2, Eye, EyeOff, ExternalLink, User } from 'lucide-react';
 import { 
   newsAPI, 
   projectsAPI, 
@@ -11,7 +11,7 @@ import {
   reportsAPI,
   mediaAPI,
   domainsAPI,
-  volunteersAPI  // ← AJOUT DE L'API BÉNÉVOLES
+  volunteersAPI
 } from '../services/adminApi';
 import toast from 'react-hot-toast';
 import { useAlert } from '../context/AlertProvider';
@@ -21,10 +21,10 @@ import './ContentPage.css';
 import NewsEditor from '../components/ContentEditor/NewsEditor';
 import ProjectEditor from '../components/ContentEditor/ProjectEditor';
 import JobEditor from '../components/ContentEditor/JobEditor';
-import AlertEditor from '../components/ContentEditor/AlertEditor';
 import DomainEditor from '../components/ContentEditor/DomainEditor';
 import PartnerEditor from '../components/ContentEditor/PartnerEditor';
-import VolunteerExaminer from '../components/ContentEditor/VolunteerExaminer'; // ← AJOUT
+import VolunteerExaminer from '../components/ContentEditor/VolunteerExaminer';
+import TeamEditor from '../components/ContentEditor/TeamEditor'; // ← AJOUT
 
 const ContentPage = () => {
   const { type } = useParams();
@@ -72,21 +72,15 @@ const ContentPage = () => {
       viewUrl: (item) => `${FRONTEND_URL}/careers`,
       itemName: (item) => `l'offre "${item.title}"`,
     },
-    alerts: {
-      title: 'Alertes humanitaires',
-      api: alertsAPI,
-      editor: AlertEditor,
-      columns: ['Titre', 'Priorité', 'Statut', 'Date', 'Actions'],
-      viewUrl: (item) => `${FRONTEND_URL}/humanitarian`,
-      itemName: (item) => `l'alerte "${item.title}"`,
-    },
+    // ← CONFIGURATION ÉQUIPE
     team: {
       title: 'Équipe',
       api: teamAPI,
-      editor: null,
-      columns: ['Nom', 'Poste', 'Email', 'Téléphone', 'Actions'],
-      viewUrl: (item) => `${FRONTEND_URL}/about/team`,
-      itemName: (item) => `${item.name}`,
+      editor: TeamEditor,
+      columns: ['Photo', 'Nom', 'Catégorie', 'Poste', 'Email', 'Téléphone', 'Statut', 'Actions'],
+      viewUrl: (item) => `${FRONTEND_URL}/team`,
+      itemName: (item) => `${item.full_name}`,
+      useCustomFilters: true, // Pour utiliser les filtres de catégorie
     },
     partners: {
       title: 'Partenaires',
@@ -112,7 +106,6 @@ const ContentPage = () => {
       viewUrl: null,
       itemName: (item) => `le média "${item.name}"`,
     },
-    // ← NOUVELLE SECTION BÉNÉVOLES
     volunteers: {
       title: 'Bénévoles',
       api: volunteersAPI,
@@ -132,7 +125,17 @@ const ContentPage = () => {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const params = filterStatus !== 'all' ? { status: filterStatus } : {};
+      let params = {};
+      
+      // Pour l'équipe, utiliser les filtres de catégorie
+      if (type === 'team') {
+        if (filterStatus !== 'all') {
+          params.category = filterStatus;
+        }
+      } else if (filterStatus !== 'all') {
+        params.status = filterStatus;
+      }
+      
       const response = await config.api.getAll(params);
       setItems(response.data.data || response.data);
     } catch (error) {
@@ -176,6 +179,18 @@ const ContentPage = () => {
     } catch (error) {
       console.error('Erreur:', error);
       toast.error('Erreur lors de la suppression');
+    }
+  };
+
+  // Toggle statut pour l'équipe
+  const handleToggleStatus = async (item) => {
+    try {
+      await teamAPI.toggleStatus(item.id);
+      toast.success('Statut mis à jour');
+      fetchItems();
+    } catch (error) {
+      console.error('Erreur:', error);
+      toast.error('Erreur lors de la mise à jour du statut');
     }
   };
 
@@ -230,6 +245,68 @@ const ContentPage = () => {
             </td>
           </>
         );
+      
+      // ← NOUVEAU CAS POUR L'ÉQUIPE
+      case 'team':
+        return (
+          <>
+            <td>
+              {item.photo ? (
+                <img 
+                  src={item.photo} 
+                  alt={item.full_name || 'Member'}
+                  style={{ 
+                    width: '50px', 
+                    height: '50px', 
+                    borderRadius: '8px', 
+                    objectFit: 'cover' 
+                  }}
+                />
+              ) : (
+                <div style={{
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '8px',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontSize: '1.2rem'
+                }}>
+                  {item.full_name ? item.full_name.split(' ').map(n => n[0]).join('').slice(0, 2) : '??'}
+                </div>
+              )}
+            </td>
+            <td>
+              <div>
+                <strong>{item.full_name || 'Sans nom'}</strong>
+                {item.role && <div style={{ fontSize: '0.85rem', color: '#718096' }}>{item.role}</div>}
+              </div>
+            </td>
+            <td>
+              <span className={`type-badge type-${item.category}`}>
+                {item.category === 'conseil_administration' ? 'Conseil' : 'Coordination'}
+              </span>
+            </td>
+            <td>{item.position}</td>
+            <td>{item.email}</td>
+            <td>{item.phone || '-'}</td>
+            <td>
+              <button
+                className={`status-badge ${item.is_active ? 'status-published' : 'status-archived'}`}
+                onClick={() => handleToggleStatus(item)}
+                style={{ cursor: 'pointer', border: 'none' }}
+                title="Cliquer pour changer le statut"
+              >
+                {item.is_active ? <Eye size={14} style={{ marginRight: '4px' }} /> : <EyeOff size={14} style={{ marginRight: '4px' }} />}
+                {item.is_active ? 'Actif' : 'Inactif'}
+              </button>
+            </td>
+          </>
+        );
+
       case 'news':
         return (
           <>
@@ -243,6 +320,7 @@ const ContentPage = () => {
             <td>{item.published_at ? new Date(item.published_at).toLocaleDateString('fr-FR') : '-'}</td>
           </>
         );
+      
       case 'projects':
         return (
           <>
@@ -256,6 +334,7 @@ const ContentPage = () => {
             <td>{item.budget ? `${item.budget} $` : '-'}</td>
           </>
         );
+      
       case 'partners':
         return (
           <>
@@ -333,7 +412,6 @@ const ContentPage = () => {
           </>
         );
 
-      // ← NOUVEAU CAS POUR LES BÉNÉVOLES
       case 'volunteers':
         return (
           <>
@@ -390,7 +468,8 @@ const ContentPage = () => {
           />
         </div>
 
-        {type !== 'domains' && (
+        {/* Filtres conditionnels selon le type */}
+        {type === 'team' ? (
           <div className="filter-group">
             <Filter size={20} />
             <select 
@@ -398,20 +477,35 @@ const ContentPage = () => {
               onChange={(e) => setFilterStatus(e.target.value)}
             >
               <option value="all">Tous</option>
-              {type === 'volunteers' ? (
-                <>
-                  <option value="pending">En attente</option>
-                  <option value="in_progress">En cours</option>
-                  <option value="accepted">Accepté</option>
-                  <option value="rejected">Rejeté</option>
-                </>
-              ) : (
-                <>
-                  <option value="published">Publié</option>
-                  <option value="draft">Brouillon</option>
-                  <option value="archived">Archivé</option>
-                </>
-              )}
+              <option value="conseil_administration">Conseil d'Administration</option>
+              <option value="coordination">Coordination</option>
+            </select>
+          </div>
+        ) : type === 'volunteers' ? (
+          <div className="filter-group">
+            <Filter size={20} />
+            <select 
+              value={filterStatus} 
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="all">Tous</option>
+              <option value="pending">En attente</option>
+              <option value="in_progress">En cours</option>
+              <option value="accepted">Accepté</option>
+              <option value="rejected">Rejeté</option>
+            </select>
+          </div>
+        ) : type !== 'domains' && (
+          <div className="filter-group">
+            <Filter size={20} />
+            <select 
+              value={filterStatus} 
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="all">Tous</option>
+              <option value="published">Publié</option>
+              <option value="draft">Brouillon</option>
+              <option value="archived">Archivé</option>
             </select>
           </div>
         )}

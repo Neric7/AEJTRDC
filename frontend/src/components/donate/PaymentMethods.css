@@ -1,0 +1,188 @@
+/* Payment Methods Styles */
+.payment-methods-container {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .payment-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 20px;
+  }
+  
+  /* Payment Grid */
+  .payment-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  
+  .payment-method-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .payment-method-card:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateX(4px);
+  }
+  
+  .payment-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .payment-info h5 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+  }
+  
+  .payment-info p {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin: 0;
+  }
+  
+  /* Payment Note */
+  .payment-note {
+    background: #dbeafe;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    border: 1px solid #93c5fd;
+  }
+  
+  .note-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .note-icon {
+    font-size: 1.25rem;
+  }
+  
+  .note-header strong {
+    font-size: 0.875rem;
+    color: #1e40af;
+  }
+  
+  .note-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .note-list li {
+    padding: 6px 0;
+    color: #1e40af;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    padding-left: 20px;
+    position: relative;
+  }
+  
+  .note-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #0B2B5B;
+    font-weight: 700;
+  }
+  
+  /* Bank Details */
+  .bank-details {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px dashed #cbd5e1;
+  }
+  
+  .bank-details h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 16px 0;
+  }
+  
+  .bank-info-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .bank-info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .bank-info-item:last-child {
+    border-bottom: none;
+  }
+  
+  .info-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .info-value {
+    font-size: 0.875rem;
+    color: #1e293b;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .bank-note {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.75rem;
+    color: #475569;
+    line-height: 1.5;
+    margin: 0;
+    border-left: 3px solid #FDB913;
+  }
+  
+  /* Responsive */
+  @media (max-width: 640px) {
+    .payment-methods-container {
+      padding: 16px;
+    }
+  
+    .payment-method-card {
+      padding: 12px;
+    }
+  
+    .payment-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1.25rem;
+    }
+  }

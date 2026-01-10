@@ -933,3 +933,115 @@ nav {
     font-size: 13px;
   }
 }
+
+/* Ajoutez ces styles à votre Header.module.css existant */
+
+/* Bouton Faire un don - Desktop */
+.donateBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #FDB913, #f59e0b);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(253, 185, 19, 0.3);
+  white-space: nowrap;
+}
+
+.donateBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(253, 185, 19, 0.4);
+  background: linear-gradient(135deg, #f59e0b, #FDB913);
+}
+
+.donateBtn:active {
+  transform: translateY(0);
+}
+
+.donateIcon {
+  font-size: 1rem;
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  10%, 30% {
+    transform: scale(1.1);
+  }
+  20%, 40% {
+    transform: scale(1);
+  }
+}
+
+/* Bouton Faire un don - Mobile */
+.donateBtnMobile {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #FDB913, #f59e0b);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(253, 185, 19, 0.3);
+  margin-top: 12px;
+}
+
+.donateBtnMobile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(253, 185, 19, 0.4);
+}
+
+.donateBtnMobile .donateIcon {
+  font-size: 1.125rem;
+}
+
+/* Responsive - Cacher le texte sur petits écrans */
+@media (max-width: 1200px) {
+  .donateBtn span {
+    display: none;
+  }
+  
+  .donateBtn {
+    padding: 10px 12px;
+  }
+  
+  .donateIcon {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 1201px) {
+  .donateBtn {
+    min-width: 140px;
+  }
+}
+
+/* Ajustements pour le layout du header */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .actions {
+    gap: 8px;
+  }
+}
+
+/* Styles existants à conserver... */

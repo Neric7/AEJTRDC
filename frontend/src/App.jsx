@@ -25,7 +25,9 @@ import DomainsPage from './pages/DomainsPage';
 import ProjectsPage from './pages/ProjectsPage';
 import CareersPage from './pages/CareersPage';
 import JobsPage from './pages/JobsPage';
-
+import DonatePage from './pages/DonatePage';
+import TeamPage from './pages/TeamPage'; 
+import HumanitarianSpacePage from './pages/HumanitarianSpacePage'; 
 
 function App() {
   return (
@@ -55,6 +57,12 @@ function App() {
             {/* Offres d'emploi */}
             <Route path="/careers" element={<JobsPage />} />
 
+            {/* Donate */}
+            <Route path="/donate" element={<DonatePage />} />
+
+            {/* Humanitarian Space */}
+            <Route path="/humanitarian" element={<HumanitarianSpacePage />} />
+
             {/* Auth */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
@@ -67,7 +75,7 @@ function App() {
               }
             />
 
-            {/* 🆕 SUIVI DES CANDIDATURES (PROTÉGÉE) */}
+            {/* SUIVI DES CANDIDATURES (PROTÉGÉE) */}
             <Route
               path="/my-applications"
               element={
@@ -86,11 +94,12 @@ function App() {
             {/* Objectifs */}
             <Route path="/about/objectives" element={<Objectives />} />
 
+            {/* ← NOUVEAU: Équipe */}
+            <Route path="/team" element={<TeamPage />} />
+            <Route path="/about/team" element={<TeamPage />} />
+
             {/* Partenaires */}
             <Route path="/partners" element={<PartnersPage />} />
-            
-            {/* Page 404 */}
-            <Route path="*" element={<NotFoundPage />} />
 
             {/* Domains */}
             <Route path="/domains" element={<DomainsPage />} />
@@ -100,6 +109,9 @@ function App() {
 
             {/* Projects */}
             <Route path="/projects" element={<ProjectsPage />} />
+            
+            {/* Page 404 */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
 

@@ -6,14 +6,16 @@ import {
   AlertTriangle,
   FolderOpen,
   Users,
-  UserPlus,      // ← Icône pour Bénévoles
+  UserPlus,
   Handshake,
   FileSpreadsheet,
   Image,
   Settings,
   LogOut,
   Menu,
-  X
+  TrendingUp,
+  X,
+  Shield  // ← AJOUT pour Engagements Éthiques
 } from 'lucide-react';
 import { authAPI } from '../services/adminApi';
 import toast from 'react-hot-toast';
@@ -59,10 +61,26 @@ const Sidebar = ({ isOpen, onToggle }) => {
       icon: <Briefcase size={20} />,
       path: '/content/jobs',
     },
+    // ✅ AJOUT : Engagements Éthiques
     {
-      title: 'Alertes',
+      title: 'Engagements Éthiques',
+      icon: <Shield size={20} />,
+      path: '/humanitarian/ethical-commitments',
+    },
+    {
+      title: 'Signalements de Violations',
+      icon: <Shield size={20} />,
+      path: '/humanitarian/violations',
+    },
+    {
+      title: 'Alertes Humanitaires',
       icon: <AlertTriangle size={20} />,
-      path: '/content/alerts',
+      path: '/humanitarian/alerts',
+    },
+    {
+      title: 'Suivi du Plaidoyer',
+      icon: <TrendingUp size={20} />,
+      path: '/humanitarian/advocacy',
     },
     {
       title: 'Équipe',
@@ -70,9 +88,9 @@ const Sidebar = ({ isOpen, onToggle }) => {
       path: '/content/team',
     },
     {
-      title: 'Bénévoles',           // ← NOUVEAU
-      icon: <UserPlus size={20} />,  // ← NOUVEAU
-      path: '/content/volunteers',   // ← NOUVEAU
+      title: 'Bénévoles',
+      icon: <UserPlus size={20} />,
+      path: '/content/volunteers',
     },
     {
       title: 'Partenaires',

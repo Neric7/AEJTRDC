@@ -29,7 +29,8 @@ import {
   FaUserTie,
   FaSignInAlt,
   FaUserPlus,
-  FaGlobeAfrica
+  FaGlobeAfrica,
+  FaHeart
 } from 'react-icons/fa';
 import styles from './Header.module.css';
 import { useAuth } from '../../context/AuthContext';
@@ -165,6 +166,12 @@ export default function Header() {
     }
   };
 
+  // Navigation vers la page de donation
+  const handleDonateClick = () => {
+    setIsMenuOpen(false);
+    navigate('/donate');
+  };
+
   // Menu réorganisé et simplifié (6 items principaux au lieu de 9)
   const menuItems = [
     {
@@ -229,12 +236,12 @@ export default function Header() {
       <nav>
         <div className={styles.bar}>
           {/* Logo/Brand */}
-          <a href="/" className={styles.brandLink}> 
+          <Link to="/" className={styles.brandLink}> 
             <div className={styles.brand}>
               <img src="/src/assets/images/logo/logo.png" alt="AEJT-RDC" />
               <span className={styles.brandName}>AEJT-RDC</span>
             </div>
-          </a>
+          </Link>
 
           {/* Navigation Desktop avec icônes et effet tiroir */}
           <div className={styles.nav}>
@@ -256,8 +263,8 @@ export default function Header() {
                     if (item.submenu) setOpenSubmenu(null);
                   }}
                 >
-                  <a 
-                    href={item.href} 
+                  <Link 
+                    to={item.href} 
                     className={`${styles.iconLink} ${itemIsActive ? styles.iconLinkActive : ''}`}
                   >
                     <div className={styles.iconWrapper}>
@@ -269,7 +276,7 @@ export default function Header() {
                     {item.submenu && (
                       <FaChevronDown className={styles.chevronSmall} />
                     )}
-                  </a>
+                  </Link>
 
                   {/* Submenu Desktop */}
                   {item.submenu && openSubmenu === item.label && (
@@ -277,14 +284,14 @@ export default function Header() {
                       {item.submenu.map((subItem, subIndex) => {
                         const SubIcon = subItem.icon;
                         return (
-                          <a
+                          <Link
                             key={subIndex}
-                            href={subItem.href}
+                            to={subItem.href}
                             className={styles.submenuLink}
                           >
                             <SubIcon className={styles.submenuIcon} />
                             <span>{subItem.label}</span>
-                          </a>
+                          </Link>
                         );
                       })}
                     </div>
@@ -418,9 +425,15 @@ export default function Header() {
               </div>
             )}
             
-            <Button className={styles.primaryBtn}>
-              Faire un don
-            </Button>
+            {/* Bouton Faire un don avec icône */}
+            <button 
+              className={styles.donateBtn}
+              onClick={handleDonateClick}
+              title="Faire un don"
+            >
+              <FaHeart className={styles.donateIcon} />
+              <span>Faire un don</span>
+            </button>
           </div>
 
           {/* Menu Mobile Button */}
@@ -471,14 +484,14 @@ export default function Header() {
               return (
                 <div key={index} className={styles.mobileItem}>
                   <div className={styles.mobileItemHeader}>
-                    <a
-                      href={item.href}
+                    <Link
+                      to={item.href}
                       className={styles.mobileLink}
                       onClick={() => !item.submenu && setIsMenuOpen(false)}
                     >
                       <Icon className={styles.mobileIcon} />
                       <span>{item.label}</span>
-                    </a>
+                    </Link>
                     {item.submenu && (
                       <button
                         onClick={() => toggleSubmenu(item.label)}
@@ -502,15 +515,15 @@ export default function Header() {
                       {item.submenu.map((subItem, subIndex) => {
                         const SubIcon = subItem.icon;
                         return (
-                          <a
+                          <Link
                             key={subIndex}
-                            href={subItem.href}
+                            to={subItem.href}
                             className={styles.mobileSubmenuLink}
                             onClick={() => setIsMenuOpen(false)}
                           >
                             <SubIcon className={styles.mobileSubmenuIcon} />
                             <span>{subItem.label}</span>
-                          </a>
+                          </Link>
                         );
                       })}
                     </div>
@@ -572,12 +585,14 @@ export default function Header() {
                   </Link>
                 </div>
               )}
-              <Button 
-                className={styles.primaryBtn}
-                onClick={() => setIsMenuOpen(false)}
+              {/* Bouton Faire un don mobile */}
+              <button 
+                className={styles.donateBtnMobile}
+                onClick={handleDonateClick}
               >
-                Faire un don
-              </Button>
+                <FaHeart className={styles.donateIcon} />
+                <span>Faire un don</span>
+              </button>
             </div>
           </div>
         )}

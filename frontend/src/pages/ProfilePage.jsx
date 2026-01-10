@@ -3,7 +3,13 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../components/common/Loader';
 import ConfirmModal from '../components/common/ConfirmModal';
-import { FaUser, FaEnvelope, FaPhone, FaEdit, FaLock, FaCheck, FaSave, FaSignOutAlt, FaCamera, FaMapMarkerAlt, FaBriefcase, FaTimes, FaTrash } from 'react-icons/fa';
+import api from '../services/api';
+import { 
+  FaUser, FaEnvelope, FaPhone, FaEdit, FaLock, FaCheck, 
+  FaSave, FaSignOutAlt, FaCamera, FaMapMarkerAlt, FaBriefcase, 
+  FaTimes, FaTrash, FaClipboardList, FaClock, FaCheckCircle, 
+  FaTimesCircle, FaEye, FaFileAlt 
+} from 'react-icons/fa';
 import styles from './ProfilePage.module.css';
 
 export default function ProfilePage() {
@@ -15,10 +21,18 @@ export default function ProfilePage() {
   const [avatarFile, setAvatarFile] = useState(null);
   const fileInputRef = useRef(null);
   
+  // États pour les candidatures
+  const [applications, setApplications] = useState([]);
+  const [applicationsLoading, setApplicationsLoading] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  
   // États pour les modals
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showDeleteAvatarModal, setShowDeleteAvatarModal] = useState(false);
+  const [showCancelApplicationModal, setShowCancelApplicationModal] = useState(false);
+  const [showApplicationDetailModal, setShowApplicationDetailModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isCancellingApplication, setIsCancellingApplication] = useState(false);
   
   const [profileData, setProfileData] = useState({
     name: '',
@@ -53,11 +67,69 @@ export default function ProfilePage() {
     }
   }, [user]);
 
+  // Charger les candidatures quand on passe à l'onglet
+  useEffect(() => {
+    if (activeTab === 'applications') {
+      loadApplications();
+    }
+  }, [activeTab]);
+
+  // Charger les candidatures
+const loadApplications = async () => {
+  setApplicationsLoading(true);
+  try {
+    // ✅ Nouveau chemin : /user/volunteers/my-applications
+    const response = await api.get('/user/volunteers/my-applications');
+    const data = response.data;
+    
+    console.log('📋 Candidatures récupérées:', data);
+    
+    setApplications(data.applications || data || []);
+  } catch (err) {
+    console.error('❌ Erreur lors du chargement des candidatures:', err);
+    setApplications([]);
+  } finally {
+    setApplicationsLoading(false);
+  }
+};
+
+// Annuler une candidature
+const confirmCancelApplication = async () => {
+  if (!selectedApplication) return;
+  
+  setIsCancellingApplication(true);
+  try {
+    // ✅ Nouveau chemin : /user/volunteers/{id}
+    await api.delete(`/user/volunteers/${selectedApplication.id}`);
+    
+    console.log('✅ Candidature annulée avec succès');
+    
+    // Recharger les candidatures
+    await loadApplications();
+    setShowCancelApplicationModal(false);
+    setSelectedApplication(null);
+  } catch (err) {
+    console.error('❌ Erreur lors de l\'annulation:', err);
+    alert(err.response?.data?.message || 'Erreur lors de l\'annulation');
+  } finally {
+    setIsCancellingApplication(false);
+  }
+};
+
+  const handleCancelApplication = (application) => {
+    setSelectedApplication(application);
+    setShowCancelApplicationModal(true);
+  };
+  const handleViewDetails = (application) => {
+    setSelectedApplication(application);
+    setShowApplicationDetailModal(true);
+  };
+
   // Calculer la progression dynamiquement
   const calculateProgress = () => {
     if (!user) return 0;
     
-    let progress = 10; // Création du compte
+    let progress = 10;
     
     if (user.avatar) progress += 20;
     if (user.name) progress += 15;
@@ -105,7 +177,6 @@ export default function ProfilePage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validation
     if (!file.type.startsWith('image/')) {
       setProfileStatus({ type: 'error', message: 'Veuillez sélectionner une image valide' });
       return;
@@ -118,7 +189,6 @@ export default function ProfilePage() {
 
     setAvatarFile(file);
     
-    // Prévisualisation
     const reader = new FileReader();
     reader.onloadend = () => {
       setAvatarPreview(reader.result);
@@ -208,7 +278,6 @@ export default function ProfilePage() {
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     
-    // Validation frontend
     if (passwordData.password !== passwordData.password_confirmation) {
       setPasswordStatus({ type: 'error', message: 'Les mots de passe ne correspondent pas' });
       return;
@@ -256,6 +325,45 @@ export default function ProfilePage() {
 
   const strokeDashoffset = 352 - (352 * progress) / 100;
 
+  // Helper pour le statut
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      pending: { label: 'En attente', color: '#f59e0b', icon: FaClock },
+      accepted: { label: 'Acceptée', color: '#10b981', icon: FaCheckCircle },
+      rejected: { label: 'Refusée', color: '#ef4444', icon: FaTimesCircle },
+    };
+    
+    const config = statusConfig[status] || statusConfig.pending;
+    const Icon = config.icon;
+    
+    return (
+      <span style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.375rem',
+        padding: '0.375rem 0.75rem',
+        borderRadius: '9999px',
+        fontSize: '0.75rem',
+        fontWeight: 600,
+        color: config.color,
+        backgroundColor: `${config.color}15`,
+        border: `1px solid ${config.color}40`,
+      }}>
+        <Icon style={{ fontSize: '0.875rem' }} />
+        {config.label}
+      </span>
+    );
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
   return (
     <section className={styles.profileSection}>
       <div className={styles.container}>
@@ -274,6 +382,14 @@ export default function ProfilePage() {
               >
                 <FaUser className={styles.navIcon} />
                 <span>Modifier le profil</span>
+              </button>
+              
+              <button 
+                onClick={() => setActiveTab('applications')}
+                className={`${styles.navButton} ${activeTab === 'applications' ? styles.navButtonActive : ''}`}
+              >
+                <FaClipboardList className={styles.navIcon} />
+                <span>Mes candidatures</span>
               </button>
               
               <button 
@@ -518,6 +634,199 @@ export default function ProfilePage() {
               </div>
             )}
 
+            {activeTab === 'applications' && (
+              <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <h2 className={styles.cardTitle}>Mes candidatures de bénévolat</h2>
+                    <p className={styles.cardSubtitle}>Suivez l'état de vos candidatures</p>
+                  </div>
+                </div>
+
+                {applicationsLoading ? (
+                  <div style={{ padding: '3rem 0', textAlign: 'center' }}>
+                    <span className={styles.spinner} style={{ margin: '0 auto' }}></span>
+                    <p style={{ marginTop: '1rem', color: '#6b7280' }}>Chargement des candidatures...</p>
+                  </div>
+                ) : applications.length === 0 ? (
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '3rem 1.5rem',
+                    background: '#f9fafb',
+                    borderRadius: '0.75rem',
+                    border: '2px dashed #e5e7eb'
+                  }}>
+                    <FaClipboardList style={{ fontSize: '3rem', color: '#d1d5db', marginBottom: '1rem' }} />
+                    <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#374151', marginBottom: '0.5rem' }}>
+                      Aucune candidature
+                    </h3>
+                    <p style={{ color: '#6b7280', marginBottom: '1.5rem' }}>
+                      Vous n'avez pas encore postulé pour devenir bénévole
+                    </p>
+                    <button
+                      onClick={() => navigate('/volunteer')}
+                      style={{
+                        padding: '0.75rem 1.5rem',
+                        background: '#2563eb',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '0.75rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Devenir bénévole
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {applications.map((app) => (
+                      <div
+                        key={app.id}
+                        style={{
+                          padding: '1.5rem',
+                          background: '#f9fafb',
+                          borderRadius: '0.75rem',
+                          border: '1px solid #e5e7eb',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                              <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#111827', margin: 0 }}>
+                                {app.interest_domain}
+                              </h3>
+                              {getStatusBadge(app.status)}
+                            </div>
+                            <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: 0 }}>
+                              Candidature déposée le {formatDate(app.created_at)}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                          gap: '1rem',
+                          marginBottom: '1rem',
+                          paddingTop: '1rem',
+                          borderTop: '1px solid #e5e7eb'
+                        }}>
+                          <div>
+                            <p style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 600, marginBottom: '0.25rem' }}>
+                              COMPÉTENCES
+                            </p>
+                            <p style={{ color: '#374151', fontSize: '0.875rem', margin: 0 }}>
+                              {app.skills || 'Non spécifié'}
+                            </p>
+                          </div>
+                          <div>
+                            <p style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 600, marginBottom: '0.25rem' }}>
+                              DISPONIBILITÉ
+                            </p>
+                            <p style={{ color: '#374151', fontSize: '0.875rem', margin: 0 }}>
+                              {app.availability || 'Non spécifié'}
+                            </p>
+                          </div>
+                          <div>
+                            <p style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 600, marginBottom: '0.25rem' }}>
+                              LOCALISATION
+                            </p>
+                            <p style={{ color: '#374151', fontSize: '0.875rem', margin: 0 }}>
+                              {app.city}, {app.country}
+                            </p>
+                          </div>
+                        </div>
+
+                        {app.admin_notes && (
+                          <div style={{
+                            padding: '1rem',
+                            background: '#eff6ff',
+                            borderRadius: '0.5rem',
+                            border: '1px solid #bfdbfe',
+                            marginBottom: '1rem'
+                          }}>
+                            <p style={{ fontSize: '0.75rem', color: '#1e40af', fontWeight: 600, marginBottom: '0.25rem' }}>
+                              NOTE DE L'ADMINISTRATEUR
+                            </p>
+                            <p style={{ color: '#1e40af', fontSize: '0.875rem', margin: 0 }}>
+                              {app.admin_notes}
+                            </p>
+                          </div>
+                        )}
+
+                        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                          <button
+                            onClick={() => handleViewDetails(app)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.5rem',
+                              padding: '0.625rem 1rem',
+                              background: 'white',
+                              color: '#2563eb',
+                              border: '1px solid #2563eb',
+                              borderRadius: '0.5rem',
+                              fontWeight: 600,
+                              fontSize: '0.875rem',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <FaEye /> Voir les détails
+                          </button>
+                          
+                          {app.cv_url && (
+                            <a
+                              href={app.cv_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.625rem 1rem',
+                                background: 'white',
+                                color: '#059669',
+                                border: '1px solid #059669',
+                                borderRadius: '0.5rem',
+                                fontWeight: 600,
+                                fontSize: '0.875rem',
+                                textDecoration: 'none'
+                              }}
+                            >
+                              <FaFileAlt /> Télécharger mon CV
+                            </a>
+                          )}
+                          
+                          {app.status === 'pending' && (
+                            <button
+                              onClick={() => handleCancelApplication(app)}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.625rem 1rem',
+                                background: 'transparent',
+                                color: '#dc2626',
+                                border: '1px solid #dc2626',
+                                borderRadius: '0.5rem',
+                                fontWeight: 600,
+                                fontSize: '0.875rem',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              <FaTimes /> Annuler la candidature
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {activeTab === 'security' && (
               <div className={styles.card}>
                 <div className={styles.cardHeader}>
@@ -677,6 +986,158 @@ export default function ProfilePage() {
         variant="delete"
         loading={avatarLoading}
       />
+
+      {/* Modal de confirmation d'annulation de candidature */}
+      <ConfirmModal
+        isOpen={showCancelApplicationModal}
+        onClose={() => setShowCancelApplicationModal(false)}
+        onConfirm={confirmCancelApplication}
+        title="Annuler la candidature ?"
+        message="Êtes-vous sûr de vouloir annuler cette candidature ? Cette action est irréversible."
+        confirmText="Annuler la candidature"
+        cancelText="Retour"
+        variant="delete"
+        loading={isCancellingApplication}
+      />
+
+      {/* Modal de détails de candidature */}
+      {showApplicationDetailModal && selectedApplication && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '1rem'
+          }}
+          onClick={() => setShowApplicationDetailModal(false)}
+        >
+          <div
+            style={{
+              background: 'white',
+              borderRadius: '1rem',
+              maxWidth: '600px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              padding: '2rem'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1.5rem' }}>
+              <div>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#111827', margin: 0 }}>
+                  Détails de la candidature
+                </h2>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+                  Déposée le {formatDate(selectedApplication.created_at)}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowApplicationDetailModal(false)}
+                style={{
+                  background: '#f3f4f6',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  fontSize: '1.25rem',
+                  color: '#6b7280'
+                }}
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              {getStatusBadge(selectedApplication.status)}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.5rem' }}>
+                  DOMAINE D'INTÉRÊT
+                </h3>
+                <p style={{ color: '#111827', fontSize: '1rem' }}>
+                  {selectedApplication.interest_domain}
+                </p>
+              </div>
+
+              <div>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.5rem' }}>
+                  INFORMATIONS PERSONNELLES
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginBottom: '0.25rem' }}>Nom</p>
+                    <p style={{ color: '#111827' }}>{selectedApplication.first_name} {selectedApplication.last_name}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginBottom: '0.25rem' }}>Email</p>
+                    <p style={{ color: '#111827' }}>{selectedApplication.email}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginBottom: '0.25rem' }}>Téléphone</p>
+                    <p style={{ color: '#111827' }}>{selectedApplication.phone}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginBottom: '0.25rem' }}>Localisation</p>
+                    <p style={{ color: '#111827' }}>{selectedApplication.city}, {selectedApplication.country}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.5rem' }}>
+                  COMPÉTENCES
+                </h3>
+                <p style={{ color: '#111827' }}>
+                  {selectedApplication.skills || 'Non spécifié'}
+                </p>
+              </div>
+
+              <div>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.5rem' }}>
+                  DISPONIBILITÉ
+                </h3>
+                <p style={{ color: '#111827' }}>
+                  {selectedApplication.availability || 'Non spécifié'}
+                </p>
+              </div>
+
+              {selectedApplication.message && (
+                <div>
+                  <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#6b7280', marginBottom: '0.5rem' }}>
+                    MESSAGE
+                  </h3>
+                  <p style={{ color: '#111827', whiteSpace: 'pre-wrap' }}>
+                    {selectedApplication.message}
+                  </p>
+                </div>
+              )}
+
+              {selectedApplication.admin_notes && (
+                <div style={{
+                  padding: '1rem',
+                  background: '#eff6ff',
+                  borderRadius: '0.5rem',
+                  border: '1px solid #bfdbfe'
+                }}>
+                  <h3 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#1e40af', marginBottom: '0.5rem' }}>
+                    NOTE DE L'ADMINISTRATEUR
+                  </h3>
+                  <p style={{ color: '#1e40af', whiteSpace: 'pre-wrap', margin: 0 }}>
+                    {selectedApplication.admin_notes}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

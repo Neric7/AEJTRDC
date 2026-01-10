@@ -14,6 +14,8 @@ use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\VolunteerController;
 use App\Http\Controllers\API\AdminJobController;
 use App\Http\Controllers\API\JobController;
+use App\Http\Controllers\API\TeamMemberController;
+use App\Http\Controllers\API\EthicalCommitmentsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,8 +45,11 @@ Route::prefix('partners')->group(function () {
 // Commentaires - Lecture publique UNIQUEMENT
 Route::get('/news/{newsId}/comments', [CommentController::class, 'index']);
 
-// Remplacez l'ancienne route par celle-ci :
-Route::post('/volunteers/user-applications', [VolunteerController::class, 'getUserApplications']);
+// Équipe - Routes PUBLIQUES
+Route::prefix('team')->group(function () {
+    Route::get('/', [TeamMemberController::class, 'index']);
+    Route::get('/{id}', [TeamMemberController::class, 'show']);
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -92,90 +97,209 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{identifier}', [JobController::class, 'show']);
     });
     
-    // ========== CANDIDATURE BÉNÉVOLE (PROTÉGÉE) 🔒 ==========
-    Route::post('/volunteers', [VolunteerController::class, 'store']);
-    Route::get('/volunteers/my-applications', [VolunteerController::class, 'myApplications']);
+    // ========== CANDIDATURE BÉNÉVOLE (UTILISATEUR) 🔒 ==========
+    Route::prefix('user/volunteers')->group(function () {
+        Route::post('/', [VolunteerController::class, 'store']);
+        Route::get('/my-applications', [VolunteerController::class, 'myApplications']);
+        Route::delete('/{id}', [VolunteerController::class, 'destroy']);
+    });
 });
 
 /*
 |--------------------------------------------------------------------------
-| API Routes - Admin BackOffice
+| API Routes - Admin BackOffice 👨‍💼
 |--------------------------------------------------------------------------
 */
 
 Route::prefix('admin')->group(function () {
-    // Authentification admin
+    
+    // ========== AUTHENTIFICATION ADMIN ==========
     Route::post('/login', [AdminAuthController::class, 'login']);
     
-    // Routes protégées admin
+    // ========== ROUTES PROTÉGÉES ADMIN 🔒 ==========
     Route::middleware(['auth:sanctum', 'check.admin'])->group(function () {
+        
+        // Profil admin
         Route::post('/logout', [AdminAuthController::class, 'logout']);
         Route::get('/user', [AdminAuthController::class, 'user']);
         
         // ========== GESTION DES ACTUALITÉS ==========
-        Route::get('/news', [AdminNewsController::class, 'index']);
-        Route::get('/news/{id}', [AdminNewsController::class, 'show']);
-        Route::post('/news', [AdminNewsController::class, 'store']);
-        Route::put('/news/{id}', [AdminNewsController::class, 'update']);
-        Route::delete('/news/{id}', [AdminNewsController::class, 'destroy']);
-        Route::post('/news/{id}/publish', [AdminNewsController::class, 'publish']);
-        Route::post('/news/{id}/unpublish', [AdminNewsController::class, 'unpublish']);
-        Route::post('/news/{id}/image', [AdminNewsController::class, 'uploadImage']);
+        Route::prefix('news')->group(function () {
+            Route::get('/', [AdminNewsController::class, 'index']);
+            Route::get('/{id}', [AdminNewsController::class, 'show']);
+            Route::post('/', [AdminNewsController::class, 'store']);
+            Route::put('/{id}', [AdminNewsController::class, 'update']);
+            Route::delete('/{id}', [AdminNewsController::class, 'destroy']);
+            Route::post('/{id}/publish', [AdminNewsController::class, 'publish']);
+            Route::post('/{id}/unpublish', [AdminNewsController::class, 'unpublish']);
+            Route::post('/{id}/image', [AdminNewsController::class, 'uploadImage']);
+        });
         
-        // ========== GESTION DES PROJETS (Admin) ==========
-        Route::get('/projects', [AdminProjectController::class, 'index']);
-        Route::get('/projects/statistics', [AdminProjectController::class, 'statistics']);
-        Route::get('/projects/{id}', [AdminProjectController::class, 'show']);
-        Route::post('/projects', [AdminProjectController::class, 'store']);
-        Route::put('/projects/{id}', [AdminProjectController::class, 'update']);
-        Route::delete('/projects/{id}', [AdminProjectController::class, 'destroy']);
-        Route::post('/projects/{id}/publish', [AdminProjectController::class, 'publish']);
-        Route::post('/projects/{id}/unpublish', [AdminProjectController::class, 'unpublish']);
-        Route::post('/projects/{id}/toggle-featured', [AdminProjectController::class, 'toggleFeatured']);
-        Route::post('/projects/{id}/image', [AdminProjectController::class, 'uploadImage']);
-        Route::post('/projects/{id}/images', [AdminProjectController::class, 'uploadImages']);
+        // ========== GESTION DES PROJETS ==========
+        Route::prefix('projects')->group(function () {
+            Route::get('/', [AdminProjectController::class, 'index']);
+            Route::get('/statistics', [AdminProjectController::class, 'statistics']);
+            Route::get('/{id}', [AdminProjectController::class, 'show']);
+            Route::post('/', [AdminProjectController::class, 'store']);
+            Route::put('/{id}', [AdminProjectController::class, 'update']);
+            Route::delete('/{id}', [AdminProjectController::class, 'destroy']);
+            Route::post('/{id}/publish', [AdminProjectController::class, 'publish']);
+            Route::post('/{id}/unpublish', [AdminProjectController::class, 'unpublish']);
+            Route::post('/{id}/toggle-featured', [AdminProjectController::class, 'toggleFeatured']);
+            Route::post('/{id}/image', [AdminProjectController::class, 'uploadImage']);
+            Route::post('/{id}/images', [AdminProjectController::class, 'uploadImages']);
+        });
         
         // ========== GESTION DES COMMENTAIRES ==========
-        Route::get('/comments', [CommentController::class, 'indexAll']);
-        Route::put('/comments/{id}/approve', [CommentController::class, 'approve']);
-        Route::put('/comments/{id}/reject', [CommentController::class, 'reject']);
+        Route::prefix('comments')->group(function () {
+            Route::get('/', [CommentController::class, 'indexAll']);
+            Route::put('/{id}/approve', [CommentController::class, 'approve']);
+            Route::put('/{id}/reject', [CommentController::class, 'reject']);
+        });
         
         // ========== DOMAINES D'INTERVENTION ==========
-        Route::get('/domains', [DomainController::class, 'adminIndex']);
-        Route::get('/domains/{id}', [DomainController::class, 'adminShow']);
-        Route::post('/domains', [DomainController::class, 'store']);
-        Route::post('/domains/{id}', [DomainController::class, 'update']);
-        Route::delete('/domains/{id}', [DomainController::class, 'destroy']);
-        Route::post('/domains/{id}/toggle-status', [DomainController::class, 'toggleStatus']);
+        Route::prefix('domains')->group(function () {
+            Route::get('/', [DomainController::class, 'adminIndex']);
+            Route::get('/{id}', [DomainController::class, 'adminShow']);
+            Route::post('/', [DomainController::class, 'store']);
+            Route::post('/{id}', [DomainController::class, 'update']);
+            Route::delete('/{id}', [DomainController::class, 'destroy']);
+            Route::post('/{id}/toggle-status', [DomainController::class, 'toggleStatus']);
+        });
         
         // ========== PARTENAIRES ==========
-        Route::get('/partners', [PartnerController::class, 'index']);
-        Route::get('/partners/{id}', [PartnerController::class, 'show']);
-        Route::post('/partners', [PartnerController::class, 'store']);
-        Route::put('/partners/{id}', [PartnerController::class, 'update']);
-        Route::delete('/partners/{id}', [PartnerController::class, 'destroy']);
-        Route::post('/partners/{id}/upload-logo', [PartnerController::class, 'uploadLogo']);
+        Route::prefix('partners')->group(function () {
+            Route::get('/', [PartnerController::class, 'adminIndex']);
+            Route::get('/{id}', [PartnerController::class, 'adminShow']);
+            Route::post('/', [PartnerController::class, 'store']);
+            Route::put('/{id}', [PartnerController::class, 'update']);
+            Route::delete('/{id}', [PartnerController::class, 'destroy']);
+            Route::post('/{id}/upload-logo', [PartnerController::class, 'uploadLogo']);
+        });
         
-        // ========== BÉNÉVOLES ==========
-        Route::get('/volunteers', [VolunteerController::class, 'index']);
-        Route::get('/volunteers/stats', [VolunteerController::class, 'stats']);
-        Route::get('/volunteers/{id}', [VolunteerController::class, 'show']);
-        Route::put('/volunteers/{id}', [VolunteerController::class, 'update']);
-        Route::put('/volunteers/{id}/status', [VolunteerController::class, 'updateStatus']);
-        Route::delete('/volunteers/{id}', [VolunteerController::class, 'destroy']);
+        // ========== BÉNÉVOLES (ADMIN) ==========
+        Route::prefix('volunteers')->group(function () {
+            Route::get('/', [VolunteerController::class, 'index']);
+            Route::get('/stats', [VolunteerController::class, 'stats']);
+            Route::get('/{id}', [VolunteerController::class, 'show']);
+            Route::put('/{id}', [VolunteerController::class, 'update']);
+            Route::put('/{id}/status', [VolunteerController::class, 'updateStatus']);
+            Route::delete('/{id}', [VolunteerController::class, 'destroy']);
+        });
         
         // ========== GESTION DES OFFRES D'EMPLOI ==========
-        Route::get('/jobs', [AdminJobController::class, 'index']);
-        Route::get('/jobs/statistics', [AdminJobController::class, 'statistics']);
-        Route::get('/jobs/{id}', [AdminJobController::class, 'show']);
-        Route::post('/jobs', [AdminJobController::class, 'store']);
-        Route::put('/jobs/{id}', [AdminJobController::class, 'update']);
-        Route::delete('/jobs/{id}', [AdminJobController::class, 'destroy']);
-        Route::post('/jobs/{id}/publish', [AdminJobController::class, 'publish']);
-        Route::post('/jobs/{id}/close', [AdminJobController::class, 'close']);
+        Route::prefix('jobs')->group(function () {
+            Route::get('/', [AdminJobController::class, 'index']);
+            Route::get('/statistics', [AdminJobController::class, 'statistics']);
+            Route::get('/{id}', [AdminJobController::class, 'show']);
+            Route::post('/', [AdminJobController::class, 'store']);
+            Route::put('/{id}', [AdminJobController::class, 'update']);
+            Route::delete('/{id}', [AdminJobController::class, 'destroy']);
+            Route::post('/{id}/publish', [AdminJobController::class, 'publish']);
+            Route::post('/{id}/close', [AdminJobController::class, 'close']);
+        });
+        
+        // ========== GESTION DE L'ÉQUIPE ==========
+        Route::prefix('team')->group(function () {
+            Route::get('/', [TeamMemberController::class, 'adminIndex']);
+            Route::get('/statistics', [TeamMemberController::class, 'statistics']);
+            Route::get('/{id}', [TeamMemberController::class, 'adminShow']);
+            Route::post('/', [TeamMemberController::class, 'store']);
+            Route::put('/{id}', [TeamMemberController::class, 'update']);
+            Route::post('/{id}', [TeamMemberController::class, 'update']);
+            Route::delete('/{id}', [TeamMemberController::class, 'destroy']);
+            Route::post('/{id}/toggle-status', [TeamMemberController::class, 'toggleStatus']);
+            Route::post('/reorder', [TeamMemberController::class, 'reorder']);
+            Route::post('/{id}/upload-photo', [TeamMemberController::class, 'uploadPhoto']);
+            Route::delete('/{id}/photo', [TeamMemberController::class, 'deletePhoto']);
+        });
+        
+        // ========== ✨ ENGAGEMENTS ÉTHIQUES (ADMIN) ✨ ==========
+        Route::prefix('ethical-commitments')->group(function () {
+            // Liste tous les engagements (y compris inactifs)
+            Route::get('/', [EthicalCommitmentsController::class, 'adminIndex']);
+            
+            // Statistiques
+            Route::get('/stats', [EthicalCommitmentsController::class, 'getStats']);
+            
+            // Détail d'un engagement
+            Route::get('/{id}', [EthicalCommitmentsController::class, 'adminShow']);
+            
+            // Créer un engagement
+            Route::post('/', [EthicalCommitmentsController::class, 'store']);
+            
+            // Mettre à jour un engagement
+            Route::put('/{id}', [EthicalCommitmentsController::class, 'update']);
+            
+            // Supprimer un engagement
+            Route::delete('/{id}', [EthicalCommitmentsController::class, 'destroy']);
+            
+            // Activer/Désactiver
+            Route::patch('/{id}/toggle-status', [EthicalCommitmentsController::class, 'toggleStatus']);
+            
+            // Réorganiser l'ordre
+            Route::post('/reorder', [EthicalCommitmentsController::class, 'reorder']);
+        });
         
         // ========== DASHBOARD STATS ==========
         Route::get('/dashboard/stats', [DashboardController::class, 'getStats']);
         Route::get('/dashboard/activities', [DashboardController::class, 'getRecentActivities']);
     });
+});
+
+/*
+|--------------------------------------------------------------------------
+| ✨ HUMANITARIAN SPACE - Routes Publiques et Admin ✨
+|--------------------------------------------------------------------------
+*/
+
+// ========== ROUTES PUBLIQUES ==========
+Route::prefix('humanitarian')->group(function () {
+    
+    // ✅ Engagements Éthiques (PUBLIC - Lecture seule)
+    Route::get('/ethical-commitments', [EthicalCommitmentsController::class, 'index']);
+    Route::get('/ethical-commitments/{id}', [EthicalCommitmentsController::class, 'show']);
+    
+    // Alertes humanitaires (PUBLIC)
+    Route::get('/alerts', [App\Http\Controllers\API\HumanitarianController::class, 'getAlerts']);
+    Route::get('/alerts/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'getAlert']);
+    
+    // Dénoncer une violation (PUBLIC - Formulaire)
+    Route::post('/violations/report', [App\Http\Controllers\API\HumanitarianController::class, 'reportViolation']);
+    
+    // Actions de plaidoyer (PUBLIC)
+    Route::get('/advocacy', [App\Http\Controllers\API\HumanitarianController::class, 'getAdvocacyActions']);
+    Route::get('/advocacy/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'getAdvocacyAction']);
+});
+
+// ========== ROUTES ADMIN PROTÉGÉES ==========
+Route::middleware(['auth:sanctum', 'check.admin'])->prefix('admin/humanitarian')->group(function () {
+    
+    // ⚠️ Note: Les routes pour ethical-commitments sont déjà définies plus haut
+    // dans /admin/ethical-commitments pour rester cohérent avec votre structure
+    
+    // ⚠️ ALERTES - ORDRE IMPORTANT (stats avant {id})
+    Route::get('/alerts/stats', [App\Http\Controllers\API\HumanitarianController::class, 'getAlertsStats']);
+    Route::get('/alerts', [App\Http\Controllers\API\HumanitarianController::class, 'getAlerts']);
+    Route::get('/alerts/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'getAlert']);
+    Route::post('/alerts', [App\Http\Controllers\API\HumanitarianController::class, 'createAlert']);
+    Route::put('/alerts/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'updateAlert']);
+    Route::delete('/alerts/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'deleteAlert']);
+    Route::patch('/alerts/{id}/activate', [App\Http\Controllers\API\HumanitarianController::class, 'activateAlert']);
+    Route::patch('/alerts/{id}/deactivate', [App\Http\Controllers\API\HumanitarianController::class, 'deactivateAlert']);
+    
+   // ⚠️ VIOLATIONS (ADMIN - Modération) - ORDRE IMPORTANT !
+   Route::get('/violations/stats', [App\Http\Controllers\API\HumanitarianController::class, 'getViolationStats']);
+   Route::get('/violations', [App\Http\Controllers\API\HumanitarianController::class, 'getViolations']);
+   Route::get('/violations/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'getViolation']);
+   Route::put('/violations/{id}/status', [App\Http\Controllers\API\HumanitarianController::class, 'updateViolationStatus']);
+   Route::delete('/violations/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'deleteViolation']);
+    
+    // ⚠️ PLAIDOYER - ORDRE IMPORTANT
+    Route::get('/advocacy/stats', [App\Http\Controllers\API\HumanitarianController::class, 'getAdvocacyStats']);
+    Route::get('/advocacy', [App\Http\Controllers\API\HumanitarianController::class, 'getAdvocacyActions']);
+    Route::get('/advocacy/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'getAdvocacyAction']);
+    Route::post('/advocacy', [App\Http\Controllers\API\HumanitarianController::class, 'createAdvocacy']);
+    Route::put('/advocacy/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'updateAdvocacy']);
+    Route::delete('/advocacy/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'deleteAdvocacy']);
 });

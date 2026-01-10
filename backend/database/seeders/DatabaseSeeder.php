@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,
             JobSeeder::class,
             PartnerSeeder::class,
-            // TeamSeeder::class,
+            TeamMemberSeeder::class,
         ]);
         
         $this->command->info('Database seeded successfully!');

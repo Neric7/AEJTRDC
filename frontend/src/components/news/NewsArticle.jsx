@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import { Link } from 'react-router-dom';
 import { getImageUrl } from '../../utils/imageHelper';
 import styles from './NewsArticle.module.css';
 
@@ -562,9 +563,9 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
             <p className={styles.ctaText}>
               Votre don peut changer des vies. Rejoignez-nous dans notre mission.
             </p>
-            <button className={styles.ctaButton}>
-              Faire un don
-            </button>
+            <Link to="/donate" className={styles.ctaButton}>
+  Faire un don
+</Link>
           </div>
         </aside>
       </div>

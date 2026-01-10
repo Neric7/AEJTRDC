@@ -1,0 +1,426 @@
+/* ============================================
+   VIOLATION REPORT FORM - PUBLIC FRONTEND
+   ============================================ */
+
+   .violation-form-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+  
+  /* ============================================
+     HEADER
+     ============================================ */
+  
+  .form-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .header-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    border-radius: 50%;
+    color: white;
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-header h2 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto 1.5rem;
+  }
+  
+  .confidentiality-notice {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: #e8f5e9;
+    border-left: 4px solid #27ae60;
+    border-radius: 8px;
+    color: #27ae60;
+    font-size: 0.95rem;
+  }
+  
+  /* ============================================
+     FORM SECTIONS
+     ============================================ */
+  
+  .form-section {
+    margin-bottom: 2.5rem;
+  }
+  
+  .form-section h3 {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  .required {
+    color: #e74c3c;
+    font-weight: 700;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+  }
+  
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+  }
+  
+  .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  .form-group small {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    color: #7f8c8d;
+    font-size: 0.875rem;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  
+  /* ============================================
+     RADIO CARDS (Categories)
+     ============================================ */
+  
+  .radio-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  
+  .radio-card {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .radio-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .radio-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: #f8f9fa;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .radio-icon {
+    font-size: 1.5rem;
+  }
+  
+  .radio-label {
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 0.95rem;
+  }
+  
+  .radio-card input[type="radio"]:checked + .radio-content {
+    background: #fff5f5;
+    border-color: #e74c3c;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
+  }
+  
+  .radio-card:hover .radio-content {
+    border-color: #e74c3c;
+    transform: translateY(-2px);
+  }
+  
+  /* ============================================
+     PRIORITY CARDS
+     ============================================ */
+  
+  .priority-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+  
+  .priority-card {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .priority-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+  }
+  
+  .priority-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .priority-label {
+    font-weight: 600;
+    font-size: 1rem;
+    display: block;
+  }
+  
+  .priority-label.low {
+    color: #3498db;
+  }
+  
+  .priority-label.medium {
+    color: #f39c12;
+  }
+  
+  .priority-label.high {
+    color: #e67e22;
+  }
+  
+  .priority-label.urgent {
+    color: #e74c3c;
+  }
+  
+  .priority-desc {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+  }
+  
+  .priority-card input[type="radio"]:checked + .priority-content {
+    border-color: currentColor;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background: white;
+  }
+  
+  .priority-card:hover .priority-content {
+    transform: translateY(-2px);
+  }
+  
+  /* ============================================
+     LEGAL NOTICE
+     ============================================ */
+  
+  .legal-notice {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: #fff3cd;
+    border-left: 4px solid #f39c12;
+    border-radius: 8px;
+    margin: 2rem 0;
+  }
+  
+  .legal-notice svg {
+    flex-shrink: 0;
+    color: #f39c12;
+  }
+  
+  .legal-notice p {
+    margin: 0;
+    color: #856404;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  
+  /* ============================================
+     SUBMIT BUTTON
+     ============================================ */
+  
+  .btn-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+  }
+  
+  .btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* ============================================
+     SUCCESS MESSAGE
+     ============================================ */
+  
+  .success-message {
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+  
+  .success-icon {
+    color: #27ae60;
+    margin-bottom: 1.5rem;
+  }
+  
+  .success-message h2 {
+    font-size: 2rem;
+    color: #27ae60;
+    margin-bottom: 1rem;
+  }
+  
+  .success-message p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .reference-box {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: #f8f9fa;
+    border: 2px dashed #27ae60;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .reference-box strong {
+    color: #2c3e50;
+    margin-right: 0.5rem;
+  }
+  
+  .reference-box code {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #27ae60;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .info-text {
+    max-width: 600px;
+    margin: 1.5rem auto;
+    line-height: 1.6;
+  }
+  
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  }
+  
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+  
+  @media (max-width: 768px) {
+    .violation-form-container {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+  
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  
+    .radio-group,
+    .priority-group {
+      grid-template-columns: 1fr;
+    }
+  
+    .form-header h2 {
+      font-size: 1.5rem;
+    }
+  
+    .subtitle {
+      font-size: 1rem;
+    }
+  } 

@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { authAPI } from './services/adminApi';
-import { AlertProvider } from './context/AlertProvider'; // ← IMPORT
+import { AlertProvider } from './context/AlertProvider';
 
 // Pages
 import LoginPage from './pages/LoginPage';
@@ -12,6 +12,11 @@ import SettingsPage from './pages/SettingsPage';
 
 // Components
 import Sidebar from './components/Sidebar';
+import SidebarToggle from './components/SidebarToggle'; // ← MÊME DOSSIER QUE Sidebar
+import EthicalCommitmentsAdmin from './components/humanitarian/EthicalCommitmentsAdmin';
+import ViolationReportAdmin from './components/humanitarian/ViolationReportAdmin';
+import HumanitarianAlertsAdmin from './components/humanitarian/HumanitarianAlertsAdmin';
+import AdvocacyTrackingAdmin from './components/humanitarian/AdvocacyTrackingAdmin';
 
 // Route protégée
 const ProtectedRoute = ({ children }) => {
@@ -31,6 +36,10 @@ const AdminLayout = ({ children }) => {
   return (
     <div className="admin-layout">
       <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      
+      {/* ← NOUVEAU: Bouton toggle flottant */}
+      <SidebarToggle isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      
       <main className={`admin-main ${!sidebarOpen ? 'sidebar-closed' : ''}`}>
         {children}
       </main>
@@ -41,7 +50,6 @@ const AdminLayout = ({ children }) => {
 function App() {
   return (
     <>
-      {/* ✅ ENTOURER LES ROUTES AVEC AlertProvider */}
       <AlertProvider>
         <Routes>
           {/* Route publique - Login */}
@@ -81,6 +89,15 @@ function App() {
             }
           />
 
+            <Route path="humanitarian">
+              {/* Engagements Éthiques */}
+              <Route path="ethical-commitments" element={<EthicalCommitmentsAdmin />} />
+              <Route path="violations" element={<ViolationReportAdmin />} />
+              <Route path="alerts" element={<HumanitarianAlertsAdmin />} />
+              <Route path="advocacy" element={<AdvocacyTrackingAdmin />} />
+
+            </Route>
+
           <Route
             path="/settings"
             element={
@@ -97,7 +114,7 @@ function App() {
         </Routes>
       </AlertProvider>
 
-      {/* ✅ Toaster pour les notifications toast */}
+      {/* Toaster pour les notifications toast */}
       <Toaster 
         position="top-right"
         toastOptions={{
