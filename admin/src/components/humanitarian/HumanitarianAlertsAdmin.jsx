@@ -211,8 +211,30 @@ const HumanitarianAlertsAdmin = () => {
     <div className="humanitarian-alerts">
       {/* Bouton Retour */}
       <button 
-        onClick={() => navigate('/dashboard')} 
         className="btn-back"
+        onClick={() => navigate('/admin/dashboard')}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          padding: '0.75rem 1.25rem',
+          background: '#ecf0f1',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          marginBottom: '1.5rem',
+          fontWeight: '600',
+          color: '#2c3e50',
+          transition: 'all 0.3s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#bdc3c7';
+          e.currentTarget.style.transform = 'translateX(-4px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = '#ecf0f1';
+          e.currentTarget.style.transform = 'translateX(0)';
+        }}
       >
         <ArrowLeft size={20} />
         Retour au Dashboard

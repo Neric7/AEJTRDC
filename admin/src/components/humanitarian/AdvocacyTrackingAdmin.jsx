@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Plus, Edit, Trash2, Save, X, TrendingUp, Target,
   Users, Calendar, FileText, CheckCircle, Clock, 
   AlertCircle, BarChart, RefreshCw, Download, Eye,
-  DollarSign, Activity, Award, Filter
+  DollarSign, Activity, Award, Filter, ArrowLeft
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import humanitarianService from '../../services/humanitarian';
-import './AdvocacyCampaignAdmin.css';
+import './AdvocacyTrackingAdmin.css';
 
-const AdvocacyCampaignAdmin = () => {
+const AdvocacyTrackingAdmin = () => {
   const navigate = useNavigate();
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -216,8 +217,30 @@ const AdvocacyCampaignAdmin = () => {
     <div className="advocacy-admin">
       {/* BOUTON RETOUR AU DASHBOARD */}
       <button 
-        className="back-to-dashboard-btn"
+        className="btn-back"
         onClick={() => navigate('/admin/dashboard')}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          padding: '0.75rem 1.25rem',
+          background: '#ecf0f1',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          marginBottom: '1.5rem',
+          fontWeight: '600',
+          color: '#2c3e50',
+          transition: 'all 0.3s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#bdc3c7';
+          e.currentTarget.style.transform = 'translateX(-4px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = '#ecf0f1';
+          e.currentTarget.style.transform = 'translateX(0)';
+        }}
       >
         <ArrowLeft size={20} />
         Retour au Dashboard
@@ -876,4 +899,4 @@ const AdvocacyCampaignAdmin = () => {
   );
 };
 
-export default AdvocacyCampaignAdmin;
+export default AdvocacyTrackingAdmin;
