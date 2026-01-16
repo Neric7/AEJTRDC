@@ -4,8 +4,8 @@ import './VolunteerForm.css';
 
 const VolunteerForm = () => {
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
+    first_name: '',    // ✅ Changé de full_name
+    last_name: '',     // ✅ Ajouté
     email: '',
     phone: '',
     address: '',
@@ -18,11 +18,11 @@ const VolunteerForm = () => {
   });
 
   const [cvFile, setCvFile] = useState(null);
+  const [userData, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // 🆕 Charger les infos de l'utilisateur connecté
   useEffect(() => {
     loadUserData();
   }, []);
@@ -34,13 +34,19 @@ const VolunteerForm = () => {
       setUser(userData);
       
       // Pré-remplir le formulaire avec les données de l'utilisateur
+      // ✅ Séparer le nom complet en prénom et nom
+      const fullName = userData.user.name || '';
+      const nameParts = fullName.trim().split(' ');
+      
       setFormData(prev => ({
         ...prev,
-        first_name: userData.first_name || '',
-        last_name: userData.last_name || '',
-        email: userData.email || '',
-        phone: userData.phone || '',
+        first_name: nameParts[0] || '',
+        last_name: nameParts.slice(1).join(' ') || '',
+        email: userData.user.email || '',
+        phone: userData.user.phone || '',
       }));
+      
+      console.log("formdata", userData.user);
     } catch (error) {
       console.error('Erreur chargement utilisateur:', error);
     }
@@ -66,9 +72,6 @@ const VolunteerForm = () => {
     'Logistique',
     'Autre',
   ];
-
-  // 🆕 Charger les candidatures (désactivé temporairement pour éviter l'erreur)
-  // On chargera après la soumission réussie
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,7 +119,8 @@ const VolunteerForm = () => {
         formDataToSend.append('cv', cvFile);
       }
 
-      await api.post('/volunteers', formDataToSend, {
+      // ✅ Changé de /volunteers à /user/volunteers
+      await api.post('/user/volunteers', formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
@@ -138,24 +142,6 @@ const VolunteerForm = () => {
     }
   };
 
-  const getStatusBadge = (status) => {
-    const statusConfig = {
-      pending: { label: 'En attente', className: 'status-pending', icon: '⏳' },
-      accepted: { label: 'Acceptée', className: 'status-accepted', icon: '✅' },
-      rejected: { label: 'Rejetée', className: 'status-rejected', icon: '❌' },
-      in_progress: { label: 'En cours', className: 'status-progress', icon: '🔄' }
-    };
-
-    const config = statusConfig[status] || statusConfig.pending;
-    return (
-      <span className={`status-badge ${config.className}`}>
-        {config.icon} {config.label}
-      </span>
-    );
-  };
-
-  // 🆕 Affichage simple - pas de suivi multiple pour l'instant
-  // Message de succès après envoi
   if (success) {
     return (
       <div className="volunteer-success">
@@ -180,7 +166,6 @@ const VolunteerForm = () => {
     );
   }
 
-  // Formulaire de candidature
   return (
     <div className="volunteer-form-container">
       <div className="volunteer-form-header">
@@ -198,6 +183,7 @@ const VolunteerForm = () => {
         <div className="form-section">
           <h3>Informations personnelles</h3>
           
+          {/* ✅ Deux champs séparés au lieu d'un seul full_name */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="first_name">Prénom *</label>
@@ -209,6 +195,9 @@ const VolunteerForm = () => {
                 onChange={handleChange}
                 required
               />
+              {errors.first_name && (
+                <span className="error-message">{errors.first_name}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -221,6 +210,9 @@ const VolunteerForm = () => {
                 onChange={handleChange}
                 required
               />
+              {errors.last_name && (
+                <span className="error-message">{errors.last_name}</span>
+              )}
             </div>
           </div>
 
@@ -241,6 +233,9 @@ const VolunteerForm = () => {
               <span className="info-text">
                 ℹ️ L'email de votre compte (non modifiable)
               </span>
+              {errors.email && (
+                <span className="error-message">{errors.email}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -254,6 +249,9 @@ const VolunteerForm = () => {
                 required
                 placeholder="+243 XXX XXX XXX"
               />
+              {errors.phone && (
+                <span className="error-message">{errors.phone}</span>
+              )}
             </div>
           </div>
 
@@ -311,6 +309,9 @@ const VolunteerForm = () => {
                 <option key={domain} value={domain}>{domain}</option>
               ))}
             </select>
+            {errors.interest_domain && (
+              <span className="error-message">{errors.interest_domain}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -373,6 +374,9 @@ const VolunteerForm = () => {
             <span className={`char-count ${formData.message.length < 50 ? 'text-red' : 'text-green'}`}>
               {formData.message.length} / 50 minimum
             </span>
+            {errors.message && (
+              <span className="error-message">{errors.message}</span>
+            )}
           </div>
         </div>
 

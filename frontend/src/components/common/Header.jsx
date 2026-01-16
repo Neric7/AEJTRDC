@@ -213,7 +213,6 @@ export default function Header() {
       submenu: [
         { label: 'Rapports d\'activités', href: '/transparency/reports', icon: FaFileAlt },
         { label: 'Rapports financiers', href: '/transparency/financial', icon: FaMoneyBillWave },
-        { label: 'Gouvernance', href: '/transparency/governance', icon: FaUsers },
         { label: 'Politiques internes', href: '/transparency/policies', icon: FaGavel },
       ]
     },
