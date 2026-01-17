@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
+import api, { clearCache, prefetchNews } from '../services/api';
 import NewsGrid from '../components/news/NewsGrid';
 import NewsArticle from '../components/news/NewsArticle';
 import Loader from '../components/common/Loader';
-import { FaLock, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
+import { FaLock, FaUserPlus, FaSignInAlt, FaRedo } from 'react-icons/fa';
 import styles from './NewsPage.module.css';
 
 export default function NewsPage() {
@@ -16,6 +16,7 @@ export default function NewsPage() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -27,14 +28,24 @@ export default function NewsPage() {
   const [selectedTag, setSelectedTag] = useState('');
   const [availableTags, setAvailableTags] = useState([]);
 
-  // Scroller vers le haut au chargement de la page
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  // ✅ Refs pour éviter les appels multiples
+  const isFetchingRef = useRef(false);
+  const fetchTimeoutRef = useRef(null);
 
-  // Charger un article spécifique si un slug est présent dans l'URL
+  // ✅ Scroller vers le haut
   useEffect(() => {
-    // Attendre que authLoading soit terminé
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [slug]);
+
+  // ✅ Prefetch au montage pour accélérer le chargement
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      prefetchNews();
+    }
+  }, [isAuthenticated, authLoading]);
+
+  // ✅ Charger un article spécifique
+  useEffect(() => {
     if (authLoading) return;
 
     if (slug) {
@@ -49,56 +60,77 @@ export default function NewsPage() {
     }
   }, [slug, isAuthenticated, authLoading]);
 
-  // Charger les news quand on est sur la liste
+  // ✅ Charger les news avec debounce
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || slug) return;
     
-    if (!slug && isAuthenticated) {
-      fetchNews();
+    // Annuler le timeout précédent
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
     }
-  }, [pagination.page, search, selectedTag, isAuthenticated, authLoading]);
 
-  const loadArticleBySlug = async (articleSlug) => {
-    // Vérifier l'authentification
+    // Debounce de 300ms pour la recherche
+    fetchTimeoutRef.current = setTimeout(() => {
+      if (isAuthenticated) {
+        fetchNews();
+      }
+    }, search ? 300 : 0);
+
+    return () => {
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
+  }, [pagination.page, search, selectedTag, isAuthenticated, authLoading, slug]);
+
+  // ✅ Fonction optimisée pour charger un article
+  const loadArticleBySlug = useCallback(async (articleSlug) => {
     if (!isAuthenticated) {
       setLoading(false);
       return;
     }
 
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
     try {
       setLoading(true);
       setError(null);
 
-      console.log('🔍 Loading article:', articleSlug);
-
       const response = await api.get(`/news/${articleSlug}`);
       
-      if (response && response.data) {
+      if (response?.data) {
         setSelectedArticle(response.data);
+        setRetryCount(0);
       } else {
         throw new Error('Article non trouvé');
       }
 
     } catch (err) {
-      console.error('💥 Error loading article:', err);
+      console.error('Error loading article:', err);
       
-      // Gérer les erreurs 401 (non authentifié)
       if (err.response?.status === 401) {
         setError('Vous devez être connecté pour lire cet article');
+      } else if (err.response?.status === 404) {
+        setError('Article introuvable');
+      } else if (err.code === 'ECONNABORTED') {
+        setError('Le chargement prend trop de temps. Vérifiez votre connexion.');
       } else {
-        setError('Article non trouvé');
+        setError(err.message || 'Erreur lors du chargement de l\'article');
       }
       
-      // Rediriger vers la liste après 2 secondes
-      setTimeout(() => {
-        navigate('/news');
-      }, 2000);
+      setTimeout(() => navigate('/news'), 2000);
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
-  };
+  }, [isAuthenticated, navigate]);
 
-  const fetchNews = async () => {
+  // ✅ Fonction optimisée pour charger les news avec retry
+  const fetchNews = useCallback(async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
     try {
       setLoading(true);
       setError(null);
@@ -116,62 +148,72 @@ export default function NewsPage() {
         params.search = search;
       }
 
-      console.log('📡 Fetching news from:', endpoint, params);
-
       const response = await api.get(endpoint, { params });
 
       if (!response) {
         throw new Error('Aucune réponse du serveur');
       }
 
-      console.log('📦 Response structure:', response);
+      // ✅ Gestion flexible de la structure de réponse
+      let newsData = [];
+      let paginationData = null;
 
-      // Gérer différents formats de réponse
-      if (response.data && Array.isArray(response.data)) {
-        setNews(response.data);
-        if (response.pagination) {
-          setPagination(prev => ({
-            ...prev,
-            ...response.pagination
-          }));
-        }
-      } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
-        setNews(response.data.data);
-        if (response.data.pagination) {
-          setPagination(prev => ({
-            ...prev,
-            ...response.data.pagination
-          }));
-        }
-      } else if (Array.isArray(response)) {
-        setNews(response);
-      } else {
-        console.warn('Format de réponse inattendu:', response);
-        setNews([]);
+      if (Array.isArray(response.data)) {
+        newsData = response.data;
+        paginationData = response.pagination;
+      } else if (response.data?.data && Array.isArray(response.data.data)) {
+        newsData = response.data.data;
+        paginationData = response.data.pagination;
+      } else if (response.data && typeof response.data === 'object') {
+        newsData = [response.data];
       }
 
-      extractTags(news);
+      setNews(newsData);
+      
+      if (paginationData) {
+        setPagination(prev => ({ ...prev, ...paginationData }));
+      }
+
+      extractTags(newsData);
+      setRetryCount(0); // Reset retry counter
 
     } catch (err) {
-      console.error('💥 Fetch error:', err);
+      console.error('Fetch error:', err);
       
-      // Gérer spécifiquement l'erreur 401
+      let errorMessage = 'Erreur de chargement';
+      
       if (err.response?.status === 401) {
-        setError('Votre session a expiré. Veuillez vous reconnecter.');
-        // Optionnel : déconnecter l'utilisateur
-        // logout();
-      } else {
-        const errorMessage = err.response?.data?.message 
-          || err.message 
-          || 'Erreur de connexion au serveur';
-        setError(errorMessage);
+        errorMessage = 'Votre session a expiré';
+      } else if (err.code === 'ECONNABORTED') {
+        errorMessage = 'Le serveur met trop de temps à répondre. Veuillez réessayer.';
+      } else if (err.message === 'Network Error') {
+        errorMessage = 'Problème de connexion. Vérifiez votre connexion internet.';
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
       }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
-  };
+  }, [pagination.page, pagination.pageSize, search, selectedTag]);
 
-  const extractTags = (newsData) => {
+  // ✅ Fonction de retry
+  const handleRetry = useCallback(() => {
+    setRetryCount(prev => prev + 1);
+    clearCache('/news');
+    
+    if (slug) {
+      loadArticleBySlug(slug);
+    } else {
+      fetchNews();
+    }
+  }, [slug, loadArticleBySlug, fetchNews]);
+
+  const extractTags = useCallback((newsData) => {
     const tags = new Set();
     newsData.forEach(article => {
       if (article.tags && Array.isArray(article.tags)) {
@@ -179,45 +221,47 @@ export default function NewsPage() {
       }
     });
     setAvailableTags([...tags].sort());
-  };
+  }, []);
 
-  const handleArticleSelect = (articleSlugOrId) => {
+  const handleArticleSelect = useCallback((articleSlugOrId) => {
     navigate(`/news/${articleSlugOrId}`);
-  };
+  }, [navigate]);
 
-  const handleBackToList = () => {
+  const handleBackToList = useCallback(() => {
     navigate('/news');
-  };
+  }, [navigate]);
 
-  const handleSearch = (e) => {
+  const handleSearch = useCallback((e) => {
     e.preventDefault();
     setPagination(prev => ({ ...prev, page: 1 }));
-  };
+  }, []);
 
-  const handleTagFilter = (tag) => {
+  const handleTagFilter = useCallback((tag) => {
     setSelectedTag(tag === selectedTag ? '' : tag);
     setPagination(prev => ({ ...prev, page: 1 }));
-  };
+  }, [selectedTag]);
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = useCallback((newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
-  };
+  }, []);
 
-  // 🔄 LOADING : Attendre l'initialisation de l'auth
+  // ✅ Loading state avec message personnalisé
   if (authLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.wrapper}>
           <div className={styles.loadingContainer}>
             <Loader />
-            <p style={{ marginTop: '1rem', color: '#6b7280' }}>Vérification de votre session...</p>
+            <p style={{ marginTop: '1rem', color: '#6b7280' }}>
+              Vérification de votre session...
+            </p>
           </div>
         </div>
       </div>
     );
   }
 
-  // 🔒 NON AUTHENTIFIÉ : Afficher le message de restriction
+  // ✅ Message si non authentifié
   if (!isAuthenticated) {
     return (
       <div className={styles.container}>
@@ -233,34 +277,28 @@ export default function NewsPage() {
               </h2>
               
               <p className={styles.authRequiredText}>
-                Pour accéder aux actualités et rester informé de nos actions sur le terrain,
-                vous devez être connecté à votre compte.
+                Pour accéder aux actualités et rester informé de nos actions,
+                vous devez être connecté.
               </p>
 
               <div className={styles.authRequiredBenefits}>
-                <h3>En vous connectant, vous pouvez :</h3>
+                <h3>En vous connectant :</h3>
                 <ul>
-                  <li>📰 Lire toutes nos actualités</li>
-                  <li>💬 Commenter et échanger</li>
-                  <li>📌 Sauvegarder vos articles favoris</li>
-                  <li>🔔 Recevoir des notifications</li>
+                  <li>📰 Lisez toutes nos actualités</li>
+                  <li>💬 Commentez et échangez</li>
+                  <li>📌 Sauvegardez vos favoris</li>
+                  <li>🔔 Recevez des notifications</li>
                 </ul>
               </div>
 
               <div className={styles.authRequiredActions}>
                 <Link to="/login" className={styles.btnPrimary}>
-                  <FaSignInAlt />
-                  Se connecter
+                  <FaSignInAlt /> Se connecter
                 </Link>
                 <Link to="/register" className={styles.btnSecondary}>
-                  <FaUserPlus />
-                  Créer un compte
+                  <FaUserPlus /> Créer un compte
                 </Link>
               </div>
-
-              <p className={styles.authRequiredFooter}>
-                Vous avez déjà un compte ? <Link to="/login">Connectez-vous</Link>
-              </p>
             </div>
           </div>
         </div>
@@ -268,10 +306,8 @@ export default function NewsPage() {
     );
   }
 
-  // ✅ AUTHENTIFIÉ : Afficher le contenu normalement
-
-  // Si un article est sélectionné
-  if (selectedArticle && selectedArticle.id) {
+  // ✅ Affichage d'un article
+  if (selectedArticle?.id) {
     return (
       <NewsArticle 
         article={selectedArticle}
@@ -281,17 +317,15 @@ export default function NewsPage() {
     );
   }
 
+  // ✅ Page principale avec gestion d'erreur améliorée
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
         
-        {/* Header */}
         <div className={styles.header}>
-          <h1 className={styles.title}>
-            Actualités
-          </h1>
+          <h1 className={styles.title}>Actualités</h1>
           <p className={styles.subtitle}>
-            Restez informé de nos dernières actions et projets sur le terrain
+            Restez informé de nos dernières actions sur le terrain
           </p>
           {user && (
             <p className={styles.welcomeText}>
@@ -300,7 +334,6 @@ export default function NewsPage() {
           )}
         </div>
 
-        {/* Barre de recherche */}
         <div className={styles.searchSection}>
           <form onSubmit={handleSearch} className={styles.searchForm}>
             <div className={styles.searchWrapper}>
@@ -308,53 +341,48 @@ export default function NewsPage() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Rechercher une actualité..."
+                placeholder="Rechercher..."
                 className={styles.searchInput}
               />
-              <button
-                type="submit"
-                className={styles.searchButton}
-              >
+              <button type="submit" className={styles.searchButton}>
                 Rechercher
               </button>
             </div>
           </form>
         </div>
 
-        {/* Contenu */}
         {loading ? (
           <div className={styles.loadingContainer}>
             <Loader />
+            {retryCount > 0 && (
+              <p style={{ marginTop: '1rem', color: '#6b7280' }}>
+                Tentative {retryCount}...
+              </p>
+            )}
           </div>
         ) : error ? (
           <div className={styles.errorContainer}>
             <div className={styles.errorBox}>
-              <h3 className={styles.errorTitle}>
-                Erreur de chargement
-              </h3>
+              <h3 className={styles.errorTitle}>Erreur de chargement</h3>
               <p className={styles.errorMessage}>{error}</p>
-              <p className={styles.errorHint}>
-                Vérifiez que l'API est accessible
-              </p>
-              <button
-                onClick={() => slug ? navigate('/news') : fetchNews()}
-                className={styles.retryButton}
-              >
-                {slug ? 'Retour à la liste' : 'Réessayer'}
+              
+              {error.includes('temps') && (
+                <p className={styles.errorHint}>
+                  💡 Le serveur semble lent. Vérifiez votre connexion.
+                </p>
+              )}
+              
+              <button onClick={handleRetry} className={styles.retryButton}>
+                <FaRedo /> Réessayer
               </button>
             </div>
           </div>
         ) : news.length === 0 ? (
           <div className={styles.emptyContainer}>
-            <p className={styles.emptyMessage}>
-              Aucune actualité trouvée
-            </p>
+            <p className={styles.emptyMessage}>Aucune actualité trouvée</p>
           </div>
         ) : (
-          <NewsGrid 
-            news={news} 
-            onArticleSelect={handleArticleSelect}
-          />
+          <NewsGrid news={news} onArticleSelect={handleArticleSelect} />
         )}
       </div>
     </div>

@@ -16,6 +16,8 @@ use App\Http\Controllers\API\AdminJobController;
 use App\Http\Controllers\API\JobController;
 use App\Http\Controllers\API\TeamMemberController;
 use App\Http\Controllers\API\EthicalCommitmentsController;
+use App\Http\Controllers\API\InterventionZoneController;
+use App\Http\Controllers\API\HumanitarianController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +51,12 @@ Route::get('/news/{newsId}/comments', [CommentController::class, 'index']);
 Route::prefix('team')->group(function () {
     Route::get('/', [TeamMemberController::class, 'index']);
     Route::get('/{id}', [TeamMemberController::class, 'show']);
+});
+
+// ========== ✅ ZONES D'INTERVENTION (PUBLIC) ==========
+Route::prefix('intervention-zones')->group(function () {
+    Route::get('/', [InterventionZoneController::class, 'index']);
+    Route::get('/{id}', [InterventionZoneController::class, 'show']);
 });
 
 /*
@@ -213,31 +221,29 @@ Route::prefix('admin')->group(function () {
             Route::post('/{id}/upload-photo', [TeamMemberController::class, 'uploadPhoto']);
             Route::delete('/{id}/photo', [TeamMemberController::class, 'deletePhoto']);
         });
+
+        // ========== ✅ ZONES D'INTERVENTION (ADMIN) ==========
+        Route::prefix('intervention-zones')->group(function () {
+            // ⚠️ ORDRE IMPORTANT : stats avant {id}
+            Route::get('/stats', [InterventionZoneController::class, 'stats']);
+            Route::get('/', [InterventionZoneController::class, 'index']);
+            Route::get('/{id}', [InterventionZoneController::class, 'show']);
+            Route::post('/', [InterventionZoneController::class, 'store']);
+            Route::put('/{id}', [InterventionZoneController::class, 'update']);
+            Route::delete('/{id}', [InterventionZoneController::class, 'destroy']);
+            Route::patch('/{id}/toggle-status', [InterventionZoneController::class, 'toggleStatus']);
+            Route::post('/reorder', [InterventionZoneController::class, 'reorder']);
+        });
         
         // ========== ✨ ENGAGEMENTS ÉTHIQUES (ADMIN) ✨ ==========
         Route::prefix('ethical-commitments')->group(function () {
-            // Liste tous les engagements (y compris inactifs)
-            Route::get('/', [EthicalCommitmentsController::class, 'adminIndex']);
-            
-            // Statistiques
             Route::get('/stats', [EthicalCommitmentsController::class, 'getStats']);
-            
-            // Détail d'un engagement
+            Route::get('/', [EthicalCommitmentsController::class, 'adminIndex']);
             Route::get('/{id}', [EthicalCommitmentsController::class, 'adminShow']);
-            
-            // Créer un engagement
             Route::post('/', [EthicalCommitmentsController::class, 'store']);
-            
-            // Mettre à jour un engagement
             Route::put('/{id}', [EthicalCommitmentsController::class, 'update']);
-            
-            // Supprimer un engagement
             Route::delete('/{id}', [EthicalCommitmentsController::class, 'destroy']);
-            
-            // Activer/Désactiver
             Route::patch('/{id}/toggle-status', [EthicalCommitmentsController::class, 'toggleStatus']);
-            
-            // Réorganiser l'ordre
             Route::post('/reorder', [EthicalCommitmentsController::class, 'reorder']);
         });
         
@@ -261,45 +267,42 @@ Route::prefix('humanitarian')->group(function () {
     Route::get('/ethical-commitments/{id}', [EthicalCommitmentsController::class, 'show']);
     
     // Alertes humanitaires (PUBLIC)
-    Route::get('/alerts', [App\Http\Controllers\API\HumanitarianController::class, 'getAlerts']);
-    Route::get('/alerts/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'getAlert']);
+    Route::get('/alerts', [HumanitarianController::class, 'getAlerts']);
+    Route::get('/alerts/{id}', [HumanitarianController::class, 'getAlert']);
     
     // Dénoncer une violation (PUBLIC - Formulaire)
-    Route::post('/violations/report', [App\Http\Controllers\API\HumanitarianController::class, 'reportViolation']);
+    Route::post('/violations/report', [HumanitarianController::class, 'reportViolation']);
     
     // Actions de plaidoyer (PUBLIC)
-    Route::get('/advocacy', [App\Http\Controllers\API\HumanitarianController::class, 'getAdvocacyActions']);
-    Route::get('/advocacy/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'getAdvocacyAction']);
+    Route::get('/advocacy', [HumanitarianController::class, 'getAdvocacyActions']);
+    Route::get('/advocacy/{id}', [HumanitarianController::class, 'getAdvocacyAction']);
 });
 
 // ========== ROUTES ADMIN PROTÉGÉES ==========
 Route::middleware(['auth:sanctum', 'check.admin'])->prefix('admin/humanitarian')->group(function () {
     
-    // ⚠️ Note: Les routes pour ethical-commitments sont déjà définies plus haut
-    // dans /admin/ethical-commitments pour rester cohérent avec votre structure
-    
     // ⚠️ ALERTES - ORDRE IMPORTANT (stats avant {id})
-    Route::get('/alerts/stats', [App\Http\Controllers\API\HumanitarianController::class, 'getAlertsStats']);
-    Route::get('/alerts', [App\Http\Controllers\API\HumanitarianController::class, 'getAlerts']);
-    Route::get('/alerts/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'getAlert']);
-    Route::post('/alerts', [App\Http\Controllers\API\HumanitarianController::class, 'createAlert']);
-    Route::put('/alerts/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'updateAlert']);
-    Route::delete('/alerts/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'deleteAlert']);
-    Route::patch('/alerts/{id}/activate', [App\Http\Controllers\API\HumanitarianController::class, 'activateAlert']);
-    Route::patch('/alerts/{id}/deactivate', [App\Http\Controllers\API\HumanitarianController::class, 'deactivateAlert']);
+    Route::get('/alerts/stats', [HumanitarianController::class, 'getAlertsStats']);
+    Route::get('/alerts', [HumanitarianController::class, 'getAlerts']);
+    Route::get('/alerts/{id}', [HumanitarianController::class, 'getAlert']);
+    Route::post('/alerts', [HumanitarianController::class, 'createAlert']);
+    Route::put('/alerts/{id}', [HumanitarianController::class, 'updateAlert']);
+    Route::delete('/alerts/{id}', [HumanitarianController::class, 'deleteAlert']);
+    Route::patch('/alerts/{id}/activate', [HumanitarianController::class, 'activateAlert']);
+    Route::patch('/alerts/{id}/deactivate', [HumanitarianController::class, 'deactivateAlert']);
     
    // ⚠️ VIOLATIONS (ADMIN - Modération) - ORDRE IMPORTANT !
-   Route::get('/violations/stats', [App\Http\Controllers\API\HumanitarianController::class, 'getViolationStats']);
-   Route::get('/violations', [App\Http\Controllers\API\HumanitarianController::class, 'getViolations']);
-   Route::get('/violations/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'getViolation']);
-   Route::put('/violations/{id}/status', [App\Http\Controllers\API\HumanitarianController::class, 'updateViolationStatus']);
-   Route::delete('/violations/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'deleteViolation']);
+   Route::get('/violations/stats', [HumanitarianController::class, 'getViolationStats']);
+   Route::get('/violations', [HumanitarianController::class, 'getViolations']);
+   Route::get('/violations/{id}', [HumanitarianController::class, 'getViolation']);
+   Route::put('/violations/{id}/status', [HumanitarianController::class, 'updateViolationStatus']);
+   Route::delete('/violations/{id}', [HumanitarianController::class, 'deleteViolation']);
     
     // ⚠️ PLAIDOYER - ORDRE IMPORTANT
-    Route::get('/advocacy/stats', [App\Http\Controllers\API\HumanitarianController::class, 'getAdvocacyStats']);
-    Route::get('/advocacy', [App\Http\Controllers\API\HumanitarianController::class, 'getAdvocacyActions']);
-    Route::get('/advocacy/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'getAdvocacyAction']);
-    Route::post('/advocacy', [App\Http\Controllers\API\HumanitarianController::class, 'createAdvocacy']);
-    Route::put('/advocacy/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'updateAdvocacy']);
-    Route::delete('/advocacy/{id}', [App\Http\Controllers\API\HumanitarianController::class, 'deleteAdvocacy']);
+    Route::get('/advocacy/stats', [HumanitarianController::class, 'getAdvocacyStats']);
+    Route::get('/advocacy', [HumanitarianController::class, 'getAdvocacyActions']);
+    Route::get('/advocacy/{id}', [HumanitarianController::class, 'getAdvocacyAction']);
+    Route::post('/advocacy', [HumanitarianController::class, 'createAdvocacy']);
+    Route::put('/advocacy/{id}', [HumanitarianController::class, 'updateAdvocacy']);
+    Route::delete('/advocacy/{id}', [HumanitarianController::class, 'deleteAdvocacy']);
 });

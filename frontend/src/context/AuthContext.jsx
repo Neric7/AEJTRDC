@@ -28,108 +28,124 @@ const AuthContext = createContext({
   refreshUser: async () => {},
 });
 
+// ✅ OPTIMISATION 1: Cache avec expiration (1 heure)
+const CACHE_DURATION = 60 * 60 * 1000; // 1 heure
+const CACHE_KEY = 'cachedUser';
+const CACHE_TIME_KEY = 'cachedUserTime';
+
+const getCachedUser = () => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
+    
+    if (!cached || !cacheTime) return null;
+    
+    const age = Date.now() - parseInt(cacheTime, 10);
+    if (age > CACHE_DURATION) {
+      localStorage.removeItem(CACHE_KEY);
+      localStorage.removeItem(CACHE_TIME_KEY);
+      return null;
+    }
+    
+    return JSON.parse(cached);
+  } catch {
+    return null;
+  }
+};
+
+const setCachedUser = (user) => {
+  if (!user) {
+    localStorage.removeItem(CACHE_KEY);
+    localStorage.removeItem(CACHE_TIME_KEY);
+    return;
+  }
+  localStorage.setItem(CACHE_KEY, JSON.stringify(user));
+  localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+};
+
+// ✅ OPTIMISATION 2: Centraliser la gestion des headers
 const setAuthHeader = (token) => {
   if (token) {
     api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    localStorage.setItem('authToken', token);
   } else {
     delete api.defaults.headers.common.Authorization;
+    localStorage.removeItem('authToken');
   }
 };
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => {
+  // ✅ OPTIMISATION 3: Initialisation synchrone du token
+  const [token] = useState(() => {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('authToken');
+    const storedToken = localStorage.getItem('authToken');
+    if (storedToken) setAuthHeader(storedToken);
+    return storedToken;
   });
-  const [loading, setLoading] = useState(true);
+
+  // ✅ OPTIMISATION 4: Initialisation synchrone du user depuis le cache
+  const [user, setUser] = useState(() => {
+    if (!token) return null;
+    return getCachedUser();
+  });
+
+  const [loading, setLoading] = useState(!user); // Si user en cache, pas de loading
   const [error, setError] = useState(null);
   
-  const isInitialized = useRef(false);
-  const isFetchingUser = useRef(false);
+  const initPromise = useRef(null);
 
+  // ✅ OPTIMISATION 5: Init async en background sans bloquer le render
   useEffect(() => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    // Si on a déjà un user en cache, on fetch en arrière-plan
+    const shouldShowLoading = !user;
+
     const initAuth = async () => {
-      if (isInitialized.current) return;
-      isInitialized.current = true;
-      
-      const storedToken = localStorage.getItem('authToken');
-      
-      if (!storedToken) {
-        setAuthHeader(null);
+      try {
+        const data = await fetchCurrentUser();
+        const userData = data.user || data;
+        setUser(userData);
+        setCachedUser(userData);
+      } catch (err) {
+        console.error('Token invalide:', err.message);
         setUser(null);
-        setLoading(false);
-        return;
-      }
-      
-      setAuthHeader(storedToken);
-      
-      const cachedUser = localStorage.getItem('cachedUser');
-      if (cachedUser) {
-        try {
-          const userData = JSON.parse(cachedUser);
-          setUser(userData);
-          setLoading(false);
-        } catch (e) {
-          console.error('Erreur parsing cachedUser:', e);
-        }
-      }
-      
-      if (!isFetchingUser.current) {
-        isFetchingUser.current = true;
-        
-        try {
-          const data = await fetchCurrentUser();
-          const userData = data.user || data;
-          setUser(userData);
-          localStorage.setItem('cachedUser', JSON.stringify(userData));
-        } catch (err) {
-          console.error('Token invalide ou expiré:', err.message);
-          setToken(null);
-          setUser(null);
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('cachedUser');
-          setAuthHeader(null);
-        } finally {
-          setLoading(false);
-          isFetchingUser.current = false;
-        }
-      } else {
-        setLoading(false);
+        setAuthHeader(null);
+        setCachedUser(null);
+      } finally {
+        if (shouldShowLoading) setLoading(false);
       }
     };
 
-    initAuth();
-  }, []);
+    // Éviter les appels multiples
+    if (!initPromise.current) {
+      initPromise.current = initAuth();
+    }
+  }, [token, user]);
 
+  // ✅ OPTIMISATION 6: Mémoïser handleAuthResponse
   const handleAuthResponse = useCallback((data) => {
     const nextUser = data.user || null;
     const nextToken = data.token || null;
 
-    if (nextToken) {
-      localStorage.setItem('authToken', nextToken);
-      setAuthHeader(nextToken);
-      setToken(nextToken);
-    }
-
-    if (nextUser) {
-      localStorage.setItem('cachedUser', JSON.stringify(nextUser));
-    }
+    if (nextToken) setAuthHeader(nextToken);
+    if (nextUser) setCachedUser(nextUser);
 
     setUser(nextUser);
     return nextUser;
   }, []);
 
-  const extractError = (err, fallback = 'Une erreur est survenue') => {
+  const extractError = useCallback((err, fallback = 'Une erreur est survenue') => {
     if (err?.response?.data?.message) return err.response.data.message;
     if (err?.response?.data?.errors) {
       const firstError = Object.values(err.response.data.errors)[0];
-      if (firstError && firstError.length) {
-        return firstError[0];
-      }
+      if (firstError?.length) return firstError[0];
     }
     return fallback;
-  };
+  }, []);
 
   const login = useCallback(
     async (credentials) => {
@@ -143,7 +159,7 @@ export function AuthProvider({ children }) {
         throw new Error(message);
       }
     },
-    [handleAuthResponse]
+    [handleAuthResponse, extractError]
   );
 
   const register = useCallback(
@@ -158,7 +174,7 @@ export function AuthProvider({ children }) {
         throw new Error(message);
       }
     },
-    [handleAuthResponse]
+    [handleAuthResponse, extractError]
   );
 
   const logout = useCallback(async () => {
@@ -167,12 +183,10 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.warn('Erreur lors de la déconnexion', err);
     } finally {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('cachedUser');
       setAuthHeader(null);
-      setToken(null);
+      setCachedUser(null);
       setUser(null);
-      isInitialized.current = false;
+      initPromise.current = null;
     }
   }, []);
 
@@ -183,8 +197,8 @@ export function AuthProvider({ children }) {
         const data = await updateProfileRequest(payload);
         const userData = data.user || data;
         setUser(userData);
-        localStorage.setItem('cachedUser', JSON.stringify(userData));
-        invalidateUserCache(); // Invalider le cache
+        setCachedUser(userData);
+        invalidateUserCache();
         return data;
       } catch (err) {
         const message = extractError(err, 'Mise à jour impossible');
@@ -192,7 +206,7 @@ export function AuthProvider({ children }) {
         throw new Error(message);
       }
     },
-    []
+    [extractError]
   );
 
   const uploadAvatar = useCallback(
@@ -202,8 +216,8 @@ export function AuthProvider({ children }) {
         const data = await uploadAvatarRequest(file);
         const userData = data.user || data;
         setUser(userData);
-        localStorage.setItem('cachedUser', JSON.stringify(userData));
-        invalidateUserCache(); // Invalider le cache
+        setCachedUser(userData);
+        invalidateUserCache();
         return data;
       } catch (err) {
         const message = extractError(err, 'Upload impossible');
@@ -211,7 +225,7 @@ export function AuthProvider({ children }) {
         throw new Error(message);
       }
     },
-    []
+    [extractError]
   );
 
   const deleteAvatar = useCallback(
@@ -221,8 +235,8 @@ export function AuthProvider({ children }) {
         const data = await deleteAvatarRequest();
         const userData = data.user || data;
         setUser(userData);
-        localStorage.setItem('cachedUser', JSON.stringify(userData));
-        invalidateUserCache(); // Invalider le cache
+        setCachedUser(userData);
+        invalidateUserCache();
         return data;
       } catch (err) {
         const message = extractError(err, 'Suppression impossible');
@@ -230,7 +244,7 @@ export function AuthProvider({ children }) {
         throw new Error(message);
       }
     },
-    []
+    [extractError]
   );
 
   const changePassword = useCallback(
@@ -244,27 +258,23 @@ export function AuthProvider({ children }) {
         throw new Error(message);
       }
     },
-    []
+    [extractError]
   );
 
   const refreshUser = useCallback(async () => {
     if (!token) return null;
-    if (isFetchingUser.current) return user;
     
     try {
-      isFetchingUser.current = true;
       const data = await fetchCurrentUser();
       const userData = data.user || data;
       setUser(userData);
-      localStorage.setItem('cachedUser', JSON.stringify(userData));
+      setCachedUser(userData);
       return userData;
     } catch (err) {
       await logout();
       throw err;
-    } finally {
-      isFetchingUser.current = false;
     }
-  }, [logout, token, user]);
+  }, [logout, token]);
 
   const value = useMemo(
     () => ({
@@ -283,7 +293,8 @@ export function AuthProvider({ children }) {
       refreshUser,
       setError,
     }),
-    [changePassword, deleteAvatar, error, loading, login, logout, refreshUser, register, updateProfile, uploadAvatar, user, token]
+    [user, token, loading, error, login, register, logout, updateProfile, 
+     uploadAvatar, deleteAvatar, changePassword, refreshUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

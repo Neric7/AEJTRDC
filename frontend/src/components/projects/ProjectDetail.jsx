@@ -365,7 +365,7 @@ export default function ProjectDetail({ project, onBack, onRelatedProject, allPr
             <p className={styles.ctaText}>
               Votre soutien permet de réaliser ces projets qui changent des vies.
             </p>
-            <button className={styles.ctaButton}>
+            <button className={styles.ctaButton} onClick={() => window.location.href = '/donate'}>
               Faire un don
             </button>
           </div>

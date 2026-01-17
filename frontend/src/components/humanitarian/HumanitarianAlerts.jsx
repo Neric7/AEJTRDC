@@ -41,11 +41,13 @@ const HumanitarianAlerts = () => {
   const fetchAlerts = async () => {
     try {
       setLoading(true);
-      const data = await humanitarianService.getAlerts();
+      // ✅ CORRECTION : Utiliser getPublicAlerts au lieu de getAlerts
+      const data = await humanitarianService.getPublicAlerts();
       // Ne garder que les alertes actives (double vérification)
-      setAlerts(data.filter(alert => alert.is_active));
+      setAlerts(Array.isArray(data) ? data.filter(alert => alert.is_active) : []);
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('Erreur lors du chargement des alertes:', error);
+      setAlerts([]); // Tableau vide en cas d'erreur
     } finally {
       setLoading(false);
     }
@@ -76,7 +78,7 @@ const HumanitarianAlerts = () => {
           <div className="hero-content">
             <Bell className="hero-icon" size={48} />
             <h1>Alertes Humanitaires</h1>
-            <p>Situations d'urgence et crises humanitaires en cours à Madagascar</p>
+            <p>Situations d'urgence et crises humanitaires en cours</p>
           </div>
 
           {(criticalCount > 0 || highCount > 0) && (

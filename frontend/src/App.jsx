@@ -28,6 +28,7 @@ import JobsPage from './pages/JobsPage';
 import DonatePage from './pages/DonatePage';
 import TeamPage from './pages/TeamPage'; 
 import HumanitarianSpacePage from './pages/HumanitarianSpacePage'; 
+import InterventionMap from './pages/InterventionMap'; 
 
 function App() {
   return (
@@ -62,6 +63,8 @@ function App() {
 
             {/* Humanitarian Space */}
             <Route path="/humanitarian" element={<HumanitarianSpacePage />} />
+
+            <Route path="/about/zones" element={<InterventionMap />} />
 
             {/* Auth */}
             <Route path="/login" element={<LoginPage />} />
