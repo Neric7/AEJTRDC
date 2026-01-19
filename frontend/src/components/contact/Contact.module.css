@@ -560,3 +560,28 @@
         font-size: 1.3rem;
     }
 }
+
+.socialIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    color: var(--icon-color, #333);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.socialIcon:hover {
+    background-color: var(--icon-color, #333);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.socialIcon svg {
+    width: 24px;
+    height: 24px;
+}

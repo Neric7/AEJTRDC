@@ -4,13 +4,13 @@ import './VolunteerForm.css';
 
 const VolunteerForm = () => {
   const [formData, setFormData] = useState({
-    first_name: '',    // ✅ Changé de full_name
-    last_name: '',     // ✅ Ajouté
+    first_name: '',
+    last_name: '',
     email: '',
     phone: '',
     address: '',
     city: '',
-    country: 'Congo',
+    country: '', // ✅ Changé de 'Congo' à vide
     interest_domain: '',
     skills: '',
     availability: 'flexible',
@@ -23,6 +23,33 @@ const VolunteerForm = () => {
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // ✅ Données des pays et leurs villes
+  const countriesData = {
+    'RDC': {
+      name: 'République Démocratique du Congo',
+      cities: ['Kinshasa', 'Lubumbashi', 'Goma', 'Mbuji-Mayi', 'Kisangani', 'Bukavu', 'Kananga', 'Likasi', 'Kolwezi', 'Matadi']
+    },
+    'Congo': {
+      name: 'République du Congo',
+      cities: ['Brazzaville', 'Pointe-Noire', 'Dolisie', 'Nkayi', 'Owando', 'Ouesso', 'Impfondo', 'Sibiti']
+    },
+    'Madagascar': {
+      name: 'Madagascar',
+      cities: ['Antananarivo', 'Toamasina', 'Antsirabe', 'Mahajanga', 'Fianarantsoa', 'Toliara', 'Antsiranana', 'Ambovombe']
+    },
+    'Burundi': {
+      name: 'Burundi',
+      cities: ['Bujumbura', 'Gitega', 'Muyinga', 'Ruyigi', 'Ngozi', 'Rutana', 'Bururi', 'Makamba']
+    },
+    'Rwanda': {
+      name: 'Rwanda',
+      cities: ['Kigali', 'Butare', 'Gitarama', 'Ruhengeri', 'Gisenyi', 'Byumba', 'Cyangugu', 'Kibungo']
+    }
+  };
+
+  // ✅ Liste des villes disponibles selon le pays sélectionné
+  const [availableCities, setAvailableCities] = useState([]);
+
   useEffect(() => {
     loadUserData();
   }, []);
@@ -33,8 +60,6 @@ const VolunteerForm = () => {
       const userData = response.data;
       setUser(userData);
       
-      // Pré-remplir le formulaire avec les données de l'utilisateur
-      // ✅ Séparer le nom complet en prénom et nom
       const fullName = userData.user.name || '';
       const nameParts = fullName.trim().split(' ');
       
@@ -75,7 +100,25 @@ const VolunteerForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // ✅ Si le pays change, réinitialiser la ville et mettre à jour les villes disponibles
+    if (name === 'country') {
+      setFormData(prev => ({ 
+        ...prev, 
+        [name]: value,
+        city: '' // Réinitialiser la ville
+      }));
+      
+      // Mettre à jour les villes disponibles
+      if (value && countriesData[value]) {
+        setAvailableCities(countriesData[value].cities);
+      } else {
+        setAvailableCities([]);
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
+    
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -119,7 +162,6 @@ const VolunteerForm = () => {
         formDataToSend.append('cv', cvFile);
       }
 
-      // ✅ Changé de /volunteers à /user/volunteers
       await api.post('/user/volunteers', formDataToSend, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
@@ -183,10 +225,9 @@ const VolunteerForm = () => {
         <div className="form-section">
           <h3>Informations personnelles</h3>
           
-          {/* ✅ Deux champs séparés au lieu d'un seul full_name */}
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="first_name">Prénom *</label>
+              <label htmlFor="first_name">Nom *</label>
               <input
                 type="text"
                 id="first_name"
@@ -195,13 +236,13 @@ const VolunteerForm = () => {
                 onChange={handleChange}
                 required
               />
-              {errors.first_name && (
-                <span className="error-message">{errors.first_name}</span>
+              {errors.last_name && (
+                <span className="error-message">{errors.last_name}</span>
               )}
             </div>
 
             <div className="form-group">
-              <label htmlFor="last_name">Nom *</label>
+              <label htmlFor="last_name">Prénom *</label>
               <input
                 type="text"
                 id="last_name"
@@ -210,8 +251,8 @@ const VolunteerForm = () => {
                 onChange={handleChange}
                 required
               />
-              {errors.last_name && (
-                <span className="error-message">{errors.last_name}</span>
+              {errors.first_name && (
+                <span className="error-message">{errors.first_name}</span>
               )}
             </div>
           </div>
@@ -255,28 +296,51 @@ const VolunteerForm = () => {
             </div>
           </div>
 
+          {/* ✅ Section Pays et Ville améliorée */}
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="city">Ville</label>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                placeholder="Kinshasa, Lubumbashi..."
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="country">Pays</label>
-              <input
-                type="text"
+              <label htmlFor="country">Pays *</label>
+              <select
                 id="country"
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
-              />
+                required
+              >
+                <option value="">Sélectionnez un pays</option>
+                {Object.entries(countriesData).map(([code, data]) => (
+                  <option key={code} value={code}>
+                    {data.name}
+                  </option>
+                ))}
+              </select>
+              {errors.country && (
+                <span className="error-message">{errors.country}</span>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="city">Ville *</label>
+              <select
+                id="city"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                required
+                disabled={!formData.country}
+              >
+                <option value="">
+                  {formData.country ? 'Sélectionnez une ville' : 'Sélectionnez d\'abord un pays'}
+                </option>
+                {availableCities.map(city => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+              {errors.city && (
+                <span className="error-message">{errors.city}</span>
+              )}
             </div>
           </div>
 

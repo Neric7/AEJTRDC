@@ -22,14 +22,14 @@ class DashboardController extends Controller
                 'domains' => Domain::count(),
                 'projects' => Project::count(),
                 'news' => News::where('status', 'published')->count(),
-                'volunteers' => Volunteer::count(), // ✅ Total de tous les bénévoles
+                'volunteers' => Volunteer::count(),
                 'volunteers_pending' => Volunteer::where('status', 'pending')->count(),
                 'volunteers_accepted' => Volunteer::where('status', 'accepted')->count(),
                 'volunteers_rejected' => Volunteer::where('status', 'rejected')->count(),
                 'volunteers_in_progress' => Volunteer::where('status', 'in_progress')->count(),
                 'partners' => Partner::count(),
                 'donations' => $this->getDonationsThisMonth(),
-                'activeAlerts' => 0,
+                'activeAlerts' => $this->countActiveAlerts(),
             ];
 
             return response()->json($stats);
@@ -50,8 +50,8 @@ class DashboardController extends Controller
             $recentVolunteers = Volunteer::latest()->take(2)->get();
             foreach ($recentVolunteers as $volunteer) {
                 $activities[] = [
-                    'description' => "Nouvelle candidature : {$volunteer->full_name} ({$volunteer->interest_domain})",
-                    'time' => $this->getTimeAgo($volunteer->created_at),
+                    'description' => "Nouvelle candidature : {$volunteer->first_name} {$volunteer->last_name} ({$volunteer->interest_domain})",
+                    'created_at' => $volunteer->created_at,
                     'type' => 'volunteer',
                     'status' => $volunteer->status
                 ];
@@ -62,7 +62,7 @@ class DashboardController extends Controller
             foreach ($recentDomains as $domain) {
                 $activities[] = [
                     'description' => "Nouveau domaine créé : {$domain->name}",
-                    'time' => $this->getTimeAgo($domain->created_at),
+                    'created_at' => $domain->created_at,
                     'type' => 'domain'
                 ];
             }
@@ -75,40 +75,38 @@ class DashboardController extends Controller
             foreach ($recentNews as $news) {
                 $activities[] = [
                     'description' => "Actualité publiée : {$news->title}",
-                    'time' => $this->getTimeAgo($news->created_at),
+                    'created_at' => $news->created_at,
                     'type' => 'news'
                 ];
             }
 
-            // Derniers projets mis à jour
+            // Derniers projets
             $recentProjects = Project::latest('updated_at')->take(2)->get();
             foreach ($recentProjects as $project) {
                 $activities[] = [
                     'description' => "Projet mis à jour : {$project->title}",
-                    'time' => $this->getTimeAgo($project->updated_at),
+                    'created_at' => $project->updated_at,
                     'type' => 'project'
                 ];
             }
 
-            // Derniers partenaires ajoutés
+            // Derniers partenaires
             $recentPartners = Partner::latest()->take(1)->get();
             foreach ($recentPartners as $partner) {
                 $activities[] = [
                     'description' => "Nouveau partenaire : {$partner->name}",
-                    'time' => $this->getTimeAgo($partner->created_at),
+                    'created_at' => $partner->created_at,
                     'type' => 'partner'
                 ];
             }
 
-            // Trier par date (les plus récents en premier)
+            // Trier par date
             usort($activities, function($a, $b) {
-                // On ne peut pas vraiment trier par "2 heures" vs "1 jour"
-                // Donc on garde l'ordre d'insertion qui est déjà chronologique
-                return 0;
+                return strtotime($b['created_at']) - strtotime($a['created_at']);
             });
 
-            // Limiter à 5 activités
-            $activities = array_slice($activities, 0, 5);
+            // Limiter à 8 activités
+            $activities = array_slice($activities, 0, 8);
 
             return response()->json($activities);
         } catch (\Exception $e) {
@@ -120,17 +118,103 @@ class DashboardController extends Controller
     }
 
     /**
+     * ✅ NOUVELLE MÉTHODE : Obtenir les alertes actives
+     */
+    public function getActiveAlerts()
+    {
+        try {
+            $alerts = [];
+
+            // Candidatures en attente
+            $pendingVolunteers = Volunteer::where('status', 'pending')->count();
+            if ($pendingVolunteers > 0) {
+                $alerts[] = [
+                    'id' => 'pending_volunteers',
+                    'severity' => 'warning',
+                    'title' => "{$pendingVolunteers} candidature" . ($pendingVolunteers > 1 ? 's' : '') . " en attente",
+                    'description' => "Des candidatures de bénévoles nécessitent votre attention",
+                    'created_at' => Volunteer::where('status', 'pending')->latest()->first()->created_at ?? now(),
+                    'action_url' => '/admin/volunteers?status=pending'
+                ];
+            }
+
+            // Actualités en brouillon depuis longtemps
+            $oldDrafts = News::where('status', 'draft')
+                ->where('created_at', '<', Carbon::now()->subDays(7))
+                ->count();
+            if ($oldDrafts > 0) {
+                $alerts[] = [
+                    'id' => 'old_drafts',
+                    'severity' => 'info',
+                    'title' => "{$oldDrafts} brouillon" . ($oldDrafts > 1 ? 's' : '') . " en attente",
+                    'description' => "Des actualités sont en brouillon depuis plus de 7 jours",
+                    'created_at' => News::where('status', 'draft')
+                        ->where('created_at', '<', Carbon::now()->subDays(7))
+                        ->latest()
+                        ->first()
+                        ->created_at ?? now(),
+                    'action_url' => '/admin/news?status=draft'
+                ];
+            }
+
+            // Projets sans mise à jour récente
+            $staleProjects = Project::where('updated_at', '<', Carbon::now()->subDays(30))
+                ->where('status', 'active')
+                ->count();
+            if ($staleProjects > 0) {
+                $alerts[] = [
+                    'id' => 'stale_projects',
+                    'severity' => 'info',
+                    'title' => "{$staleProjects} projet" . ($staleProjects > 1 ? 's' : '') . " non mis à jour",
+                    'description' => "Des projets actifs n'ont pas été mis à jour depuis 30 jours",
+                    'created_at' => now()->subDays(30),
+                    'action_url' => '/admin/projects?filter=stale'
+                ];
+            }
+
+            // Trier par date
+            usort($alerts, function($a, $b) {
+                return strtotime($b['created_at']) - strtotime($a['created_at']);
+            });
+
+            return response()->json($alerts);
+        } catch (\Exception $e) {
+            \Log::error('Error in getActiveAlerts: ' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Compter le nombre total d'alertes actives
+     */
+    private function countActiveAlerts()
+    {
+        $count = 0;
+
+        // Candidatures en attente
+        $count += Volunteer::where('status', 'pending')->count() > 0 ? 1 : 0;
+
+        // Actualités en brouillon depuis longtemps
+        $count += News::where('status', 'draft')
+            ->where('created_at', '<', Carbon::now()->subDays(7))
+            ->count() > 0 ? 1 : 0;
+
+        // Projets sans mise à jour
+        $count += Project::where('updated_at', '<', Carbon::now()->subDays(30))
+            ->where('status', 'active')
+            ->count() > 0 ? 1 : 0;
+
+        return $count;
+    }
+
+    /**
      * Obtenir le montant des dons du mois en cours
-     * À implémenter quand vous aurez un modèle Donation
      */
     private function getDonationsThisMonth()
     {
-        // Option 1 : Si vous avez un modèle Donation
-        // return \App\Models\Donation::whereMonth('created_at', Carbon::now()->month)
-        //     ->whereYear('created_at', Carbon::now()->year)
-        //     ->sum('amount');
-
-        // Option 2 : Valeur temporaire (à remplacer)
+        // Temporaire - remplacer quand vous aurez le modèle Donation
         return 15420;
     }
 
@@ -155,104 +239,6 @@ class DashboardController extends Controller
         } else {
             $diffInMonths = $carbon->diffInMonths($now);
             return $diffInMonths . ' mois';
-        }
-    }
-
-    /**
-     * Obtenir les statistiques détaillées par période
-     */
-    public function getDetailedStats(Request $request)
-    {
-        try {
-            $period = $request->input('period', 'month'); // day, week, month, year
-
-            $startDate = match($period) {
-                'day' => Carbon::today(),
-                'week' => Carbon::now()->startOfWeek(),
-                'month' => Carbon::now()->startOfMonth(),
-                'year' => Carbon::now()->startOfYear(),
-                default => Carbon::now()->startOfMonth(),
-            };
-
-            $stats = [
-                'volunteers' => [
-                    'total' => Volunteer::count(),
-                    'new' => Volunteer::where('created_at', '>=', $startDate)->count(),
-                    'pending' => Volunteer::where('status', 'pending')->count(),
-                    'accepted' => Volunteer::where('status', 'accepted')->count(),
-                    'rejected' => Volunteer::where('status', 'rejected')->count(),
-                    'in_progress' => Volunteer::where('status', 'in_progress')->count(),
-                ],
-                'projects' => [
-                    'total' => Project::count(),
-                    'new' => Project::where('created_at', '>=', $startDate)->count(),
-                    'active' => Project::where('status', 'active')->count(),
-                ],
-                'domains' => [
-                    'total' => Domain::count(),
-                    'new' => Domain::where('created_at', '>=', $startDate)->count(),
-                ],
-                'news' => [
-                    'total' => News::count(),
-                    'published' => News::where('status', 'published')->count(),
-                    'draft' => News::where('status', 'draft')->count(),
-                    'new' => News::where('created_at', '>=', $startDate)->count(),
-                ],
-                'partners' => [
-                    'total' => Partner::count(),
-                    'new' => Partner::where('created_at', '>=', $startDate)->count(),
-                ],
-            ];
-
-            return response()->json($stats);
-        } catch (\Exception $e) {
-            \Log::error('Error in getDetailedStats: ' . $e->getMessage());
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Obtenir les statistiques des bénévoles par domaine d'intérêt
-     */
-    public function getVolunteersByDomain()
-    {
-        try {
-            $volunteersByDomain = Volunteer::select('interest_domain', DB::raw('count(*) as total'))
-                ->groupBy('interest_domain')
-                ->orderBy('total', 'desc')
-                ->get();
-
-            return response()->json($volunteersByDomain);
-        } catch (\Exception $e) {
-            \Log::error('Error in getVolunteersByDomain: ' . $e->getMessage());
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Obtenir les bénévoles récents en attente de traitement
-     */
-    public function getPendingVolunteers()
-    {
-        try {
-            $pendingVolunteers = Volunteer::where('status', 'pending')
-                ->latest()
-                ->take(10)
-                ->get();
-
-            return response()->json([
-                'total' => Volunteer::where('status', 'pending')->count(),
-                'volunteers' => $pendingVolunteers
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Error in getPendingVolunteers: ' . $e->getMessage());
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 500);
         }
     }
 }

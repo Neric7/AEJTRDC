@@ -246,10 +246,10 @@ Route::prefix('admin')->group(function () {
             Route::patch('/{id}/toggle-status', [EthicalCommitmentsController::class, 'toggleStatus']);
             Route::post('/reorder', [EthicalCommitmentsController::class, 'reorder']);
         });
-        
         // ========== DASHBOARD STATS ==========
         Route::get('/dashboard/stats', [DashboardController::class, 'getStats']);
         Route::get('/dashboard/activities', [DashboardController::class, 'getRecentActivities']);
+        Route::get('/dashboard/alerts', [DashboardController::class, 'getActiveAlerts']); // ✅ AJOUTER CETTE LIGNE
     });
 });
 

@@ -15,7 +15,10 @@ import {
   Menu,
   TrendingUp,
   X,
-  Shield  // ← AJOUT pour Engagements Éthiques
+  Shield,
+  Flag,
+  Megaphone,
+  ClipboardCheck
 } from 'lucide-react';
 import { authAPI } from '../services/adminApi';
 import toast from 'react-hot-toast';
@@ -58,18 +61,17 @@ const Sidebar = ({ isOpen, onToggle }) => {
     },
     {
       title: 'Offres d\'emploi',
-      icon: <Briefcase size={20} />,
+      icon: <ClipboardCheck size={20} />,
       path: '/content/jobs',
     },
-    // ✅ AJOUT : Engagements Éthiques
     {
       title: 'Engagements Éthiques',
       icon: <Shield size={20} />,
       path: '/humanitarian/ethical-commitments',
     },
     {
-      title: 'Signalements de Violations',
-      icon: <Shield size={20} />,
+      title: 'Signalements',
+      icon: <Flag size={20} />,
       path: '/humanitarian/violations',
     },
     {
@@ -78,8 +80,8 @@ const Sidebar = ({ isOpen, onToggle }) => {
       path: '/humanitarian/alerts',
     },
     {
-      title: 'Suivi du Plaidoyer',
-      icon: <TrendingUp size={20} />,
+      title: 'Plaidoyer',
+      icon: <Megaphone size={20} />,
       path: '/humanitarian/advocacy',
     },
     {
@@ -114,7 +116,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
       <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <h2>SOS Congo</h2>
+            <h2>AEJT-RDC</h2>
             <span>Admin</span>
           </div>
           <button className="sidebar-toggle" onClick={onToggle}>

@@ -677,3 +677,24 @@
     font-size: 1.25rem;
   }
 }
+.formRowSingle {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.formRowDouble {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+@media (min-width: 768px) {
+  .formRowDouble {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

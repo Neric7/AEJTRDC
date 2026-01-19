@@ -533,7 +533,7 @@ const confirmCancelApplication = async () => {
                       <h3 className={styles.sectionTitle}>Informations personnelles</h3>
                     </div>
 
-                    <div className={styles.formRow}>
+                    <div className={styles.formRowSingle}>
                       <div className={styles.formGroup}>
                         <label htmlFor="name" className={styles.label}>Nom complet *</label>
                         <input
@@ -547,7 +547,9 @@ const confirmCancelApplication = async () => {
                           required
                         />
                       </div>
+                    </div>
 
+                    <div className={styles.formRowDouble}>
                       <div className={styles.formGroup}>
                         <label htmlFor="email" className={styles.label}>Email</label>
                         <input
@@ -569,7 +571,7 @@ const confirmCancelApplication = async () => {
                           className={styles.input}
                           value={profileData.phone}
                           onChange={handleProfileChange}
-                          placeholder="+33 6 12 34 56 78"
+                          placeholder="+243 XXX XXX XXX"
                         />
                       </div>
                     </div>

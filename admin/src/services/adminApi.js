@@ -93,6 +93,7 @@ export const authAPI = {
 export const dashboardAPI = {
   getStats: () => api.get('/admin/dashboard/stats'),
   getRecentActivities: () => api.get('/admin/dashboard/activities'),
+  getActiveAlerts: () => api.get('/admin/dashboard/alerts'), // ✅ Nouveau
 };
 
 // ============================================================
