@@ -337,23 +337,23 @@ const DashboardPage = () => {
             <h3 className="card-title">Actions rapides</h3>
           </div>
           <div className="quick-actions">
-            <button className="quick-action-btn">
+            <button className="quick-action-btn" onClick={() => window.location.href = '/content/domains'}>
               <Layers size={20} />
               <span>Nouveau domaine</span>
             </button>
-            <button className="quick-action-btn">
+            <button className="quick-action-btn" onClick={() => window.location.href = '/content/news'}>
               <FileText size={20} />
               <span>Nouvelle actualité</span>
             </button>
-            <button className="quick-action-btn">
+            <button className="quick-action-btn" onClick={() => window.location.href = '/content/projects'}>
               <Briefcase size={20} />
               <span>Nouveau projet</span>
             </button>
-            <button className="quick-action-btn">
+            <button className="quick-action-btn" onClick={() => window.location.href = '/humanitarian/alerts'}>
               <AlertTriangle size={20} />
               <span>Nouvelle alerte</span>
             </button>
-            <button className="quick-action-btn">
+            <button className="quick-action-btn" onClick={() => window.location.href = '/content/team'}>
               <Users size={20} />
               <span>Gérer l'équipe</span>
             </button>

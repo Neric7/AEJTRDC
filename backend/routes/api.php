@@ -156,6 +156,9 @@ Route::prefix('admin')->group(function () {
             Route::post('/{id}/toggle-featured', [AdminProjectController::class, 'toggleFeatured']);
             Route::post('/{id}/image', [AdminProjectController::class, 'uploadImage']);
             Route::post('/{id}/images', [AdminProjectController::class, 'uploadImages']);
+            Route::post('/{id}/upload-image', [ProjectController::class, 'uploadImage']);
+            Route::post('/{id}/upload-images', [ProjectController::class, 'uploadImages']);
+            Route::delete('/{id}/gallery-image', [ProjectController::class, 'deleteGalleryImage']); // ← NOUVELLE ROUTE
         });
         
         // ========== GESTION DES COMMENTAIRES ==========

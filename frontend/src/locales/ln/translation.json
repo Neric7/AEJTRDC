@@ -1,0 +1,49 @@
+{
+    "nav": {
+      "home": "Ndako",
+      "news": "Sango",
+      "actions": "Misala na Biso",
+      "organization": "Ebongiseli",
+      "transparency": "Polele",
+      "join": "Kokota na Biso",
+      "domains": "Bisika ya Kosala",
+      "projects": "Misala",
+      "humanitarian": "Esika ya Boboto",
+      "about": "Na Tina na Biso",
+      "mission": "Mokano & Emoniseli",
+      "team": "Ekipi na Biso",
+      "zones": "Bisika ya Kosala",
+      "partners": "Bapartenaire",
+      "reports": "Balisolo ya Misala",
+      "financial": "Balisolo ya Mbongo",
+      "policies": "Mibeko ya Kati",
+      "careers": "Misala ya Kozwa",
+      "volunteer": "Kokoma Mosalisi ya Mposa",
+      "contact": "Kolobana"
+    },
+    "buttons": {
+      "donate": "Kopesa Likabo",
+      "login": "Kokota",
+      "register": "Komikoma",
+      "logout": "Kobima",
+      "profile": "Profil na Ngai",
+      "createAccount": "Kosala Compte"
+    },
+    "auth": {
+      "connectedAs": "Okangami lokola",
+      "notConnected": "Okangami te"
+    },
+    "modal": {
+      "logoutTitle": "Kobima?",
+      "logoutMessage": "Olingi solo kobima? Okozonga kokota mpo na kokɔta na compte na yo.",
+      "confirm": "Kondima",
+      "cancel": "Kotika"
+    },
+    "language": {
+      "label": "Monoko",
+      "french": "Lifalanse",
+      "english": "Lingelesi",
+      "swahili": "Swahili",
+      "lingala": "Lingala"
+    }
+  }

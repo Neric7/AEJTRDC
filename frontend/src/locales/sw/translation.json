@@ -1,0 +1,49 @@
+{
+    "nav": {
+      "home": "Nyumbani",
+      "news": "Habari",
+      "actions": "Vitendo Vyetu",
+      "organization": "Shirika",
+      "transparency": "Uwazi",
+      "join": "Jiunge Nasi",
+      "domains": "Maeneo ya Uingiliaji",
+      "projects": "Miradi",
+      "humanitarian": "Nafasi ya Kibinadamu",
+      "about": "Kuhusu",
+      "mission": "Dhamira & Maono",
+      "team": "Timu Yetu",
+      "zones": "Maeneo ya Uingiliaji",
+      "partners": "Washirika",
+      "reports": "Ripoti za Shughuli",
+      "financial": "Ripoti za Fedha",
+      "policies": "Sera za Ndani",
+      "careers": "Fursa za Kazi",
+      "volunteer": "Kuwa Mtoaji Msaada",
+      "contact": "Wasiliana"
+    },
+    "buttons": {
+      "donate": "Toa Mchango",
+      "login": "Ingia",
+      "register": "Jisajili",
+      "logout": "Toka",
+      "profile": "Wasifu Wangu",
+      "createAccount": "Unda Akaunti"
+    },
+    "auth": {
+      "connectedAs": "Umeunganishwa kama",
+      "notConnected": "Haujaungana"
+    },
+    "modal": {
+      "logoutTitle": "Toka?",
+      "logoutMessage": "Una uhakika unataka kutoka? Utahitaji kuingia tena ili kufikia akaunti yako.",
+      "confirm": "Thibitisha",
+      "cancel": "Ghairi"
+    },
+    "language": {
+      "label": "Lugha",
+      "french": "Kifaransa",
+      "english": "Kiingereza",
+      "swahili": "Kiswahili",
+      "lingala": "Lingala"
+    }
+  }

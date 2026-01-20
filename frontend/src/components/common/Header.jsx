@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import GoogleTranslate from './GoogleTranslate';
 import Button from './Button';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -50,27 +51,27 @@ export default function Header() {
   const userMenuRef = useRef(null);
   const langMenuRef = useRef(null);
 
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const languages = [
     { 
       code: 'fr', 
-      name: 'Français', 
+      name: t('language.french'), 
       flag: '/src/assets/images/flags/fr.svg' 
     },
     { 
       code: 'en', 
-      name: 'English', 
+      name: t('language.english'), 
       flag: '/src/assets/images/flags/en.svg' 
     },
     { 
       code: 'sw', 
-      name: 'Swahili', 
+      name: t('language.swahili'), 
       flag: '/src/assets/images/flags/globe.svg' 
     },
     { 
       code: 'ln', 
-      name: 'Lingala', 
+      name: t('language.lingala'), 
       flag: '/src/assets/images/flags/globe.svg' 
     }
   ];
@@ -134,7 +135,6 @@ export default function Header() {
     }
   };
 
-  // Générer les initiales de l'utilisateur
   const getUserInitials = () => {
     if (!user?.name) return 'U';
     return user.name
@@ -146,7 +146,6 @@ export default function Header() {
       .toUpperCase();
   };
 
-  // Gestion de la déconnexion
   const handleLogout = () => {
     setIsUserMenuOpen(false);
     setIsMenuOpen(false);
@@ -166,64 +165,62 @@ export default function Header() {
     }
   };
 
-  // Navigation vers la page de donation
   const handleDonateClick = () => {
     setIsMenuOpen(false);
     navigate('/donate');
   };
 
-  // Menu réorganisé et simplifié (6 items principaux au lieu de 9)
   const menuItems = [
     {
-      label: 'Accueil',
+      label: t('nav.home'),
       href: '/',
       icon: FaHome,
     },
     {
-      label: 'Actualités',
+      label: t('nav.news'),
       href: '/news',
       icon: FaNewspaper,
     },
     {
-      label: 'Nos actions',
+      label: t('nav.actions'),
       href: '#',
       icon: FaHandsHelping,
       submenu: [
-        { label: 'Domaines d\'intervention', href: '/domains', icon: FaBullseye },
-        { label: 'Projets', href: '/projects', icon: FaProjectDiagram },
-        { label: 'Espace humanitaire', href: '/humanitarian', icon: FaGlobeAfrica },
+        { label: t('nav.domains'), href: '/domains', icon: FaBullseye },
+        { label: t('nav.projects'), href: '/projects', icon: FaProjectDiagram },
+        { label: t('nav.humanitarian'), href: '/humanitarian', icon: FaGlobeAfrica },
       ]
     },
     {
-      label: 'Organisation',
+      label: t('nav.organization'),
       href: '#',
       icon: FaInfoCircle,
       submenu: [
-        { label: 'À propos', href: '/about/history', icon: FaBook },
-        { label: 'Mission & Vision', href: '/about/mission', icon: FaEye },
-        { label: 'Notre équipe', href: '/about/team', icon: FaUserTie },
-        { label: 'Zones d\'intervention', href: '/about/zones', icon: FaMapMarkedAlt },
-        { label: 'Partenaires', href: '/partners', icon: FaHandshake },
+        { label: t('nav.about'), href: '/about/history', icon: FaBook },
+        { label: t('nav.mission'), href: '/about/mission', icon: FaEye },
+        { label: t('nav.team'), href: '/about/team', icon: FaUserTie },
+        { label: t('nav.zones'), href: '/about/zones', icon: FaMapMarkedAlt },
+        { label: t('nav.partners'), href: '/partners', icon: FaHandshake },
       ]
     },
     {
-      label: 'Transparence',
+      label: t('nav.transparency'),
       href: '#',
       icon: FaChartLine,
       submenu: [
-        { label: 'Rapports d\'activités', href: '/transparency/reports', icon: FaFileAlt },
-        { label: 'Rapports financiers', href: '/transparency/financial', icon: FaMoneyBillWave },
-        { label: 'Politiques internes', href: '/transparency/policies', icon: FaGavel },
+        { label: t('nav.reports'), href: '/transparency/reports', icon: FaFileAlt },
+        { label: t('nav.financial'), href: '/transparency/financial', icon: FaMoneyBillWave },
+        { label: t('nav.policies'), href: '/transparency/policies', icon: FaGavel },
       ]
     },
     {
-      label: 'Nous rejoindre',
+      label: t('nav.join'),
       href: '#',
       icon: FaUsers,
       submenu: [
-        { label: 'Offres d\'emploi', href: '/careers', icon: FaBriefcase },
-        { label: 'Devenir bénévole', href: '/volunteer', icon: FaHandHoldingHeart },
-        { label: 'Contact', href: '/contact', icon: FaEnvelope },
+        { label: t('nav.careers'), href: '/careers', icon: FaBriefcase },
+        { label: t('nav.volunteer'), href: '/volunteer', icon: FaHandHoldingHeart },
+        { label: t('nav.contact'), href: '/contact', icon: FaEnvelope },
       ]
     },
   ];
@@ -231,10 +228,9 @@ export default function Header() {
   const currentLanguage = languages.find(lang => lang.code === currentLang);
   
   return (
-    <header className={styles.headerWrapper}>
+    <header className={styles.headerWrapper} translate="no">
       <nav>
         <div className={styles.bar}>
-          {/* Logo/Brand */}
           <Link to="/" className={styles.brandLink}> 
             <div className={styles.brand}>
               <img src="/src/assets/images/logo/logo.png" alt="AEJT-RDC" />
@@ -242,7 +238,7 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Navigation Desktop avec icônes et effet tiroir */}
+          {/* Navigation Desktop */}
           <div className={styles.nav}>
             {menuItems.map((item, index) => {
               const Icon = item.icon;
@@ -277,7 +273,6 @@ export default function Header() {
                     )}
                   </Link>
 
-                  {/* Submenu Desktop */}
                   {item.submenu && openSubmenu === item.label && (
                     <div className={styles.submenu}>
                       {item.submenu.map((subItem, subIndex) => {
@@ -300,15 +295,15 @@ export default function Header() {
             })}
           </div>
 
-          {/* Boutons CTA Desktop */}
+          {/* Actions Desktop */}
           <div className={styles.actions}>
-            {/* Sélecteur de langue avec drapeaux SVG */}
+            {/* Sélecteur de langue i18n (Interface) */}
             <div className={styles.langMenu} ref={langMenuRef}>
               <button
                 className={styles.langButton}
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                aria-label="Changer de langue"
-                title={currentLanguage?.name || 'Langue'}
+                aria-label={t('language.label')}
+                title={currentLanguage?.name || t('language.label')}
               >
                 <img 
                   src={currentLanguage?.flag} 
@@ -340,7 +335,10 @@ export default function Header() {
               )}
             </div>
 
-            {/* Menu utilisateur avec avatar */}
+            {/* Google Translate (Contenu des pages) */}
+            <GoogleTranslate />
+
+            {/* Menu utilisateur */}
             {isAuthenticated ? (
               <div className={styles.userMenu} ref={userMenuRef}>
                 <button
@@ -350,7 +348,6 @@ export default function Header() {
                   aria-expanded={isUserMenuOpen}
                   title={user?.name}
                 >
-                  {/* Avatar ou initiales */}
                   {user?.avatar ? (
                     <img 
                       src={user.avatar} 
@@ -380,14 +377,14 @@ export default function Header() {
                       }}
                     >
                       <FaUser className={styles.dropdownIcon} />
-                      <span>Mon profil</span>
+                      <span>{t('buttons.profile')}</span>
                     </button>
                     <button
                       className={styles.dropdownItem}
                       onClick={handleLogout}
                     >
                       <FaSignInAlt className={styles.dropdownIcon} />
-                      <span>Déconnexion</span>
+                      <span>{t('buttons.logout')}</span>
                     </button>
                   </div>
                 )}
@@ -397,7 +394,7 @@ export default function Header() {
                 <button
                   className={styles.authButton}
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  aria-label="Connexion"
+                  aria-label={t('buttons.login')}
                 >
                   <FaUserCircle size={24} />
                 </button>
@@ -409,7 +406,7 @@ export default function Header() {
                       onClick={() => setIsUserMenuOpen(false)}
                     >
                       <FaSignInAlt className={styles.authDropdownIcon} />
-                      <span>Se connecter</span>
+                      <span>{t('buttons.login')}</span>
                     </Link>
                     <Link
                       to="/register"
@@ -417,21 +414,21 @@ export default function Header() {
                       onClick={() => setIsUserMenuOpen(false)}
                     >
                       <FaUserPlus className={styles.authDropdownIcon} />
-                      <span>S'inscrire</span>
+                      <span>{t('buttons.register')}</span>
                     </Link>
                   </div>
                 )}
               </div>
             )}
             
-            {/* Bouton Faire un don avec icône */}
+            {/* Bouton Faire un don */}
             <button 
               className={styles.donateBtn}
               onClick={handleDonateClick}
-              title="Faire un don"
+              title={t('buttons.donate')}
             >
               <FaHeart className={styles.donateIcon} />
-              <span>Faire un don</span>
+              <span>{t('buttons.donate')}</span>
             </button>
           </div>
 
@@ -456,9 +453,9 @@ export default function Header() {
         {/* Menu Mobile */}
         {isMenuOpen && (
           <div className={styles.mobileMenu}>
-            {/* Sélecteur de langue mobile avec SVG */}
+            {/* Sélecteur de langue i18n mobile */}
             <div className={styles.mobileLangSection}>
-              <span className={styles.mobileLangLabel}>Langue:</span>
+              <span className={styles.mobileLangLabel}>{t('language.interfaceLanguage')}:</span>
               <div className={styles.mobileLangButtons}>
                 {languages.map((lang) => (
                   <button
@@ -476,6 +473,12 @@ export default function Header() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Google Translate mobile */}
+            <div className={styles.mobileLangSection}>
+              <span className={styles.mobileLangLabel}>{t('language.contentTranslation')}:</span>
+              <GoogleTranslate />
             </div>
 
             {menuItems.map((item, index) => {
@@ -508,7 +511,6 @@ export default function Header() {
                     )}
                   </div>
 
-                  {/* Submenu Mobile */}
                   {item.submenu && openSubmenu === item.label && (
                     <div className={styles.mobileSubmenu}>
                       {item.submenu.map((subItem, subIndex) => {
@@ -531,11 +533,10 @@ export default function Header() {
               );
             })}
 
-            {/* CTA Mobile avec avatar */}
+            {/* CTA Mobile */}
             <div className={styles.mobileCta}>
               {isAuthenticated ? (
                 <div className={styles.mobileAuth}>
-                  {/* Avatar mobile */}
                   <div className={styles.mobileUserInfo}>
                     {user?.avatar ? (
                       <img 
@@ -549,7 +550,7 @@ export default function Header() {
                       </div>
                     )}
                     <p className={styles.mobileUser}>
-                      Connecté en tant que <strong>{user?.name}</strong>
+                      {t('auth.connectedAs')} <strong>{user?.name}</strong>
                     </p>
                   </div>
                   <Link
@@ -557,13 +558,13 @@ export default function Header() {
                     className={styles.secondaryBtn}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Mon profil
+                    {t('buttons.profile')}
                   </Link>
                   <button
                     className={styles.primaryBtn}
                     onClick={handleLogout}
                   >
-                    Déconnexion
+                    {t('buttons.logout')}
                   </button>
                 </div>
               ) : (
@@ -573,39 +574,38 @@ export default function Header() {
                     className={styles.secondaryBtn}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Se connecter
+                    {t('buttons.login')}
                   </Link>
                   <Link
                     to="/register"
                     className={styles.primaryBtn}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Créer un compte
+                    {t('buttons.createAccount')}
                   </Link>
                 </div>
               )}
-              {/* Bouton Faire un don mobile */}
               <button 
                 className={styles.donateBtnMobile}
                 onClick={handleDonateClick}
               >
                 <FaHeart className={styles.donateIcon} />
-                <span>Faire un don</span>
+                <span>{t('buttons.donate')}</span>
               </button>
             </div>
           </div>
         )}
       </nav>
 
-      {/* Modal de confirmation de déconnexion */}
+      {/* Modal de confirmation */}
       <ConfirmModal
         isOpen={showLogoutModal}
         onClose={() => setShowLogoutModal(false)}
         onConfirm={confirmLogout}
-        title="Se déconnecter ?"
-        message="Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte."
-        confirmText="Se déconnecter"
-        cancelText="Annuler"
+        title={t('modal.logoutTitle')}
+        message={t('modal.logoutMessage')}
+        confirmText={t('buttons.logout')}
+        cancelText={t('modal.cancel')}
         variant="logout"
         loading={isLoggingOut}
       />

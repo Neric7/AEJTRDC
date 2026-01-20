@@ -1044,4 +1044,16 @@ nav {
   }
 }
 
-/* Styles existants à conserver... */
+/* === GOOGLE TRANSLATE DANS LE HEADER === */
+
+/* Desktop */
+.actions > div:has(#google_translate_element) {
+  margin: 0 0.5rem;
+}
+
+/* Mobile */
+.mobileLangSection:has(#google_translate_element) {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}

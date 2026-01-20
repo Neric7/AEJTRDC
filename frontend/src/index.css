@@ -27,3 +27,69 @@ a:focus-visible {
   outline: 2px solid #f59e0b;
   outline-offset: 2px;
 }
+
+/* === GOOGLE TRANSLATE STYLES GLOBAUX === */
+
+/* Masquer complètement la bannière Google Translate */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+/* Empêcher le décalage du body causé par Google Translate */
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+/* Supprimer la marge en haut ajoutée par Google */
+body.translated-ltr {
+  margin-top: 0 !important;
+}
+
+/* Style du widget de traduction */
+.goog-te-gadget {
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+/* Masquer le texte "Propulsé par" */
+.goog-logo-link {
+  display: none !important;
+}
+
+.goog-te-gadget span {
+  display: none !important;
+}
+
+/* Améliorer l'apparence du sélecteur */
+.goog-te-combo {
+  margin: 0 !important;
+}
+/* === PROTECTION CONTRE GOOGLE TRANSLATE === */
+
+/* Empêcher Google Translate de traduire le header */
+header[translate="no"],
+.notranslate {
+  transform: none !important;
+}
+
+/* Forcer le body à rester en haut */
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+/* Masquer complètement la bannière Google */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+iframe.skiptranslate {
+  display: none !important;
+}
+
+/* Empêcher le décalage du body */
+body.translated-ltr,
+body.translated-rtl {
+  margin-top: 0 !important;
+}

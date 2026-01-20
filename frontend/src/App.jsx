@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './i18n';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ScrollToTop } from './hooks/useScrollToTop';
 
 // Components

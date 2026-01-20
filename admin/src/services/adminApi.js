@@ -117,6 +117,12 @@ export const projectsAPI = {
     api.post(`/admin/projects/${id}/images`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
+  
+    // ← NOUVELLE MÉTHODE
+    deleteGalleryImage: (id, imagePath) =>
+      api.delete(`/admin/projects/${id}/gallery-image`, {
+        data: { image_path: imagePath }
+      }),
 };
 
 // ============================================================

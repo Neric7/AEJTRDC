@@ -2,7 +2,7 @@ export const CONTACT_INFO = {
     email: 'aejtrdcongoa@gmail.com',
     directionNationale: '+243 995 948 132',
     social: {
-        facebook: 'https://web.facebook.com/nericben.raherimanjato',
+        facebook: 'https://www.facebook.com/profile.php?id=61582808317998',
         x: 'URL_VOTRE_PAGE_X_TWITTER',
         instagram: 'URL_VOTRE_PAGE_INSTAGRAM',
         linkedIn: 'URL_VOTRE_PAGE_LINKEDIN',

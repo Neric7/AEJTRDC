@@ -1,0 +1,49 @@
+{
+    "nav": {
+      "home": "Home",
+      "news": "News",
+      "actions": "Our Actions",
+      "organization": "Organization",
+      "transparency": "Transparency",
+      "join": "Join Us",
+      "domains": "Areas of Intervention",
+      "projects": "Projects",
+      "humanitarian": "Humanitarian Space",
+      "about": "About",
+      "mission": "Mission & Vision",
+      "team": "Our Team",
+      "zones": "Intervention Zones",
+      "partners": "Partners",
+      "reports": "Activity Reports",
+      "financial": "Financial Reports",
+      "policies": "Internal Policies",
+      "careers": "Job Offers",
+      "volunteer": "Become a Volunteer",
+      "contact": "Contact"
+    },
+    "buttons": {
+      "donate": "Donate",
+      "login": "Log In",
+      "register": "Sign Up",
+      "logout": "Log Out",
+      "profile": "My Profile",
+      "createAccount": "Create Account"
+    },
+    "auth": {
+      "connectedAs": "Connected as",
+      "notConnected": "Not connected"
+    },
+    "modal": {
+      "logoutTitle": "Log Out?",
+      "logoutMessage": "Are you sure you want to log out? You will need to log in again to access your account.",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "language": {
+      "label": "Language",
+      "french": "Français",
+      "english": "English",
+      "swahili": "Swahili",
+      "lingala": "Lingala"
+    }
+  }

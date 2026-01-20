@@ -1,3 +1,4 @@
+import './i18n'  // ⬅️ AJOUTEZ CETTE LIGNE EN PREMIER
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 // Global stylesheet intentionally removed to avoid style conflicts

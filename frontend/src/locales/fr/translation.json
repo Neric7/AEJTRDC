@@ -1,0 +1,49 @@
+{
+    "nav": {
+      "home": "Accueil",
+      "news": "Actualités",
+      "actions": "Nos actions",
+      "organization": "Organisation",
+      "transparency": "Transparence",
+      "join": "Nous rejoindre",
+      "domains": "Domaines d'intervention",
+      "projects": "Projets",
+      "humanitarian": "Espace humanitaire",
+      "about": "À propos",
+      "mission": "Mission & Vision",
+      "team": "Notre équipe",
+      "zones": "Zones d'intervention",
+      "partners": "Partenaires",
+      "reports": "Rapports d'activités",
+      "financial": "Rapports financiers",
+      "policies": "Politiques internes",
+      "careers": "Offres d'emploi",
+      "volunteer": "Devenir bénévole",
+      "contact": "Contact"
+    },
+    "buttons": {
+      "donate": "Faire un don",
+      "login": "Se connecter",
+      "register": "S'inscrire",
+      "logout": "Déconnexion",
+      "profile": "Mon profil",
+      "createAccount": "Créer un compte"
+    },
+    "auth": {
+      "connectedAs": "Connecté en tant que",
+      "notConnected": "Non connecté"
+    },
+    "modal": {
+      "logoutTitle": "Se déconnecter ?",
+      "logoutMessage": "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte.",
+      "confirm": "Confirmer",
+      "cancel": "Annuler"
+    },
+    "language": {
+      "label": "Langue",
+      "french": "Français",
+      "english": "English",
+      "swahili": "Swahili",
+      "lingala": "Lingala"
+    }
+  }

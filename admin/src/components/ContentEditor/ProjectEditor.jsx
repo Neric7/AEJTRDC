@@ -25,10 +25,17 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
   const [testimonials, setTestimonials] = useState(item?.testimonials || []);
   const [domains, setDomains] = useState([]);
   
-  const [images, setImages] = useState([]);
-  const [imagePreview, setImagePreview] = useState(item?.image_url || null);
+  // IMAGE PRINCIPALE
+  const [mainImage, setMainImage] = useState(null);
+  const [mainImagePreview, setMainImagePreview] = useState(item?.image_url || null);
+  const mainImageInputRef = useRef(null);
+
+  // GALERIE D'IMAGES
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [existingGalleryImages, setExistingGalleryImages] = useState(item?.images_urls || []);
+  const galleryInputRef = useRef(null);
+
   const [loading, setLoading] = useState(false);
-  const fileInputRef = useRef(null);
 
   // Charger les domaines
   useEffect(() => {
@@ -97,41 +104,92 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
     setTestimonials(newTestimonials);
   };
 
-  // ==================== IMAGES ====================
-  const handleImageSelect = (e) => {
+  // ==================== IMAGE PRINCIPALE ====================
+  const handleMainImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('L\'image ne doit pas dépasser 2 Mo');
+      return;
+    }
+
+    setMainImage(file);
+    setMainImagePreview(URL.createObjectURL(file));
+  };
+
+  const removeMainImage = () => {
+    setMainImage(null);
+    setMainImagePreview(null);
+    if (mainImageInputRef.current) {
+      mainImageInputRef.current.value = '';
+    }
+  };
+
+  // ==================== GALERIE D'IMAGES ====================
+  const handleGalleryImagesSelect = (e) => {
     const files = Array.from(e.target.files);
     
     if (files.length === 0) return;
 
-    const newImages = files.map(file => ({
+    // Vérifier la taille de chaque fichier
+    const invalidFiles = files.filter(file => file.size > 2 * 1024 * 1024);
+    if (invalidFiles.length > 0) {
+      toast.error(`${invalidFiles.length} image(s) dépassent 2 Mo et seront ignorées`);
+    }
+
+    const validFiles = files.filter(file => file.size <= 2 * 1024 * 1024);
+
+    const newImages = validFiles.map(file => ({
       file,
       preview: URL.createObjectURL(file),
       name: file.name,
     }));
 
-    setImages(prev => [...prev, ...newImages]);
-    
-    if (imagePreview && newImages.length > 0) {
-      setImagePreview(null);
-    }
+    setGalleryImages(prev => [...prev, ...newImages]);
   };
 
-  const removeImage = (index) => {
-    setImages(prev => {
+  const removeGalleryImage = (index) => {
+    setGalleryImages(prev => {
       const newImages = [...prev];
       URL.revokeObjectURL(newImages[index].preview);
       newImages.splice(index, 1);
-      
-      if (newImages.length === 0 && item?.image_url) {
-        setImagePreview(item.image_url);
-      }
-      
       return newImages;
     });
   };
 
-  const removeCurrentImage = () => {
-    setImagePreview(null);
+  const removeExistingGalleryImage = async (index) => {
+    if (!item?.id) {
+      // Si c'est un nouveau projet, juste retirer de l'état
+      setExistingGalleryImages(prev => prev.filter((_, i) => i !== index));
+      return;
+    }
+
+    // Confirmer la suppression
+    if (!window.confirm('Voulez-vous vraiment supprimer cette image ?')) {
+      return;
+    }
+
+    try {
+      const imageUrl = existingGalleryImages[index];
+      
+      // Extraire le chemin relatif de l'URL
+      // Ex: http://localhost:8000/storage/projects/image.jpg → projects/image.jpg
+      const imagePath = imageUrl.includes('/storage/')
+        ? imageUrl.split('/storage/')[1]
+        : imageUrl;
+
+      // Appeler l'API pour supprimer l'image
+      await projectsAPI.deleteGalleryImage(item.id, imagePath);
+      
+      // Retirer l'image de l'état
+      setExistingGalleryImages(prev => prev.filter((_, i) => i !== index));
+      
+      toast.success('Image supprimée avec succès');
+    } catch (error) {
+      console.error('Erreur suppression image:', error);
+      toast.error('Erreur lors de la suppression de l\'image');
+    }
   };
 
   // ==================== SOUMISSION ====================
@@ -170,9 +228,16 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
         toast.success('Projet créé avec succès');
       }
 
-      // Upload des images si présentes
-      if (images.length > 0) {
-        await uploadImages(savedProject.id || savedProject.data?.id);
+      const projectId = savedProject.id || savedProject.data?.id;
+
+      // Upload de l'image principale si présente
+      if (mainImage) {
+        await uploadMainImage(projectId);
+      }
+
+      // Upload des images de la galerie si présentes
+      if (galleryImages.length > 0) {
+        await uploadGalleryImages(projectId);
       }
 
       onSave();
@@ -184,18 +249,31 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
     }
   };
 
-  const uploadImages = async (projectId) => {
+  const uploadMainImage = async (projectId) => {
     try {
-      if (images.length > 0) {
-        const formData = new FormData();
-        formData.append('image', images[0].file);
+      const formData = new FormData();
+      formData.append('image', mainImage);
 
-        await projectsAPI.uploadImage(projectId, formData);
-        toast.success('Image uploadée avec succès');
-      }
+      await projectsAPI.uploadImage(projectId, formData);
+      toast.success('Image principale uploadée');
     } catch (error) {
-      console.error('Erreur upload image:', error);
-      toast.error('Erreur lors de l\'upload de l\'image');
+      console.error('Erreur upload image principale:', error);
+      toast.error('Erreur lors de l\'upload de l\'image principale');
+    }
+  };
+
+  const uploadGalleryImages = async (projectId) => {
+    try {
+      const formData = new FormData();
+      galleryImages.forEach((img) => {
+        formData.append('images[]', img.file);
+      });
+
+      await projectsAPI.uploadImages(projectId, formData);
+      toast.success(`${galleryImages.length} image(s) de galerie uploadées`);
+    } catch (error) {
+      console.error('Erreur upload galerie:', error);
+      toast.error('Erreur lors de l\'upload des images de galerie');
     }
   };
 
@@ -220,7 +298,6 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
         <div className="form-section">
           <h3 className="section-title">Informations de base</h3>
           
-          {/* Titre */}
           <div className="form-group">
             <label className="form-label">
               Titre du projet <span className="required">*</span>
@@ -236,7 +313,6 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
             />
           </div>
 
-          {/* Extrait */}
           <div className="form-group">
             <label className="form-label">Extrait</label>
             <textarea
@@ -249,7 +325,6 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
             />
           </div>
 
-          {/* Objectif */}
           <div className="form-group">
             <label className="form-label">
               Objectif du projet <span className="required">*</span>
@@ -265,7 +340,6 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
             />
           </div>
 
-          {/* Zone d'exécution */}
           <div className="form-group">
             <label className="form-label">
               Zone d'exécution <span className="required">*</span>
@@ -375,7 +449,6 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
             </div>
           </div>
 
-          {/* Partenaires */}
           <div className="form-group">
             <label className="form-label">Partenaires (séparés par des virgules)</label>
             <input
@@ -388,7 +461,6 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
             />
           </div>
 
-          {/* Featured */}
           <div className="form-group">
             <label className="form-checkbox">
               <input
@@ -546,71 +618,129 @@ const ProjectEditor = ({ item, onSave, onCancel }) => {
           </button>
         </div>
 
-        {/* ========== IMAGES ========== */}
+        {/* ========== IMAGE PRINCIPALE ========== */}
         <div className="form-section">
           <h3 className="section-title">Image principale</h3>
           
           <div className="image-upload-area">
             <input
-              ref={fileInputRef}
+              ref={mainImageInputRef}
               type="file"
               accept="image/*"
-              multiple
-              onChange={handleImageSelect}
+              onChange={handleMainImageSelect}
               style={{ display: 'none' }}
             />
             
             <button
               type="button"
               className="upload-btn"
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => mainImageInputRef.current?.click()}
             >
               <Upload size={20} />
-              {images.length > 0 || imagePreview ? 'Remplacer l\'image' : 'Ajouter une image'}
+              {mainImagePreview ? 'Remplacer l\'image principale' : 'Ajouter une image principale'}
             </button>
           </div>
 
-          {/* Preview de l'image actuelle */}
-          {imagePreview && images.length === 0 && (
+          {mainImagePreview && (
             <div className="image-preview-grid">
               <div className="image-preview-item">
-                <img src={imagePreview} alt="Image actuelle" />
+                <img src={mainImagePreview} alt="Image principale" />
                 <button
                   type="button"
                   className="remove-image-btn"
-                  onClick={removeCurrentImage}
+                  onClick={removeMainImage}
                   title="Supprimer"
                 >
                   <Trash2 size={16} />
                 </button>
-                <p className="image-name">Image actuelle</p>
+                <p className="image-name">Image principale</p>
               </div>
-            </div>
-          )}
-
-          {/* Preview des nouvelles images */}
-          {images.length > 0 && (
-            <div className="image-preview-grid">
-              {images.map((img, index) => (
-                <div key={index} className="image-preview-item">
-                  <img src={img.preview} alt={img.name} />
-                  <button
-                    type="button"
-                    className="remove-image-btn"
-                    onClick={() => removeImage(index)}
-                    title="Supprimer"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                  <p className="image-name">{img.name}</p>
-                </div>
-              ))}
             </div>
           )}
 
           <p className="form-hint">
             <ImageIcon size={16} />
             Formats acceptés : JPG, PNG, WebP (max 2MB)
+          </p>
+        </div>
+
+        {/* ========== GALERIE D'IMAGES ========== */}
+        <div className="form-section">
+          <h3 className="section-title">Galerie d'images</h3>
+          
+          <div className="image-upload-area">
+            <input
+              ref={galleryInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleGalleryImagesSelect}
+              style={{ display: 'none' }}
+            />
+            
+            <button
+              type="button"
+              className="upload-btn"
+              onClick={() => galleryInputRef.current?.click()}
+            >
+              <Upload size={20} />
+              Ajouter des images à la galerie
+            </button>
+          </div>
+
+          {/* Images existantes de la galerie */}
+          {existingGalleryImages.length > 0 && (
+            <>
+              <h4 style={{ marginTop: '1rem', marginBottom: '0.5rem', fontSize: '0.9rem', color: '#666' }}>
+                Images actuelles de la galerie
+              </h4>
+              <div className="image-preview-grid">
+                {existingGalleryImages.map((imgUrl, index) => (
+                  <div key={`existing-${index}`} className="image-preview-item">
+                    <img src={imgUrl} alt={`Galerie ${index + 1}`} />
+                    <button
+                      type="button"
+                      className="remove-image-btn"
+                      onClick={() => removeExistingGalleryImage(index)}
+                      title="Supprimer"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                    <p className="image-name">Image {index + 1}</p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Nouvelles images de la galerie */}
+          {galleryImages.length > 0 && (
+            <>
+              <h4 style={{ marginTop: '1rem', marginBottom: '0.5rem', fontSize: '0.9rem', color: '#666' }}>
+                Nouvelles images à ajouter
+              </h4>
+              <div className="image-preview-grid">
+                {galleryImages.map((img, index) => (
+                  <div key={`new-${index}`} className="image-preview-item">
+                    <img src={img.preview} alt={img.name} />
+                    <button
+                      type="button"
+                      className="remove-image-btn"
+                      onClick={() => removeGalleryImage(index)}
+                      title="Supprimer"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                    <p className="image-name">{img.name}</p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <p className="form-hint">
+            <ImageIcon size={16} />
+            Vous pouvez ajouter plusieurs images pour créer une galerie (max 2MB par image)
           </p>
         </div>
 

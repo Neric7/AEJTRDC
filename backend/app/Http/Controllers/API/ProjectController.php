@@ -585,4 +585,47 @@ class ProjectController extends Controller
             ], 500);
         }
     }
+
+    /**
+ * Supprimer une image de la galerie
+ */
+public function deleteGalleryImage(Request $request, $id)
+{
+    try {
+        $project = Project::findOrFail($id);
+        
+        $request->validate([
+            'image_path' => 'required|string'
+        ]);
+
+        $imagePath = $request->input('image_path');
+        $images = $project->images ?? [];
+
+        // Trouver et supprimer l'image du tableau
+        $images = array_values(array_filter($images, function($img) use ($imagePath) {
+            return $img !== $imagePath;
+        }));
+
+        // Supprimer le fichier physique
+        $fullPath = str_replace('storage/', 'public/', $imagePath);
+        if (Storage::exists($fullPath)) {
+            Storage::delete($fullPath);
+        }
+
+        // Mettre à jour le projet
+        $project->images = $images;
+        $project->save();
+
+        return response()->json([
+            'message' => 'Image supprimée avec succès',
+            'data' => $project
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Error in ProjectController@deleteGalleryImage: ' . $e->getMessage());
+        return response()->json([
+            'message' => 'Erreur lors de la suppression de l\'image',
+            'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+        ], 500);
+    }
+}
 }

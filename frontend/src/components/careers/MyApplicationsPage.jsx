@@ -22,7 +22,7 @@ const MyApplicationsPage = () => {
 
   const loadApplications = async () => {
     try {
-      const response = await api.get('/volunteers/my-applications');
+      const response = await api.get('/user/volunteers/my-applications');
       setApplications(response.data.applications);
       setCanApply(response.data.can_apply);
     } catch (error) {

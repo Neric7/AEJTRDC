@@ -2,6 +2,11 @@ import { useEffect, useState, useRef } from 'react';
 import styles from './CTASection.module.css';
 
 export default function CTASection() {
+  // Calcul automatique du nombre d'années depuis 2008
+  const foundingYear = 2008;
+  const currentYear = new Date().getFullYear();
+  const totalYears = currentYear - foundingYear;
+  
   const [yearsCount, setYearsCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
@@ -30,15 +35,15 @@ export default function CTASection() {
     };
   }, [isVisible]);
 
-  // Animation du compteur de 0 à 17
+  // Animation du compteur de 0 jusqu'au nombre d'années calculé
   useEffect(() => {
-    if (isVisible && yearsCount < 17) {
+    if (isVisible && yearsCount < totalYears) {
       const timer = setTimeout(() => {
         setYearsCount(prev => prev + 1);
       }, 80);
       return () => clearTimeout(timer);
     }
-  }, [isVisible, yearsCount]);
+  }, [isVisible, yearsCount, totalYears]);
 
   return (
     <section className={styles.ctaSection} ref={sectionRef}>
@@ -91,12 +96,12 @@ export default function CTASection() {
             </div>
           </div>
 
-          {/* CENTRE - Compteur "17" vertical */}
+          {/* CENTRE - Compteur vertical dynamique */}
           <div className={styles.centerContent}>
             <div className={styles.yearsNumber}>{yearsCount}</div>
             <div className={styles.yearsTextWrapper}> 
               <span className={styles.yearsOf}>Années</span>
-              <span className={styles.yearsExperience}>d’expérience</span>
+              <span className={styles.yearsExperience}>d'expérience</span>
             </div>
           </div>
 
@@ -111,7 +116,7 @@ export default function CTASection() {
             </div>
             {/* Overlay "AEJT - Depuis 2008" séparé du logo */}
             <div className={styles.logoOverlay}>
-              <h3 className={styles.overlayTitle}>AEJT - Depuis 2008</h3>
+              <h3 className={styles.overlayTitle}>AEJT - Depuis {foundingYear}</h3>
               <p className={styles.overlayText}>
                 Née en crise, l'AEJT soutient les enfants et les jeunes vulnérables 
                 avec l'éducation, la santé, la protection des droits et l'inclusion 
