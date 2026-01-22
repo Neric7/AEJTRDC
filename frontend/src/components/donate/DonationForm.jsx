@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FaUser, FaEnvelope, FaPhone, FaDollarSign, FaComment } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaDollarSign, FaComment, FaMobileAlt, FaUniversity, FaPaypal } from 'react-icons/fa';
 import './DonationForm.css';
 
 function DonationForm({ selectedAmount, donationType, onAmountChange }) {
@@ -12,13 +12,38 @@ function DonationForm({ selectedAmount, donationType, onAmountChange }) {
     phone: '',
     message: '',
     anonymous: false,
-    newsletter: true
+    newsletter: true,
+    paymentMethod: 'mobile' // Valeur par défaut
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const predefinedAmounts = [25, 50, 100, 250, 500, 1000];
+
+  const paymentMethods = [
+    {
+      id: 'mobile',
+      name: 'Mobile Money',
+      description: 'M-Pesa, Airtel Money, Orange Money',
+      icon: <FaMobileAlt />,
+      note: 'Pour les donateurs en RDC'
+    },
+    {
+      id: 'paypal',
+      name: 'PayPal',
+      description: 'Paiement sécurisé international',
+      icon: <FaPaypal />,
+      note: 'Pour les donateurs hors RDC'
+    },
+    {
+      id: 'bank',
+      name: 'Virement bancaire',
+      description: 'Transfert direct vers notre compte',
+      icon: <FaUniversity />,
+      note: 'Pour les entreprises et gros donateurs'
+    }
+  ];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -70,6 +95,10 @@ function DonationForm({ selectedAmount, donationType, onAmountChange }) {
       newErrors.email = 'Email invalide';
     }
     
+    if (!formData.paymentMethod) {
+      newErrors.paymentMethod = 'Veuillez sélectionner un moyen de paiement';
+    }
+    
     if (formData.phone && !/^\+?[\d\s-()]+$/.test(formData.phone)) {
       newErrors.phone = 'Numéro de téléphone invalide';
     }
@@ -88,22 +117,135 @@ function DonationForm({ selectedAmount, donationType, onAmountChange }) {
     setIsSubmitting(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
       const donationAmount = formData.customAmount || formData.amount;
-      
-      console.log('Donation submitted:', {
+      const paymentData = {
         ...formData,
         finalAmount: donationAmount,
-        type: donationType
-      });
+        type: donationType,
+        paymentMethod: formData.paymentMethod
+      };
+
+      console.log('Donation submitted:', paymentData);
       
-      alert('Merci pour votre générosité ! Redirection vers le paiement...');
+      // Redirection selon le moyen de paiement
+      if (formData.paymentMethod === 'mobile') {
+        // Pour Mobile Money
+        alert(`Merci pour votre générosité ! 
+        
+Veuillez effectuer votre paiement Mobile Money au numéro :
+📱 +243 859 140 150
+
+Montant: $${donationAmount}
+        
+Pour les donateurs hors RDC, utilisez TapTap Send.`);
+        
+        // Ouvrir TapTap Send dans un nouvel onglet
+        window.open('https://www.taptapsend.com/', '_blank');
+        
+      } else if (formData.paymentMethod === 'paypal') {
+        // Redirection vers PayPal
+        alert('Redirection vers PayPal...');
+        // Ici, vous intégreriez l'API PayPal
+        // window.location.href = 'votre-lien-paypal';
+        
+      } else if (formData.paymentMethod === 'bank') {
+        // Afficher les détails bancaires
+        alert(`Merci pour votre générosité !
+        
+Veuillez effectuer un virement bancaire aux coordonnées suivantes :
+
+🏦 TRUST MERCHANT BANK
+💳 Compte USD: 00017-22100-30255320001-44
+👤 Titulaire: Association des Enfants et Jeunes Travailleurs
+🌐 Code Swift: TRMSCD3L
+
+Après votre virement, merci d'envoyer un email à donations@aejtrdc.org`);
+      }
       
     } catch (error) {
       alert('Une erreur est survenue. Veuillez réessayer.');
+      console.error('Submission error:', error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const renderPaymentInstructions = () => {
+    switch(formData.paymentMethod) {
+      case 'mobile':
+        return (
+          <div className="payment-instructions">
+            <div className="instructions-header">
+              <FaMobileAlt />
+              <h5>Instructions Mobile Money</h5>
+            </div>
+            <div className="instructions-content">
+              <div className="instruction-item">
+                <span className="instruction-label">Numéro Mobile Money :</span>
+                <span className="instruction-value">+243 859 140 150</span>
+              </div>
+              <div className="instruction-item">
+                <span className="instruction-label">Pour hors RDC :</span>
+                <a href="https://www.taptapsend.com/" target="_blank" rel="noopener noreferrer" className="instruction-link">
+                  Utilisez TapTap Send
+                </a>
+              </div>
+              <p className="instruction-note">
+                Après paiement, vous recevrez une confirmation par email.
+              </p>
+            </div>
+          </div>
+        );
+      
+      case 'bank':
+        return (
+          <div className="payment-instructions">
+            <div className="instructions-header">
+              <FaUniversity />
+              <h5>Instructions Virement Bancaire</h5>
+            </div>
+            <div className="instructions-content">
+              <div className="instruction-item">
+                <span className="instruction-label">Banque :</span>
+                <span className="instruction-value">TRUST MERCHANT BANK</span>
+              </div>
+              <div className="instruction-item">
+                <span className="instruction-label">Code Swift :</span>
+                <span className="instruction-value">TRMSCD3L</span>
+              </div>
+              <div className="instruction-item">
+                <span className="instruction-label">Nom du compte :</span>
+                <span className="instruction-value">Association des Enfants et Jeunes Travailleurs</span>
+              </div>
+              <div className="instruction-item">
+                <span className="instruction-label">Compte USD :</span>
+                <span className="instruction-value">00017-22100-30255320001-44</span>
+              </div>
+              <p className="instruction-note">
+                Après votre virement, merci d'envoyer un email à donations@aejtrdc.org
+              </p>
+            </div>
+          </div>
+        );
+      
+      case 'paypal':
+        return (
+          <div className="payment-instructions">
+            <div className="instructions-header">
+              <FaPaypal />
+              <h5>Instructions PayPal</h5>
+            </div>
+            <div className="instructions-content">
+              <p className="instruction-note">
+                Vous serez redirigé vers PayPal pour finaliser votre paiement sécurisé.
+                Cette option est recommandée pour les donateurs hors de la RDC.
+              </p>
+            </div>
+          </div>
+        );
+      
+      default:
+        return null;
     }
   };
 
@@ -219,6 +361,46 @@ function DonationForm({ selectedAmount, donationType, onAmountChange }) {
           </div>
         </div>
 
+        {/* Payment Method Selection */}
+        <div className="form-section">
+          <label className="section-label">Moyen de paiement *</label>
+          
+          <div className="payment-methods-grid">
+            {paymentMethods.map(method => (
+              <label 
+                key={method.id}
+                className={`payment-method-option ${formData.paymentMethod === method.id ? 'selected' : ''}`}
+              >
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value={method.id}
+                  checked={formData.paymentMethod === method.id}
+                  onChange={handleChange}
+                  className="payment-method-radio"
+                />
+                <div className="payment-method-content">
+                  <div className="payment-method-icon">
+                    {method.icon}
+                  </div>
+                  <div className="payment-method-info">
+                    <h5>{method.name}</h5>
+                    <p>{method.description}</p>
+                    <span className="payment-method-note">{method.note}</span>
+                  </div>
+                </div>
+              </label>
+            ))}
+          </div>
+          
+          {errors.paymentMethod && (
+            <span className="error-message">{errors.paymentMethod}</span>
+          )}
+          
+          {/* Payment Instructions */}
+          {formData.paymentMethod && renderPaymentInstructions()}
+        </div>
+
         {/* Message */}
         <div className="form-section">
           <label className="section-label">Message (optionnel)</label>
@@ -267,6 +449,12 @@ function DonationForm({ selectedAmount, donationType, onAmountChange }) {
             <span>Type</span>
             <strong>{donationType === 'monthly' ? 'Mensuel' : 'Ponctuel'}</strong>
           </div>
+          <div className="summary-row">
+            <span>Moyen de paiement</span>
+            <strong>
+              {paymentMethods.find(m => m.id === formData.paymentMethod)?.name || 'Non sélectionné'}
+            </strong>
+          </div>
           <div className="summary-row total">
             <span>Total</span>
             <strong>${formData.customAmount || formData.amount || '0'}</strong>
@@ -287,13 +475,14 @@ function DonationForm({ selectedAmount, donationType, onAmountChange }) {
           ) : (
             <>
               <FaDollarSign />
-              Procéder au paiement
+              {formData.paymentMethod === 'paypal' ? 'Payer avec PayPal' : 'Procéder au paiement'}
             </>
           )}
         </button>
 
         <p className="form-note">
           En continuant, vous acceptez nos conditions d'utilisation et notre politique de confidentialité.
+          Tous les paiements sont sécurisés et cryptés.
         </p>
       </form>
     </div>

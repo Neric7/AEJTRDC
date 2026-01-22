@@ -1,14 +1,18 @@
 SiteCongo/
 │
-├── frontend/                          (Existant - Application React)
+├── frontend/                          (Application React - Frontend Public)
 │   ├── node_modules/
+│   ├── dist/
+│   │
 │   ├── public/
 │   │   ├── favicon.ico
+│   │   ├── logo.svg
 │   │   ├── robots.txt
 │   │   └── sitemap.xml
 │   │
 │   ├── src/
 │   │   ├── assets/
+│   │   │   ├── react.svg
 │   │   │   ├── images/
 │   │   │   │   ├── logo/
 │   │   │   │   ├── carousel/
@@ -26,12 +30,20 @@ SiteCongo/
 │   │   ├── components/
 │   │   │   ├── common/
 │   │   │   │   ├── Header.jsx
+│   │   │   │   ├── Header.module.css
 │   │   │   │   ├── Footer.jsx
+│   │   │   │   ├── Footer.module.css
 │   │   │   │   ├── Navigation.jsx
 │   │   │   │   ├── Button.jsx
 │   │   │   │   ├── Card.jsx
 │   │   │   │   ├── Modal.jsx
-│   │   │   │   └── Loader.jsx
+│   │   │   │   ├── Loader.jsx
+│   │   │   │   ├── GoogleTranslate.jsx
+│   │   │   │   ├── GoogleTranslate.module.css
+│   │   │   │   ├── ConfirmModal.jsx
+│   │   │   │   ├── ConfirmModal.module.css
+│   │   │   │   └── LoginRequiredMessage.jsx
+│   │   │   │   └── LoginRequiredMessage.css
 │   │   │   │
 │   │   │   ├── auth/
 │   │   │   │   └── ProtectedRoute.jsx
@@ -49,23 +61,19 @@ SiteCongo/
 │   │   │   ├── about/
 │   │   │   │   ├── History.jsx
 │   │   │   │   ├── History.module.css
-│   │   │   │   ├── MissionVision.jsx
 │   │   │   │   ├── MissionVisionValeurs.jsx
 │   │   │   │   ├── MissionVision.module.css
 │   │   │   │   ├── OrganizationChart.jsx
 │   │   │   │   ├── InterventionMap.jsx
 │   │   │   │   ├── Objectives.jsx
 │   │   │   │   ├── Objectives.module.css
-│   │   │   │   ├── Values.jsx
-│   │   │   │   └── Values.module.css
+│   │   │   │   └── MergedPage.css
 │   │   │   │
 │   │   │   ├── projects/
-│   │   │   │   ├── ProjectCard.jsx
-│   │   │   │   ├── ProjectCard.css
+│   │   │   │   ├── ProjectGrid.jsx
 │   │   │   │   ├── ProjectDetail.jsx
-│   │   │   │   ├── ProjectDetail.css
+│   │   │   │   ├── ProjectDetail.module.css
 │   │   │   │   ├── ProjectFilter.jsx
-│   │   │   │   ├── ProjectFilter.css
 │   │   │   │   └── TestimonySection.jsx
 │   │   │   │
 │   │   │   ├── details_domains/
@@ -74,7 +82,8 @@ SiteCongo/
 │   │   │   │
 │   │   │   ├── partners/
 │   │   │   │   ├── PartnerGrid.jsx
-│   │   │   │   └── PartnerLogo.jsx
+│   │   │   │   ├── PartnerLogo.jsx
+│   │   │   │   └── PartnerGrid.css
 │   │   │   │
 │   │   │   ├── transparency/
 │   │   │   │   ├── ReportsList.jsx
@@ -84,32 +93,49 @@ SiteCongo/
 │   │   │   ├── news/
 │   │   │   │   ├── NewsGrid.jsx
 │   │   │   │   ├── NewsArticle.jsx
-│   │   │   │   └── PressReleases.jsx
+│   │   │   │   ├── PressReleases.jsx
+│   │   │   │   ├── NewsGrid.css
+│   │   │   │   └── NewsArticle.css
 │   │   │   │
 │   │   │   ├── team/
 │   │   │   │   ├── TeamGrid.jsx
-│   │   │   │   └── MemberCard.jsx
+│   │   │   │   ├── MemberCard.jsx
+│   │   │   │   ├── OrganizationChart.jsx
+│   │   │   │   ├── TeamGrid.css
+│   │   │   │   ├── MemberCard.css
+│   │   │   │   └── OrganizationChart.css
 │   │   │   │
 │   │   │   ├── careers/
 │   │   │   │   ├── JobList.jsx
 │   │   │   │   ├── VolunteerForm.jsx
-│   │   │   │   └── ApplicationProcess.jsx
+│   │   │   │   ├── VolunteerForm.css
+│   │   │   │   ├── ApplicationProcess.jsx
+│   │   │   │   └── MyApplicationsPage.jsx
+│   │   │   │   └── MyApplicationsPage.css
 │   │   │   │
 │   │   │   ├── donate/
 │   │   │   │   ├── DonationForm.jsx
+│   │   │   │   ├── DonationForm.css
 │   │   │   │   ├── PaymentMethods.jsx
-│   │   │   │   └── ImpactStories.jsx
+│   │   │   │   ├── PaymentMethods.css
+│   │   │   │   ├── ImpactStories.jsx
+│   │   │   │   └── ImpactStories.css
 │   │   │   │
 │   │   │   ├── contact/
 │   │   │   │   ├── ContactForm.jsx
 │   │   │   │   ├── LocationMap.jsx
-│   │   │   │   └── SocialLinks.jsx
+│   │   │   │   ├── SocialLinks.jsx
+│   │   │   │   └── Contact.module.css
 │   │   │   │
 │   │   │   └── humanitarian/
 │   │   │       ├── EthicalCommitments.jsx
+│   │   │       ├── EthicalCommitments.css
 │   │   │       ├── ViolationReport.jsx
+│   │   │       ├── ViolationReport.css
 │   │   │       ├── HumanitarianAlerts.jsx
-│   │   │       └── AdvocacyTracking.jsx
+│   │   │       ├── HumanitarianAlerts.css
+│   │   │       ├── AdvocacyTracking.jsx
+│   │   │       └── AdvocacyTracking.css
 │   │   │
 │   │   ├── pages/
 │   │   │   ├── HomePage.jsx
@@ -119,34 +145,36 @@ SiteCongo/
 │   │   │   ├── PartnersPage.jsx
 │   │   │   ├── PartnersPage.css
 │   │   │   ├── DomainsPage.jsx
-│   │   │   ├── DomainsPage.css
+│   │   │   ├── DomainsPage.module.css
 │   │   │   ├── TransparencyPage.jsx
 │   │   │   ├── NewsPage.jsx
-│   │   │   ├── NewsPage.css
+│   │   │   ├── NewsPage.module.css
 │   │   │   ├── TeamPage.jsx
 │   │   │   ├── TeamPage.css
 │   │   │   ├── CareersPage.jsx
 │   │   │   ├── CareersPage.css
+│   │   │   ├── JobsPage.jsx
+│   │   │   ├── JobsPage.css
 │   │   │   ├── DonatePage.jsx
 │   │   │   ├── DonatePage.css
 │   │   │   ├── ContactPage.jsx
-│   │   │   ├── ContactPage.css
+│   │   │   ├── ContactPage.module.css
 │   │   │   ├── LegalPage.jsx
 │   │   │   ├── PrivacyPage.jsx
 │   │   │   ├── LoginPage.jsx
-│   │   │   ├── LoginPage.css
 │   │   │   ├── RegisterPage.jsx
-│   │   │   ├── RegisterPage.css
 │   │   │   ├── ProfilePage.jsx
 │   │   │   ├── ProfilePage.module.css
 │   │   │   ├── NotFoundPage.jsx
 │   │   │   ├── NotFoundPage.css
-│   │   │   └── HumanitarianSpacePage.jsx
+│   │   │   ├── HumanitarianSpacePage.jsx
+│   │   │   ├── HumanitarianSpacePage.css
+│   │   │   ├── InterventionMap.jsx
+│   │   │   └── InterventionMap.css
 │   │   │
 │   │   ├── data/
 │   │   │   ├── domainsData.js
-│   │   │   ├── projectsData.js
-│   │   │   └── newsData.js
+│   │   │   └── contactData.js
 │   │   │
 │   │   ├── services/
 │   │   │   ├── api.js
@@ -154,9 +182,14 @@ SiteCongo/
 │   │   │   ├── news.js
 │   │   │   ├── domains.js
 │   │   │   ├── projects.js
+│   │   │   ├── partners.js
 │   │   │   ├── paymentService.js
 │   │   │   ├── mapService.js
-│   │   │   └── emailService.js
+│   │   │   ├── emailService.js
+│   │   │   ├── humanitarian.js
+│   │   │   ├── interventionZones.js
+│   │   │   ├── teamService.js
+│   │   │   └── volunteers.js
 │   │   │
 │   │   ├── utils/
 │   │   │   ├── validation.js
@@ -169,13 +202,22 @@ SiteCongo/
 │   │   │   ├── useForm.js
 │   │   │   ├── useApi.js
 │   │   │   ├── useMediaQuery.js
-│   │   │   ├── useEntryAnimation.js
 │   │   │   └── useScrollToTop.js
 │   │   │
 │   │   ├── context/
 │   │   │   ├── LanguageContext.jsx
 │   │   │   ├── ThemeContext.jsx
 │   │   │   └── AuthContext.jsx
+│   │   │
+│   │   ├── locales/
+│   │   │   ├── fr/
+│   │   │   │   └── translation.json
+│   │   │   ├── en/
+│   │   │   │   └── translation.json
+│   │   │   ├── ln/
+│   │   │   │   └── translation.json
+│   │   │   └── sw/
+│   │   │       └── translation.json
 │   │   │
 │   │   ├── styles/
 │   │   │   ├── index.css
@@ -185,7 +227,8 @@ SiteCongo/
 │   │   │
 │   │   ├── i18n.js
 │   │   ├── App.jsx
-│   │   └── main.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
 │   │
 │   ├── index.html
 │   ├── .env.example
@@ -195,10 +238,9 @@ SiteCongo/
 │   ├── tailwind.config.js
 │   ├── vite.config.js
 │   ├── eslint.config.js
-│   ├── index.css
 │   └── README.md
 │
-├── backend/                           (API Laravel)
+├── backend/                           (API Laravel - Backend)
 │   ├── .editorconfig
 │   ├── .env
 │   ├── .env.example
@@ -217,30 +259,32 @@ SiteCongo/
 │   ├── app/
 │   │   ├── Http/
 │   │   │   ├── Controllers/
+│   │   │   │   ├── Controller.php
 │   │   │   │   ├── API/
 │   │   │   │   │   ├── AuthController.php
+│   │   │   │   │   ├── AdminAuthController.php
 │   │   │   │   │   ├── NewsController.php
+│   │   │   │   │   ├── AdminNewsController.php
 │   │   │   │   │   ├── CommentController.php
 │   │   │   │   │   ├── ProjectController.php
+│   │   │   │   │   ├── AdminProjectController.php
 │   │   │   │   │   ├── DomainController.php
-│   │   │   │   │   └── PartnerController.php
-│   │   │   │   ├── ContactController.php
-│   │   │   │   ├── DonationController.php
-│   │   │   │   ├── VolunteerController.php
-│   │   │   │   └── PaymentController.php
+│   │   │   │   │   ├── PartnerController.php
+│   │   │   │   │   ├── TeamMemberController.php
+│   │   │   │   │   ├── JobController.php
+│   │   │   │   │   ├── AdminJobController.php
+│   │   │   │   │   ├── VolunteerController.php
+│   │   │   │   │   ├── HumanitarianController.php
+│   │   │   │   │   ├── EthicalCommitmentsController.php
+│   │   │   │   │   ├── InterventionZoneController.php
+│   │   │   │   │   └── DashboardController.php
+│   │   │   │   └── StorageController.php
 │   │   │   │
 │   │   │   ├── Middleware/
-│   │   │   │   ├── CheckAdmin.php
-│   │   │   │   ├── SanitizeInput.php
-│   │   │   │   ├── RateLimiter.php
-│   │   │   │   └── Authenticate.php
+│   │   │   │   └── CheckAdmin.php
 │   │   │   │
 │   │   │   └── Requests/
-│   │   │       ├── ContactRequest.php
-│   │   │       ├── DonationRequest.php
-│   │   │       ├── VolunteerRequest.php
-│   │   │       ├── ProjectRequest.php
-│   │   │       └── DomainRequest.php
+│   │   │       └── VolunteerRequest.php
 │   │   │
 │   │   ├── Models/
 │   │   │   ├── User.php
@@ -249,74 +293,112 @@ SiteCongo/
 │   │   │   ├── Project.php
 │   │   │   ├── Domain.php
 │   │   │   ├── Partner.php
-│   │   │   ├── Contact.php
-│   │   │   ├── Donation.php
-│   │   │   └── Volunteer.php
+│   │   │   ├── TeamMember.php
+│   │   │   ├── JobOffer.php
+│   │   │   ├── Volunteer.php
+│   │   │   ├── HumanitarianAlert.php
+│   │   │   ├── EthicalCommitment.php
+│   │   │   ├── ViolationReport.php
+│   │   │   ├── AdvocacyCampaign.php
+│   │   │   └── InterventionZone.php
 │   │   │
 │   │   ├── Services/
-│   │   │   ├── PaymentService.php
-│   │   │   ├── EmailService.php
-│   │   │   ├── FileUploadService.php
-│   │   │   └── NotificationService.php
+│   │   │   (Dossier vide - prêt pour services personnalisés)
 │   │   │
-│   │   └── Repositories/
-│   │       ├── ProjectRepository.php
-│   │       ├── NewsRepository.php
-│   │       ├── DomainRepository.php
-│   │       └── ReportRepository.php
+│   │   ├── Repositories/
+│   │   │   (Dossier vide - prêt pour repositories)
+│   │   │
+│   │   └── Providers/
+│   │       └── AppServiceProvider.php
 │   │
 │   ├── bootstrap/
-│   │   └── app.php
+│   │   ├── app.php
+│   │   ├── providers.php
+│   │   └── cache/
+│   │       ├── packages.php
+│   │       └── services.php
 │   │
 │   ├── config/
 │   │   ├── app.php
 │   │   ├── auth.php
+│   │   ├── cache.php
 │   │   ├── cors.php
 │   │   ├── database.php
+│   │   ├── filesystems.php
+│   │   ├── logging.php
 │   │   ├── mail.php
-│   │   ├── payment.php
+│   │   ├── queue.php
 │   │   ├── sanctum.php
-│   │   └── services.php
+│   │   ├── services.php
+│   │   └── session.php
 │   │
 │   ├── database/
+│   │   ├── database.sqlite
+│   │   │
 │   │   ├── migrations/
 │   │   │   ├── 0001_01_01_000000_create_users_table.php
-│   │   │   ├── 2025_01_01_create_projects_table.php
+│   │   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   │   ├── 0001_01_01_000002_create_jobs_table.php
 │   │   │   ├── 2025_01_02_create_news_table.php
-│   │   │   ├── 2025_01_03_create_domains_table.php
 │   │   │   ├── 2025_01_04_create_team_members_table.php
-│   │   │   ├── 2025_01_05_create_jobs_table.php
-│   │   │   ├── 2025_01_06_create_partners_table.php
-│   │   │   ├── 2025_01_07_create_reports_table.php
-│   │   │   ├── 2025_01_08_create_alerts_table.php
-│   │   │   ├── 2025_01_09_create_contacts_table.php
-│   │   │   ├── 2025_01_10_create_donations_table.php
-│   │   │   └── 2025_01_11_create_volunteers_table.php
+│   │   │   ├── 2025_01_11_create_volunteers_table.php
+│   │   │   ├── 2025_01_15_create_advocacy_campaigns_table.php
+│   │   │   ├── 2025_11_13_140953_create_comments_table.php
+│   │   │   ├── 2025_11_19_074740_create_personal_access_tokens_table.php
+│   │   │   ├── 2025_11_22_093831_add_role_to_users_table.php
+│   │   │   ├── 2025_11_22_111629_add_images_and_category_to_news_table.php
+│   │   │   ├── 2025_11_22_112444_add_role_to_users_table.php
+│   │   │   ├── 2025_12_10_105941_skip_duplicate_user_id_in_comments.php
+│   │   │   ├── 2025_12_10_112529_create_domains_table.php
+│   │   │   ├── 2025_12_11_172852_create_partners_table.php
+│   │   │   ├── 2025_12_28_210259_create_projects_table.php
+│   │   │   ├── 2026_01_04_205248_create_job_offers_table.php
+│   │   │   ├── 2026_01_04_221938_change_user_table.php
+│   │   │   ├── 2026_01_06_223422_remove_unique_constraint_from_volunteers_email.php
+│   │   │   ├── 2026_01_17_070503_create_intervention_zones_table.php
+│   │   │   ├── ethic_commitments.php
+│   │   │   ├── humanitarian_alert.php
+│   │   │   └── violation_report.php
 │   │   │
 │   │   ├── seeders/
 │   │   │   ├── DatabaseSeeder.php
+│   │   │   ├── AdminSeeder.php
 │   │   │   ├── NewsSeeder.php
 │   │   │   ├── CommentSeeder.php
 │   │   │   ├── ProjectSeeder.php
 │   │   │   ├── DomainSeeder.php
-│   │   │   └── PartnerSeeder.php
+│   │   │   ├── PartnerSeeder.php
+│   │   │   ├── TeamMemberSeeder.php
+│   │   │   ├── JobSeeder.php
+│   │   │   ├── VolunteerSeeder.php
+│   │   │   ├── HumanitarianAlertsSeeder.php
+│   │   │   ├── EthicalCommitmentsSeeder.php
+│   │   │   ├── ViolationReportSeeder.php
+│   │   │   ├── AdvocacyCampaignSeeder.php
+│   │   │   └── InterventionZoneSeeder.php
 │   │   │
 │   │   └── factories/
-│   │       ├── ProjectFactory.php
-│   │       ├── UserFactory.php
-│   │       ├── NewsFactory.php
-│   │       └── DomainFactory.php
+│   │       └── UserFactory.php
 │   │
 │   ├── public/
-│   │   └── index.php
+│   │   ├── index.php
+│   │   ├── favicon.ico
+│   │   ├── robots.txt
+│   │   └── storage
 │   │
 │   ├── resources/
+│   │   ├── css/
+│   │   │   └── app.css
+│   │   ├── js/
+│   │   │   ├── app.js
+│   │   │   └── bootstrap.js
 │   │   └── views/
 │   │       └── welcome.blade.php
 │   │
 │   ├── routes/
 │   │   ├── api.php
-│   │   └── web.php
+│   │   ├── web.php
+│   │   └── console.php
 │   │
 │   ├── storage/
 │   │   ├── app/
@@ -328,26 +410,23 @@ SiteCongo/
 │   │   │   │   ├── documents/
 │   │   │   │   └── uploads/
 │   │   │   └── private/
+│   │   ├── images/
 │   │   ├── logs/
+│   │   │   └── laravel.log
 │   │   └── framework/
 │   │       ├── cache/
 │   │       ├── sessions/
+│   │       ├── testing/
 │   │       └── views/
 │   │
 │   ├── tests/
+│   │   ├── TestCase.php
 │   │   ├── Unit/
-│   │   │   ├── ProjectTest.php
-│   │   │   ├── DomainTest.php
-│   │   │   ├── PaymentTest.php
-│   │   │   └── ValidationTest.php
+│   │   │   └── ExampleTest.php
 │   │   └── Feature/
-│   │       ├── ContactFormTest.php
-│   │       ├── DonationTest.php
-│   │       ├── ProjectAPITest.php
-│   │       ├── DomainAPITest.php
-│   │       └── AuthAPITest.php
+│   │       └── ExampleTest.php
 │   │
-│   └── artisan
+│   └── vendor/
 │
 ├── admin/                             (Dashboard BackOffice React)
 │   ├── .env
@@ -363,37 +442,45 @@ SiteCongo/
 │   │
 │   ├── public/
 │   │   ├── index.html
+│   │   ├── vite.svg
 │   │   ├── favicon.ico
 │   │   └── robots.txt
 │   │
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── common/
-│   │   │   │   ├── Navbar.jsx
-│   │   │   │   ├── Sidebar.jsx
-│   │   │   │   └── Sidebar.css
+│   │   │   │   ├── ConfirmDialog.jsx
+│   │   │   │   └── ConfirmDialog.css
 │   │   │   │
-│   │   │   ├── Dashboard.jsx
-│   │   │   ├── Dashboard.css
-│   │   │   │
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── Sidebar.css
+│   │   │   ├── SidebarToggle.jsx
+│   │   │   └── SidebarToggle.css
+│   │   │
 │   │   │   ├── ContentEditor/
 │   │   │   │   ├── NewsEditor.jsx
-│   │   │   │   ├── NewsEditor.css
 │   │   │   │   ├── ProjectEditor.jsx
-│   │   │   │   ├── ProjectEditor.css
 │   │   │   │   ├── DomainEditor.jsx
-│   │   │   │   ├── DomainEditor.css
+│   │   │   │   ├── PartnerEditor.jsx
 │   │   │   │   ├── JobEditor.jsx
-│   │   │   │   ├── JobEditor.css
-│   │   │   │   ├── AlertEditor.jsx
-│   │   │   │   ├── AlertEditor.css
+│   │   │   │   ├── TeamEditor.jsx
+│   │   │   │   ├── TeamEditor.css
+│   │   │   │   ├── VolunteerExaminer.jsx
 │   │   │   │   └── Editor.css
 │   │   │   │
-│   │   │   ├── MediaManager.jsx
-│   │   │   ├── MediaManager.css
-│   │   │   ├── ReportManager.jsx
-│   │   │   ├── ReportManager.css
-│   │   │   └── UserManager.jsx
+│   │   │   ├── Dashboard/
+│   │   │   │   ├── ActivityChart.jsx
+│   │   │   │   └── ActivityChart.css
+│   │   │   │
+│   │   │   └── humanitarian/
+│   │   │       ├── EthicalCommitmentsAdmin.jsx
+│   │   │       ├── EthicalCommitmentsAdmin.css
+│   │   │       ├── ViolationReportAdmin.jsx
+│   │   │       ├── ViolationReportAdmin.css
+│   │   │       ├── HumanitarianAlertsAdmin.jsx
+│   │   │       ├── HumanitarianAlertsAdmin.css
+│   │   │       ├── AdvocacyTrackingAdmin.jsx
+│   │   │       └── AdvocacyTrackingAdmin.css
 │   │   │
 │   │   ├── pages/
 │   │   │   ├── LoginPage.jsx
@@ -402,31 +489,26 @@ SiteCongo/
 │   │   │   ├── DashboardPage.css
 │   │   │   ├── ContentPage.jsx
 │   │   │   ├── ContentPage.css
-│   │   │   ├── MediaPage.jsx
-│   │   │   ├── MediaPage.css
 │   │   │   ├── SettingsPage.jsx
-│   │   │   ├── SettingsPage.css
-│   │   │   └── UsersPage.jsx
+│   │   │   └── SettingsPage.css
 │   │   │
 │   │   ├── services/
 │   │   │   ├── adminApi.js
-│   │   │   ├── authService.js
-│   │   │   └── uploadService.js
-│   │   │
-│   │   ├── hooks/
-│   │   │   ├── useAdminAuth.js
-│   │   │   └── useAdminForm.js
+│   │   │   └── humanitarian.js
 │   │   │
 │   │   ├── context/
-│   │   │   └── AdminAuthContext.jsx
+│   │   │   └── AlertProvider.jsx
 │   │   │
 │   │   ├── styles/
-│   │   │   ├── admin.css
-│   │   │   ├── variables.css
-│   │   │   └── responsive.css
+│   │   │   └── admin.css
+│   │   │
+│   │   ├── assets/
+│   │   │   └── react.svg
 │   │   │
 │   │   ├── App.jsx
-│   │   └── main.jsx
+│   │   ├── App.css
+│   │   ├── main.jsx
+│   │   └── index.css
 │   │
 │
 ├── docs/
@@ -475,4 +557,5 @@ SiteCongo/
 ├── .gitignore
 ├── README.md
 ├── LICENSE
-└── CHANGELOG.md
+├── CHANGELOG.md
+└── structure
