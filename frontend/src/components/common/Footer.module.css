@@ -213,13 +213,57 @@
     justify-content: center;
   }
   
-  .newsletterButton:hover {
+  .newsletterButton:hover:not(:disabled) {
     background: #6a9e3a;
     transform: translateY(-1px);
   }
+
+  .newsletterButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .newsletterStatus {
+    margin-top: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .newsletterStatus.success {
+    background: rgba(124, 179, 66, 0.2);
+    color: #7CB342;
+    border: 1px solid rgba(124, 179, 66, 0.3);
+  }
+
+  .newsletterStatus.error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  .spinner {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
   
+  .contact {
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
   .contact:hover {
-    color: var(--primary-dark);
+    color: #7CB342;
   }
 
   img {

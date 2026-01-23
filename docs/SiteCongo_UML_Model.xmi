@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://www.omg.org/XMI" xmlns:uml="http://www.omg.org/spec/UML/20131001">
+  <uml:Model xmi:id="SiteCongo_Model" name="SiteCongo">
+    
+    <!-- ============================================ -->
+    <!-- 1. DIAGRAMME DE CAS D'UTILISATION -->
+    <!-- ============================================ -->
+    <packagedElement xmi:type="uml:UseCaseDiagram" xmi:id="UseCaseDiagram" name="Diagramme de Cas d'Utilisation">
+      
+      <!-- Acteurs -->
+      <packagedElement xmi:type="uml:Actor" xmi:id="Visiteur" name="Visiteur"/>
+      <packagedElement xmi:type="uml:Actor" xmi:id="Utilisateur" name="Utilisateur"/>
+      <packagedElement xmi:type="uml:Actor" xmi:id="Administrateur" name="Administrateur"/>
+      
+      <!-- Cas d'utilisation - Visiteur (Routes PUBLIQUES uniquement) -->
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterDomaines" name="Consulter les domaines"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterPartenaires" name="Consulter les partenaires"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterEquipe" name="Consulter l'équipe"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterAlertesHumanitaires" name="Consulter les alertes humanitaires"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterEngagementsEthiques" name="Consulter les engagements éthiques"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterZonesIntervention" name="Consulter les zones d'intervention"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="LireCommentaires" name="Consulter les commentaires"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="SInscrire" name="S'inscrire"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="SeConnecter" name="Se connecter"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ContacterOrganisation" name="Contacter l'organisation"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="DenoncerViolation" name="Dénoncer une violation"/>
+      
+      <!-- Cas d'utilisation - Utilisateur (Routes PROTÉGÉES - auth:sanctum) -->
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterActualites" name="Consulter les actualités"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterProjets" name="Consulter les projets"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterOffresEmploi" name="Consulter les offres d'emploi"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="CommenterActualite" name="Commenter une actualité"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ModifierCommentaire" name="Modifier son commentaire"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="SupprimerCommentaire" name="Supprimer son commentaire"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="PostulerBenevolat" name="Postuler comme bénévole"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterMesCandidatures" name="Consulter mes candidatures"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererProfil" name="Gérer son profil"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="SeDeconnecter" name="Se déconnecter"/>
+      
+      <!-- Cas d'utilisation - Administrateur -->
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererActualites" name="Gérer les actualités"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererProjets" name="Gérer les projets"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererDomaines" name="Gérer les domaines"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererPartenaires" name="Gérer les partenaires"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererEquipe" name="Gérer l'équipe"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererOffresEmploi" name="Gérer les offres d'emploi"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ModererCommentaires" name="Modérer les commentaires"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererBenevoles" name="Gérer les bénévoles"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererAlertesHumanitaires" name="Gérer les alertes humanitaires"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererViolations" name="Gérer les violations"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererEngagementsEthiques" name="Gérer les engagements éthiques"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="GererZonesIntervention" name="Gérer les zones d'intervention"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="ConsulterDashboard" name="Consulter le tableau de bord"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="SeConnecterAdmin" name="Se connecter (Admin)"/>
+      
+      <!-- Associations Visiteur (Routes PUBLIQUES) -->
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_ConsulterDomaines">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="ConsulterDomaines"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_ConsulterPartenaires">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="ConsulterPartenaires"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_ConsulterEquipe">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="ConsulterEquipe"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_ConsulterAlertes">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="ConsulterAlertesHumanitaires"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_ConsulterEngagements">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="ConsulterEngagementsEthiques"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_ConsulterZones">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="ConsulterZonesIntervention"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_LireCommentaires">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="LireCommentaires"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_SInscrire">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="SInscrire"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_SeConnecter">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="SeConnecter"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_Contacter">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="ContacterOrganisation"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Visiteur_DenoncerViolation">
+        <memberEnd xmi:idref="Visiteur"/>
+        <memberEnd xmi:idref="DenoncerViolation"/>
+      </packagedElement>
+      
+      <!-- Associations Utilisateur (Routes PROTÉGÉES) -->
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Utilisateur_ConsulterActualites">
+        <memberEnd xmi:idref="Utilisateur"/>
+        <memberEnd xmi:idref="ConsulterActualites"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Utilisateur_ConsulterProjets">
+        <memberEnd xmi:idref="Utilisateur"/>
+        <memberEnd xmi:idref="ConsulterProjets"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Utilisateur_ConsulterOffresEmploi">
+        <memberEnd xmi:idref="Utilisateur"/>
+        <memberEnd xmi:idref="ConsulterOffresEmploi"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Utilisateur_Commenter">
+        <memberEnd xmi:idref="Utilisateur"/>
+        <memberEnd xmi:idref="CommenterActualite"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Utilisateur_ModifierCommentaire">
+        <memberEnd xmi:idref="Utilisateur"/>
+        <memberEnd xmi:idref="ModifierCommentaire"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Utilisateur_SupprimerCommentaire">
+        <memberEnd xmi:idref="Utilisateur"/>
+        <memberEnd xmi:idref="SupprimerCommentaire"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Utilisateur_PostulerBenevolat">
+        <memberEnd xmi:idref="Utilisateur"/>
+        <memberEnd xmi:idref="PostulerBenevolat"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Utilisateur_MesCandidatures">
+        <memberEnd xmi:idref="Utilisateur"/>
+        <memberEnd xmi:idref="ConsulterMesCandidatures"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Utilisateur_GererProfil">
+        <memberEnd xmi:idref="Utilisateur"/>
+        <memberEnd xmi:idref="GererProfil"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Utilisateur_SeDeconnecter">
+        <memberEnd xmi:idref="Utilisateur"/>
+        <memberEnd xmi:idref="SeDeconnecter"/>
+      </packagedElement>
+      
+      <!-- Associations Administrateur -->
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererActualites">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererActualites"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererProjets">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererProjets"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererDomaines">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererDomaines"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererPartenaires">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererPartenaires"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererEquipe">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererEquipe"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererOffresEmploi">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererOffresEmploi"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_ModererCommentaires">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="ModererCommentaires"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererBenevoles">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererBenevoles"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererAlertes">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererAlertesHumanitaires"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererViolations">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererViolations"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererEngagements">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererEngagementsEthiques"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_GererZones">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="GererZonesIntervention"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_Dashboard">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="ConsulterDashboard"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Association" xmi:id="Assoc_Admin_SeConnecterAdmin">
+        <memberEnd xmi:idref="Administrateur"/>
+        <memberEnd xmi:idref="SeConnecterAdmin"/>
+      </packagedElement>
+      
+      <!-- Héritage -->
+      <packagedElement xmi:type="uml:Generalization" xmi:id="Gen_Utilisateur_Visiteur">
+        <general xmi:idref="Visiteur"/>
+        <specific xmi:idref="Utilisateur"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Generalization" xmi:id="Gen_Admin_Utilisateur">
+        <general xmi:idref="Utilisateur"/>
+        <specific xmi:idref="Administrateur"/>
+      </packagedElement>
+      
+    </packagedElement>
+    
+    <!-- ============================================ -->
+    <!-- 2. DIAGRAMME DE CLASSES -->
+    <!-- ============================================ -->
+    <packagedElement xmi:type="uml:ClassDiagram" xmi:id="ClassDiagram" name="Diagramme de Classes">
+      
+      <!-- Classe User -->
+      <packagedElement xmi:type="uml:Class" xmi:id="User" name="User">
+        <ownedAttribute xmi:id="User_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="User_name" name="name" type="string"/>
+        <ownedAttribute xmi:id="User_email" name="email" type="string"/>
+        <ownedAttribute xmi:id="User_password" name="password" type="string"/>
+        <ownedAttribute xmi:id="User_avatar" name="avatar" type="string"/>
+        <ownedAttribute xmi:id="User_phone" name="phone" type="string"/>
+        <ownedAttribute xmi:id="User_bio" name="bio" type="text"/>
+        <ownedAttribute xmi:id="User_location" name="location" type="string"/>
+        <ownedAttribute xmi:id="User_role" name="role" type="enum(user,admin)"/>
+        <ownedAttribute xmi:id="User_is_active" name="is_active" type="boolean"/>
+        <ownedOperation xmi:id="User_isAdmin" name="isAdmin()" returnType="boolean"/>
+        <ownedOperation xmi:id="User_comments" name="comments()" returnType="Comment[]"/>
+      </packagedElement>
+      
+      <!-- Classe News -->
+      <packagedElement xmi:type="uml:Class" xmi:id="News" name="News">
+        <ownedAttribute xmi:id="News_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="News_slug" name="slug" type="string"/>
+        <ownedAttribute xmi:id="News_title" name="title" type="string"/>
+        <ownedAttribute xmi:id="News_excerpt" name="excerpt" type="text"/>
+        <ownedAttribute xmi:id="News_content" name="content" type="text"/>
+        <ownedAttribute xmi:id="News_image" name="image" type="string"/>
+        <ownedAttribute xmi:id="News_images" name="images" type="array"/>
+        <ownedAttribute xmi:id="News_category" name="category" type="string"/>
+        <ownedAttribute xmi:id="News_published_at" name="published_at" type="datetime"/>
+        <ownedAttribute xmi:id="News_author" name="author" type="string"/>
+        <ownedAttribute xmi:id="News_tags" name="tags" type="array"/>
+        <ownedAttribute xmi:id="News_status" name="status" type="enum(draft,published)"/>
+        <ownedAttribute xmi:id="News_views" name="views" type="integer"/>
+        <ownedAttribute xmi:id="News_featured" name="featured" type="boolean"/>
+        <ownedOperation xmi:id="News_comments" name="comments()" returnType="Comment[]"/>
+        <ownedOperation xmi:id="News_incrementViews" name="incrementViews()"/>
+      </packagedElement>
+      
+      <!-- Classe Comment -->
+      <packagedElement xmi:type="uml:Class" xmi:id="Comment" name="Comment">
+        <ownedAttribute xmi:id="Comment_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="Comment_news_id" name="news_id" type="integer"/>
+        <ownedAttribute xmi:id="Comment_parent_id" name="parent_id" type="integer"/>
+        <ownedAttribute xmi:id="Comment_author_name" name="author_name" type="string"/>
+        <ownedAttribute xmi:id="Comment_author_email" name="author_email" type="string"/>
+        <ownedAttribute xmi:id="Comment_content" name="content" type="text"/>
+        <ownedAttribute xmi:id="Comment_status" name="status" type="enum(pending,approved,rejected)"/>
+        <ownedAttribute xmi:id="Comment_user_id" name="user_id" type="integer"/>
+        <ownedOperation xmi:id="Comment_news" name="news()" returnType="News"/>
+        <ownedOperation xmi:id="Comment_user" name="user()" returnType="User"/>
+        <ownedOperation xmi:id="Comment_parent" name="parent()" returnType="Comment"/>
+        <ownedOperation xmi:id="Comment_replies" name="replies()" returnType="Comment[]"/>
+      </packagedElement>
+      
+      <!-- Classe Project -->
+      <packagedElement xmi:type="uml:Class" xmi:id="Project" name="Project">
+        <ownedAttribute xmi:id="Project_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="Project_slug" name="slug" type="string"/>
+        <ownedAttribute xmi:id="Project_title" name="title" type="string"/>
+        <ownedAttribute xmi:id="Project_excerpt" name="excerpt" type="text"/>
+        <ownedAttribute xmi:id="Project_objective" name="objective" type="text"/>
+        <ownedAttribute xmi:id="Project_execution_zone" name="execution_zone" type="string"/>
+        <ownedAttribute xmi:id="Project_start_date" name="start_date" type="date"/>
+        <ownedAttribute xmi:id="Project_end_date" name="end_date" type="date"/>
+        <ownedAttribute xmi:id="Project_status" name="status" type="enum(planning,ongoing,completed,suspended)"/>
+        <ownedAttribute xmi:id="Project_results" name="results" type="array"/>
+        <ownedAttribute xmi:id="Project_indicators" name="indicators" type="array"/>
+        <ownedAttribute xmi:id="Project_testimonials" name="testimonials" type="array"/>
+        <ownedAttribute xmi:id="Project_image" name="image" type="string"/>
+        <ownedAttribute xmi:id="Project_images" name="images" type="array"/>
+        <ownedAttribute xmi:id="Project_domain_id" name="domain_id" type="integer"/>
+        <ownedAttribute xmi:id="Project_partners" name="partners" type="array"/>
+        <ownedAttribute xmi:id="Project_budget" name="budget" type="decimal"/>
+        <ownedAttribute xmi:id="Project_beneficiaries_count" name="beneficiaries_count" type="integer"/>
+        <ownedAttribute xmi:id="Project_featured" name="featured" type="boolean"/>
+        <ownedAttribute xmi:id="Project_views" name="views" type="integer"/>
+        <ownedOperation xmi:id="Project_domain" name="domain()" returnType="Domain"/>
+        <ownedOperation xmi:id="Project_incrementViews" name="incrementViews()"/>
+      </packagedElement>
+      
+      <!-- Classe Domain -->
+      <packagedElement xmi:type="uml:Class" xmi:id="Domain" name="Domain">
+        <ownedAttribute xmi:id="Domain_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="Domain_titre" name="titre" type="string"/>
+        <ownedAttribute xmi:id="Domain_slug" name="slug" type="string"/>
+        <ownedAttribute xmi:id="Domain_image" name="image" type="string"/>
+        <ownedAttribute xmi:id="Domain_description_courte" name="description_courte" type="text"/>
+        <ownedAttribute xmi:id="Domain_contenu" name="contenu" type="array"/>
+        <ownedAttribute xmi:id="Domain_icon" name="icon" type="string"/>
+        <ownedAttribute xmi:id="Domain_ordre" name="ordre" type="integer"/>
+        <ownedAttribute xmi:id="Domain_actif" name="actif" type="boolean"/>
+        <ownedOperation xmi:id="Domain_projects" name="projects()" returnType="Project[]"/>
+      </packagedElement>
+      
+      <!-- Classe Partner -->
+      <packagedElement xmi:type="uml:Class" xmi:id="Partner" name="Partner">
+        <ownedAttribute xmi:id="Partner_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="Partner_name" name="name" type="string"/>
+        <ownedAttribute xmi:id="Partner_slug" name="slug" type="string"/>
+        <ownedAttribute xmi:id="Partner_type" name="type" type="string"/>
+        <ownedAttribute xmi:id="Partner_logo" name="logo" type="string"/>
+        <ownedAttribute xmi:id="Partner_description" name="description" type="text"/>
+        <ownedAttribute xmi:id="Partner_website" name="website" type="string"/>
+        <ownedAttribute xmi:id="Partner_contact_email" name="contact_email" type="string"/>
+        <ownedAttribute xmi:id="Partner_contact_phone" name="contact_phone" type="string"/>
+        <ownedAttribute xmi:id="Partner_is_active" name="is_active" type="boolean"/>
+      </packagedElement>
+      
+      <!-- Classe TeamMember -->
+      <packagedElement xmi:type="uml:Class" xmi:id="TeamMember" name="TeamMember">
+        <ownedAttribute xmi:id="TeamMember_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="TeamMember_name" name="name" type="string"/>
+        <ownedAttribute xmi:id="TeamMember_position" name="position" type="string"/>
+        <ownedAttribute xmi:id="TeamMember_photo" name="photo" type="string"/>
+        <ownedAttribute xmi:id="TeamMember_bio" name="bio" type="text"/>
+        <ownedAttribute xmi:id="TeamMember_email" name="email" type="string"/>
+        <ownedAttribute xmi:id="TeamMember_phone" name="phone" type="string"/>
+        <ownedAttribute xmi:id="TeamMember_order" name="order" type="integer"/>
+        <ownedAttribute xmi:id="TeamMember_is_active" name="is_active" type="boolean"/>
+      </packagedElement>
+      
+      <!-- Classe JobOffer -->
+      <packagedElement xmi:type="uml:Class" xmi:id="JobOffer" name="JobOffer">
+        <ownedAttribute xmi:id="JobOffer_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="JobOffer_slug" name="slug" type="string"/>
+        <ownedAttribute xmi:id="JobOffer_title" name="title" type="string"/>
+        <ownedAttribute xmi:id="JobOffer_type" name="type" type="enum(full-time,part-time,contract,volunteer)"/>
+        <ownedAttribute xmi:id="JobOffer_location" name="location" type="string"/>
+        <ownedAttribute xmi:id="JobOffer_department" name="department" type="string"/>
+        <ownedAttribute xmi:id="JobOffer_description" name="description" type="text"/>
+        <ownedAttribute xmi:id="JobOffer_requirements" name="requirements" type="array"/>
+        <ownedAttribute xmi:id="JobOffer_responsibilities" name="responsibilities" type="array"/>
+        <ownedAttribute xmi:id="JobOffer_duration" name="duration" type="string"/>
+        <ownedAttribute xmi:id="JobOffer_deadline" name="deadline" type="date"/>
+        <ownedAttribute xmi:id="JobOffer_status" name="status" type="enum(draft,published,closed)"/>
+        <ownedAttribute xmi:id="JobOffer_featured" name="featured" type="boolean"/>
+        <ownedAttribute xmi:id="JobOffer_views" name="views" type="integer"/>
+        <ownedAttribute xmi:id="JobOffer_applications_count" name="applications_count" type="integer"/>
+        <ownedAttribute xmi:id="JobOffer_published_at" name="published_at" type="datetime"/>
+        <ownedOperation xmi:id="JobOffer_isExpired" name="isExpired()" returnType="boolean"/>
+        <ownedOperation xmi:id="JobOffer_isOpen" name="isOpen()" returnType="boolean"/>
+      </packagedElement>
+      
+      <!-- Classe Volunteer -->
+      <packagedElement xmi:type="uml:Class" xmi:id="Volunteer" name="Volunteer">
+        <ownedAttribute xmi:id="Volunteer_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="Volunteer_first_name" name="first_name" type="string"/>
+        <ownedAttribute xmi:id="Volunteer_last_name" name="last_name" type="string"/>
+        <ownedAttribute xmi:id="Volunteer_email" name="email" type="string"/>
+        <ownedAttribute xmi:id="Volunteer_phone" name="phone" type="string"/>
+        <ownedAttribute xmi:id="Volunteer_address" name="address" type="string"/>
+        <ownedAttribute xmi:id="Volunteer_city" name="city" type="string"/>
+        <ownedAttribute xmi:id="Volunteer_country" name="country" type="string"/>
+        <ownedAttribute xmi:id="Volunteer_interest_domain" name="interest_domain" type="string"/>
+        <ownedAttribute xmi:id="Volunteer_skills" name="skills" type="text"/>
+        <ownedAttribute xmi:id="Volunteer_availability" name="availability" type="string"/>
+        <ownedAttribute xmi:id="Volunteer_message" name="message" type="text"/>
+        <ownedAttribute xmi:id="Volunteer_cv_path" name="cv_path" type="string"/>
+        <ownedAttribute xmi:id="Volunteer_status" name="status" type="enum(pending,accepted,rejected)"/>
+        <ownedAttribute xmi:id="Volunteer_admin_notes" name="admin_notes" type="text"/>
+      </packagedElement>
+      
+      <!-- Classe HumanitarianAlert -->
+      <packagedElement xmi:type="uml:Class" xmi:id="HumanitarianAlert" name="HumanitarianAlert">
+        <ownedAttribute xmi:id="HumanitarianAlert_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_title" name="title" type="string"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_alert_type" name="alert_type" type="string"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_severity" name="severity" type="enum(low,medium,high,critical)"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_location" name="location" type="string"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_affected_population" name="affected_population" type="integer"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_description" name="description" type="text"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_needs_identified" name="needs_identified" type="text"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_response_actions" name="response_actions" type="text"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_contact_person" name="contact_person" type="string"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_contact_phone" name="contact_phone" type="string"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_start_date" name="start_date" type="date"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_end_date" name="end_date" type="date"/>
+        <ownedAttribute xmi:id="HumanitarianAlert_is_active" name="is_active" type="boolean"/>
+      </packagedElement>
+      
+      <!-- Classe ViolationReport -->
+      <packagedElement xmi:type="uml:Class" xmi:id="ViolationReport" name="ViolationReport">
+        <ownedAttribute xmi:id="ViolationReport_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="ViolationReport_reporter_name" name="reporter_name" type="string"/>
+        <ownedAttribute xmi:id="ViolationReport_reporter_email" name="reporter_email" type="string"/>
+        <ownedAttribute xmi:id="ViolationReport_reporter_phone" name="reporter_phone" type="string"/>
+        <ownedAttribute xmi:id="ViolationReport_violation_type" name="violation_type" type="string"/>
+        <ownedAttribute xmi:id="ViolationReport_location" name="location" type="string"/>
+        <ownedAttribute xmi:id="ViolationReport_date_occurred" name="date_occurred" type="date"/>
+        <ownedAttribute xmi:id="ViolationReport_description" name="description" type="text"/>
+        <ownedAttribute xmi:id="ViolationReport_evidence" name="evidence" type="text"/>
+        <ownedAttribute xmi:id="ViolationReport_status" name="status" type="enum(pending,under_review,resolved,dismissed)"/>
+        <ownedAttribute xmi:id="ViolationReport_admin_notes" name="admin_notes" type="text"/>
+      </packagedElement>
+      
+      <!-- Classe EthicalCommitment -->
+      <packagedElement xmi:type="uml:Class" xmi:id="EthicalCommitment" name="EthicalCommitment">
+        <ownedAttribute xmi:id="EthicalCommitment_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="EthicalCommitment_title" name="title" type="string"/>
+        <ownedAttribute xmi:id="EthicalCommitment_description" name="description" type="text"/>
+        <ownedAttribute xmi:id="EthicalCommitment_category" name="category" type="string"/>
+        <ownedAttribute xmi:id="EthicalCommitment_order" name="order" type="integer"/>
+        <ownedAttribute xmi:id="EthicalCommitment_is_active" name="is_active" type="boolean"/>
+      </packagedElement>
+      
+      <!-- Classe InterventionZone -->
+      <packagedElement xmi:type="uml:Class" xmi:id="InterventionZone" name="InterventionZone">
+        <ownedAttribute xmi:id="InterventionZone_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="InterventionZone_name" name="name" type="string"/>
+        <ownedAttribute xmi:id="InterventionZone_location" name="location" type="string"/>
+        <ownedAttribute xmi:id="InterventionZone_coordinates" name="coordinates" type="string"/>
+        <ownedAttribute xmi:id="InterventionZone_description" name="description" type="text"/>
+        <ownedAttribute xmi:id="InterventionZone_order" name="order" type="integer"/>
+        <ownedAttribute xmi:id="InterventionZone_is_active" name="is_active" type="boolean"/>
+      </packagedElement>
+      
+      <!-- Classe AdvocacyCampaign -->
+      <packagedElement xmi:type="uml:Class" xmi:id="AdvocacyCampaign" name="AdvocacyCampaign">
+        <ownedAttribute xmi:id="AdvocacyCampaign_id" name="id" type="integer"/>
+        <ownedAttribute xmi:id="AdvocacyCampaign_title" name="title" type="string"/>
+        <ownedAttribute xmi:id="AdvocacyCampaign_description" name="description" type="text"/>
+        <ownedAttribute xmi:id="AdvocacyCampaign_objective" name="objective" type="text"/>
+        <ownedAttribute xmi:id="AdvocacyCampaign_status" name="status" type="enum(planned,ongoing,completed)"/>
+        <ownedAttribute xmi:id="AdvocacyCampaign_start_date" name="start_date" type="date"/>
+        <ownedAttribute xmi:id="AdvocacyCampaign_end_date" name="end_date" type="date"/>
+      </packagedElement>
+      
+      <!-- Relations -->
+      <packagedElement xmi:type="uml:Association" xmi:id="User_Comment_Association">
+        <memberEnd xmi:idref="User"/>
+        <memberEnd xmi:idref="Comment"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="User_comments_end" name="comments" type="Comment[]" aggregation="none" association="User_Comment_Association">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="User_comments_lower" value="0"/>
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="User_comments_upper" value="*"/>
+        </ownedEnd>
+        <ownedEnd xmi:type="uml:Property" xmi:id="Comment_user_end" name="user" type="User" aggregation="none" association="User_Comment_Association">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="Comment_user_lower" value="0"/>
+          <upperValue xmi:type="uml:LiteralInteger" xmi:id="Comment_user_upper" value="1"/>
+        </ownedEnd>
+      </packagedElement>
+      
+      <packagedElement xmi:type="uml:Association" xmi:id="News_Comment_Association">
+        <memberEnd xmi:idref="News"/>
+        <memberEnd xmi:idref="Comment"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="News_comments_end" name="comments" type="Comment[]" aggregation="none" association="News_Comment_Association">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="News_comments_lower" value="0"/>
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="News_comments_upper" value="*"/>
+        </ownedEnd>
+        <ownedEnd xmi:type="uml:Property" xmi:id="Comment_news_end" name="news" type="News" aggregation="none" association="News_Comment_Association">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="Comment_news_lower" value="1"/>
+          <upperValue xmi:type="uml:LiteralInteger" xmi:id="Comment_news_upper" value="1"/>
+        </ownedEnd>
+      </packagedElement>
+      
+      <packagedElement xmi:type="uml:Association" xmi:id="Domain_Project_Association">
+        <memberEnd xmi:idref="Domain"/>
+        <memberEnd xmi:idref="Project"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="Domain_projects_end" name="projects" type="Project[]" aggregation="none" association="Domain_Project_Association">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="Domain_projects_lower" value="0"/>
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="Domain_projects_upper" value="*"/>
+        </ownedEnd>
+        <ownedEnd xmi:type="uml:Property" xmi:id="Project_domain_end" name="domain" type="Domain" aggregation="none" association="Domain_Project_Association">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="Project_domain_lower" value="0"/>
+          <upperValue xmi:type="uml:LiteralInteger" xmi:id="Project_domain_upper" value="1"/>
+        </ownedEnd>
+      </packagedElement>
+      
+      <packagedElement xmi:type="uml:Association" xmi:id="Comment_Parent_Association">
+        <memberEnd xmi:idref="Comment"/>
+        <memberEnd xmi:idref="Comment"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="Comment_replies_end" name="replies" type="Comment[]" aggregation="none" association="Comment_Parent_Association">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="Comment_replies_lower" value="0"/>
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="Comment_replies_upper" value="*"/>
+        </ownedEnd>
+        <ownedEnd xmi:type="uml:Property" xmi:id="Comment_parent_end" name="parent" type="Comment" aggregation="none" association="Comment_Parent_Association">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="Comment_parent_lower" value="0"/>
+          <upperValue xmi:type="uml:LiteralInteger" xmi:id="Comment_parent_upper" value="1"/>
+        </ownedEnd>
+      </packagedElement>
+      
+    </packagedElement>
+    
+    <!-- ============================================ -->
+    <!-- 3. DIAGRAMME DE SÉQUENCES -->
+    <!-- ============================================ -->
+    <packagedElement xmi:type="uml:Interaction" xmi:id="SequenceDiagram_Login" name="Séquence - Connexion Utilisateur">
+      <lifeline xmi:id="Lifeline_Frontend" name="Frontend (React)"/>
+      <lifeline xmi:id="Lifeline_Backend" name="Backend (Laravel API)"/>
+      <lifeline xmi:id="Lifeline_Database" name="Base de données (MySQL)"/>
+      <lifeline xmi:id="Lifeline_Auth" name="Laravel Sanctum"/>
+      
+      <message xmi:id="Message_LoginRequest" name="POST /api/login" sendEvent="LoginRequest_Send" receiveEvent="LoginRequest_Receive">
+        <source xmi:idref="Lifeline_Frontend"/>
+        <target xmi:idref="Lifeline_Backend"/>
+      </message>
+      
+      <message xmi:id="Message_ValidateCredentials" name="validateCredentials()" sendEvent="ValidateCredentials_Send" receiveEvent="ValidateCredentials_Receive">
+        <source xmi:idref="Lifeline_Backend"/>
+        <target xmi:idref="Lifeline_Database"/>
+      </message>
+      
+      <message xmi:id="Message_CreateToken" name="createToken()" sendEvent="CreateToken_Send" receiveEvent="CreateToken_Receive">
+        <source xmi:idref="Lifeline_Backend"/>
+        <target xmi:idref="Lifeline_Auth"/>
+      </message>
+      
+      <message xmi:id="Message_LoginResponse" name="Response (token, user)" sendEvent="LoginResponse_Send" receiveEvent="LoginResponse_Receive">
+        <source xmi:idref="Lifeline_Backend"/>
+        <target xmi:idref="Lifeline_Frontend"/>
+      </message>
+    </packagedElement>
+    
+    <packagedElement xmi:type="uml:Interaction" xmi:id="SequenceDiagram_CreateNews" name="Séquence - Créer une actualité (Admin)">
+      <lifeline xmi:id="Lifeline_Admin" name="Admin Dashboard"/>
+      <lifeline xmi:id="Lifeline_Backend_Admin" name="Backend API"/>
+      <lifeline xmi:id="Lifeline_DB_News" name="Base de données"/>
+      <lifeline xmi:id="Lifeline_Storage" name="Storage (Images)"/>
+      
+      <message xmi:id="Message_CreateNewsRequest" name="POST /api/admin/news" sendEvent="CreateNewsRequest_Send" receiveEvent="CreateNewsRequest_Receive">
+        <source xmi:idref="Lifeline_Admin"/>
+        <target xmi:idref="Lifeline_Backend_Admin"/>
+      </message>
+      
+      <message xmi:id="Message_ValidateNews" name="validate()" sendEvent="ValidateNews_Send" receiveEvent="ValidateNews_Receive">
+        <source xmi:idref="Lifeline_Backend_Admin"/>
+        <target xmi:idref="Lifeline_Backend_Admin"/>
+      </message>
+      
+      <message xmi:id="Message_UploadImage" name="uploadImage()" sendEvent="UploadImage_Send" receiveEvent="UploadImage_Receive">
+        <source xmi:idref="Lifeline_Backend_Admin"/>
+        <target xmi:idref="Lifeline_Storage"/>
+      </message>
+      
+      <message xmi:id="Message_SaveNews" name="save()" sendEvent="SaveNews_Send" receiveEvent="SaveNews_Receive">
+        <source xmi:idref="Lifeline_Backend_Admin"/>
+        <target xmi:idref="Lifeline_DB_News"/>
+      </message>
+      
+      <message xmi:id="Message_NewsCreated" name="Response (news)" sendEvent="NewsCreated_Send" receiveEvent="NewsCreated_Receive">
+        <source xmi:idref="Lifeline_Backend_Admin"/>
+        <target xmi:idref="Lifeline_Admin"/>
+      </message>
+    </packagedElement>
+    
+    <packagedElement xmi:type="uml:Interaction" xmi:id="SequenceDiagram_Comment" name="Séquence - Commenter une actualité">
+      <lifeline xmi:id="Lifeline_User_Frontend" name="Frontend (Utilisateur)"/>
+      <lifeline xmi:id="Lifeline_Backend_Comment" name="Backend API"/>
+      <lifeline xmi:id="Lifeline_DB_Comment" name="Base de données"/>
+      
+      <message xmi:id="Message_CommentRequest" name="POST /api/news/{id}/comments" sendEvent="CommentRequest_Send" receiveEvent="CommentRequest_Receive">
+        <source xmi:idref="Lifeline_User_Frontend"/>
+        <target xmi:idref="Lifeline_Backend_Comment"/>
+      </message>
+      
+      <message xmi:id="Message_CheckAuth" name="checkAuth()" sendEvent="CheckAuth_Send" receiveEvent="CheckAuth_Receive">
+        <source xmi:idref="Lifeline_Backend_Comment"/>
+        <target xmi:idref="Lifeline_Backend_Comment"/>
+      </message>
+      
+      <message xmi:id="Message_SaveComment" name="save()" sendEvent="SaveComment_Send" receiveEvent="SaveComment_Receive">
+        <source xmi:idref="Lifeline_Backend_Comment"/>
+        <target xmi:idref="Lifeline_DB_Comment"/>
+      </message>
+      
+      <message xmi:id="Message_CommentResponse" name="Response (comment)" sendEvent="CommentResponse_Send" receiveEvent="CommentResponse_Receive">
+        <source xmi:idref="Lifeline_Backend_Comment"/>
+        <target xmi:idref="Lifeline_User_Frontend"/>
+      </message>
+    </packagedElement>
+    
+    <!-- ============================================ -->
+    <!-- 4. DIAGRAMME DE DÉPLOIEMENT -->
+    <!-- ============================================ -->
+    <packagedElement xmi:type="uml:DeploymentDiagram" xmi:id="DeploymentDiagram" name="Diagramme de Déploiement">
+      
+      <!-- Node: Serveur Web -->
+      <packagedElement xmi:type="uml:Node" xmi:id="WebServer" name="Serveur Web (Nginx)">
+        <ownedAttribute xmi:id="WebServer_Port80" name="Port 80 (HTTP)"/>
+        <ownedAttribute xmi:id="WebServer_Port443" name="Port 443 (HTTPS)"/>
+      </packagedElement>
+      
+      <!-- Node: Frontend -->
+      <packagedElement xmi:type="uml:Node" xmi:id="FrontendContainer" name="Container Frontend (React)">
+        <ownedAttribute xmi:id="FrontendContainer_Port3000" name="Port 3000"/>
+        <deployedArtifact xmi:type="uml:Artifact" xmi:id="FrontendApp" name="Frontend Application (React + Vite)"/>
+      </packagedElement>
+      
+      <!-- Node: Admin -->
+      <packagedElement xmi:type="uml:Node" xmi:id="AdminContainer" name="Container Admin (React)">
+        <ownedAttribute xmi:id="AdminContainer_Port3001" name="Port 3001"/>
+        <deployedArtifact xmi:type="uml:Artifact" xmi:id="AdminApp" name="Admin Dashboard (React + Vite)"/>
+      </packagedElement>
+      
+      <!-- Node: Backend -->
+      <packagedElement xmi:type="uml:Node" xmi:id="BackendContainer" name="Container Backend (Laravel)">
+        <ownedAttribute xmi:id="BackendContainer_Port8000" name="Port 8000"/>
+        <deployedArtifact xmi:type="uml:Artifact" xmi:id="LaravelApp" name="Laravel API Application"/>
+        <deployedArtifact xmi:type="uml:Artifact" xmi:id="LaravelStorage" name="Storage (Files)"/>
+      </packagedElement>
+      
+      <!-- Node: Base de données -->
+      <packagedElement xmi:type="uml:Node" xmi:id="DatabaseContainer" name="Container MySQL">
+        <ownedAttribute xmi:id="DatabaseContainer_Port3306" name="Port 3306"/>
+        <deployedArtifact xmi:type="uml:Artifact" xmi:id="MySQLDatabase" name="MySQL 8.0 Database"/>
+      </packagedElement>
+      
+      <!-- Node: Cache -->
+      <packagedElement xmi:type="uml:Node" xmi:id="RedisContainer" name="Container Redis">
+        <ownedAttribute xmi:id="RedisContainer_Port6379" name="Port 6379"/>
+        <deployedArtifact xmi:type="uml:Artifact" xmi:id="RedisCache" name="Redis Cache"/>
+      </packagedElement>
+      
+      <!-- Node: Mail -->
+      <packagedElement xmi:type="uml:Node" xmi:id="MailpitContainer" name="Container Mailpit">
+        <ownedAttribute xmi:id="MailpitContainer_Port1025" name="Port 1025 (SMTP)"/>
+        <ownedAttribute xmi:id="MailpitContainer_Port8025" name="Port 8025 (Web UI)"/>
+        <deployedArtifact xmi:type="uml:Artifact" xmi:id="MailpitService" name="Mailpit Email Service"/>
+      </packagedElement>
+      
+      <!-- Communication -->
+      <packagedElement xmi:type="uml:CommunicationPath" xmi:id="WebServer_Frontend" name="Proxy">
+        <source xmi:idref="WebServer"/>
+        <target xmi:idref="FrontendContainer"/>
+      </packagedElement>
+      
+      <packagedElement xmi:type="uml:CommunicationPath" xmi:id="WebServer_Admin" name="Proxy">
+        <source xmi:idref="WebServer"/>
+        <target xmi:idref="AdminContainer"/>
+      </packagedElement>
+      
+      <packagedElement xmi:type="uml:CommunicationPath" xmi:id="WebServer_Backend" name="Proxy">
+        <source xmi:idref="WebServer"/>
+        <target xmi:idref="BackendContainer"/>
+      </packagedElement>
+      
+      <packagedElement xmi:type="uml:CommunicationPath" xmi:id="Frontend_Backend" name="API Calls">
+        <source xmi:idref="FrontendContainer"/>
+        <target xmi:idref="BackendContainer"/>
+      </packagedElement>
+      
+      <packagedElement xmi:type="uml:CommunicationPath" xmi:id="Admin_Backend" name="API Calls">
+        <source xmi:idref="AdminContainer"/>
+        <target xmi:idref="BackendContainer"/>
+      </packagedElement>
+      
+      <packagedElement xmi:type="uml:CommunicationPath" xmi:id="Backend_Database" name="Database Connection">
+        <source xmi:idref="BackendContainer"/>
+        <target xmi:idref="DatabaseContainer"/>
+      </packagedElement>
+      
+      <packagedElement xmi:type="uml:CommunicationPath" xmi:id="Backend_Redis" name="Cache Connection">
+        <source xmi:idref="BackendContainer"/>
+        <target xmi:idref="RedisContainer"/>
+      </packagedElement>
+      
+      <packagedElement xmi:type="uml:CommunicationPath" xmi:id="Backend_Mailpit" name="Email Service">
+        <source xmi:idref="BackendContainer"/>
+        <target xmi:idref="MailpitContainer"/>
+      </packagedElement>
+      
+    </packagedElement>
+    
+  </uml:Model>
+</xmi:XMI>

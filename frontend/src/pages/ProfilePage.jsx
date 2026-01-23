@@ -313,10 +313,30 @@ const confirmCancelApplication = async () => {
   const confirmLogout = async () => {
     setIsLoggingOut(true);
     try {
+      // Marquer la déconnexion avant d'appeler logout
+      // pour éviter que l'intercepteur ne redirige vers login
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('isLoggingOut', 'true');
+      }
+      
       await logout();
-      navigate('/');
+      
+      // Nettoyer le flag après un court délai
+      setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('isLoggingOut');
+        }
+      }, 1000);
+      
+      // Rediriger vers la page d'accueil (route publique)
+      navigate('/', { replace: true });
     } catch (err) {
       console.error('Erreur lors de la déconnexion:', err);
+      // Même en cas d'erreur, nettoyer et rediriger
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('isLoggingOut');
+      }
+      navigate('/', { replace: true });
     } finally {
       setIsLoggingOut(false);
       setShowLogoutModal(false);

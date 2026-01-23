@@ -638,3 +638,48 @@
     max-width: 100%;
   }
 }
+
+.passwordInputWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.passwordInputWrapper .input {
+  padding-right: 45px;
+  width: 100%;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  transition: color 0.2s ease;
+  z-index: 10;
+  border-radius: 4px;
+}
+
+.passwordToggle:hover {
+  color: #374151;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.passwordToggle:focus {
+  outline: none;
+  color: #1f2937;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.passwordToggle:active {
+  transform: translateY(-50%) scale(0.95);
+}

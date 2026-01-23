@@ -1,0 +1,495 @@
+@startuml SiteCongo_UML_Model
+
+!theme plain
+skinparam classAttributeIconSize 0
+
+' ============================================
+' 1. DIAGRAMME DE CAS D'UTILISATION
+' ============================================
+
+left to right direction
+
+actor "Visiteur" as Visiteur
+actor "Utilisateur" as Utilisateur
+actor "Administrateur" as Admin
+
+package "Cas d'utilisation - Visiteur" {
+  usecase "Consulter les domaines" as UC_ConsulterDomaines
+  usecase "Consulter les partenaires" as UC_ConsulterPartenaires
+  usecase "Consulter l'équipe" as UC_ConsulterEquipe
+  usecase "Consulter les alertes humanitaires" as UC_ConsulterAlertes
+  usecase "Consulter les engagements éthiques" as UC_ConsulterEngagements
+  usecase "Consulter les zones d'intervention" as UC_ConsulterZones
+  usecase "Consulter les commentaires" as UC_LireCommentaires
+  usecase "S'inscrire" as UC_SInscrire
+  usecase "Se connecter" as UC_SeConnecter
+  usecase "Contacter l'organisation" as UC_Contacter
+  usecase "Dénoncer une violation" as UC_DenoncerViolation
+}
+
+package "Cas d'utilisation - Utilisateur" {
+  usecase "Consulter les actualités" as UC_ConsulterActualites
+  usecase "Consulter les projets" as UC_ConsulterProjets
+  usecase "Consulter les offres d'emploi" as UC_ConsulterOffresEmploi
+  usecase "Commenter une actualité" as UC_Commenter
+  usecase "Modifier son commentaire" as UC_ModifierCommentaire
+  usecase "Supprimer son commentaire" as UC_SupprimerCommentaire
+  usecase "Postuler comme bénévole" as UC_PostulerBenevolat
+  usecase "Consulter mes candidatures" as UC_MesCandidatures
+  usecase "Gérer son profil" as UC_GererProfil
+  usecase "Se déconnecter" as UC_SeDeconnecter
+}
+
+package "Cas d'utilisation - Administrateur" {
+  usecase "Gérer les actualités" as UC_GererActualites
+  usecase "Gérer les projets" as UC_GererProjets
+  usecase "Gérer les domaines" as UC_GererDomaines
+  usecase "Gérer les partenaires" as UC_GererPartenaires
+  usecase "Gérer l'équipe" as UC_GererEquipe
+  usecase "Gérer les offres d'emploi" as UC_GererOffresEmploi
+  usecase "Modérer les commentaires" as UC_ModererCommentaires
+  usecase "Gérer les bénévoles" as UC_GererBenevoles
+  usecase "Gérer les alertes humanitaires" as UC_GererAlertes
+  usecase "Gérer les violations" as UC_GererViolations
+  usecase "Gérer les engagements éthiques" as UC_GererEngagements
+  usecase "Gérer les zones d'intervention" as UC_GererZones
+  usecase "Consulter le tableau de bord" as UC_Dashboard
+  usecase "Se connecter (Admin)" as UC_SeConnecterAdmin
+}
+
+' Associations Visiteur
+Visiteur --> UC_ConsulterDomaines
+Visiteur --> UC_ConsulterPartenaires
+Visiteur --> UC_ConsulterEquipe
+Visiteur --> UC_ConsulterAlertes
+Visiteur --> UC_ConsulterEngagements
+Visiteur --> UC_ConsulterZones
+Visiteur --> UC_LireCommentaires
+Visiteur --> UC_SInscrire
+Visiteur --> UC_SeConnecter
+Visiteur --> UC_Contacter
+Visiteur --> UC_DenoncerViolation
+
+' Associations Utilisateur
+Utilisateur --> UC_ConsulterActualites
+Utilisateur --> UC_ConsulterProjets
+Utilisateur --> UC_ConsulterOffresEmploi
+Utilisateur --> UC_Commenter
+Utilisateur --> UC_ModifierCommentaire
+Utilisateur --> UC_SupprimerCommentaire
+Utilisateur --> UC_PostulerBenevolat
+Utilisateur --> UC_MesCandidatures
+Utilisateur --> UC_GererProfil
+Utilisateur --> UC_SeDeconnecter
+
+' Associations Administrateur
+Admin --> UC_GererActualites
+Admin --> UC_GererProjets
+Admin --> UC_GererDomaines
+Admin --> UC_GererPartenaires
+Admin --> UC_GererEquipe
+Admin --> UC_GererOffresEmploi
+Admin --> UC_ModererCommentaires
+Admin --> UC_GererBenevoles
+Admin --> UC_GererAlertes
+Admin --> UC_GererViolations
+Admin --> UC_GererEngagements
+Admin --> UC_GererZones
+Admin --> UC_Dashboard
+Admin --> UC_SeConnecterAdmin
+
+' Héritage
+Utilisateur --|> Visiteur
+Admin --|> Utilisateur
+
+@enduml
+
+' ============================================
+' 2. DIAGRAMME DE CLASSES
+' ============================================
+
+@startuml SiteCongo_ClassDiagram
+
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class User {
+  -id: integer
+  -name: string
+  -email: string
+  -password: string
+  -avatar: string
+  -phone: string
+  -bio: text
+  -location: string
+  -role: enum(user,admin)
+  -is_active: boolean
+  +isAdmin(): boolean
+  +comments(): Comment[]
+}
+
+class News {
+  -id: integer
+  -slug: string
+  -title: string
+  -excerpt: text
+  -content: text
+  -image: string
+  -images: array
+  -category: string
+  -published_at: datetime
+  -author: string
+  -tags: array
+  -status: enum(draft,published)
+  -views: integer
+  -featured: boolean
+  +comments(): Comment[]
+  +incrementViews(): void
+}
+
+class Comment {
+  -id: integer
+  -news_id: integer
+  -parent_id: integer
+  -author_name: string
+  -author_email: string
+  -content: text
+  -status: enum(pending,approved,rejected)
+  -user_id: integer
+  +news(): News
+  +user(): User
+  +parent(): Comment
+  +replies(): Comment[]
+}
+
+class Project {
+  -id: integer
+  -slug: string
+  -title: string
+  -excerpt: text
+  -objective: text
+  -execution_zone: string
+  -start_date: date
+  -end_date: date
+  -status: enum(planning,ongoing,completed,suspended)
+  -results: array
+  -indicators: array
+  -testimonials: array
+  -image: string
+  -images: array
+  -domain_id: integer
+  -partners: array
+  -budget: decimal
+  -beneficiaries_count: integer
+  -featured: boolean
+  -views: integer
+  +domain(): Domain
+  +incrementViews(): void
+}
+
+class Domain {
+  -id: integer
+  -titre: string
+  -slug: string
+  -image: string
+  -description_courte: text
+  -contenu: array
+  -icon: string
+  -ordre: integer
+  -actif: boolean
+  +projects(): Project[]
+}
+
+class Partner {
+  -id: integer
+  -name: string
+  -slug: string
+  -type: string
+  -logo: string
+  -description: text
+  -website: string
+  -contact_email: string
+  -contact_phone: string
+  -is_active: boolean
+}
+
+class TeamMember {
+  -id: integer
+  -name: string
+  -position: string
+  -photo: string
+  -bio: text
+  -email: string
+  -phone: string
+  -order: integer
+  -is_active: boolean
+}
+
+class JobOffer {
+  -id: integer
+  -slug: string
+  -title: string
+  -type: enum(full-time,part-time,contract,volunteer)
+  -location: string
+  -department: string
+  -description: text
+  -requirements: array
+  -responsibilities: array
+  -duration: string
+  -deadline: date
+  -status: enum(draft,published,closed)
+  -featured: boolean
+  -views: integer
+  -applications_count: integer
+  -published_at: datetime
+  +isExpired(): boolean
+  +isOpen(): boolean
+}
+
+class Volunteer {
+  -id: integer
+  -first_name: string
+  -last_name: string
+  -email: string
+  -phone: string
+  -address: string
+  -city: string
+  -country: string
+  -interest_domain: string
+  -skills: text
+  -availability: string
+  -message: text
+  -cv_path: string
+  -status: enum(pending,accepted,rejected)
+  -admin_notes: text
+}
+
+class HumanitarianAlert {
+  -id: integer
+  -title: string
+  -alert_type: string
+  -severity: enum(low,medium,high,critical)
+  -location: string
+  -affected_population: integer
+  -description: text
+  -needs_identified: text
+  -response_actions: text
+  -contact_person: string
+  -contact_phone: string
+  -start_date: date
+  -end_date: date
+  -is_active: boolean
+}
+
+class ViolationReport {
+  -id: integer
+  -reporter_name: string
+  -reporter_email: string
+  -reporter_phone: string
+  -violation_type: string
+  -location: string
+  -date_occurred: date
+  -description: text
+  -evidence: text
+  -status: enum(pending,under_review,resolved,dismissed)
+  -admin_notes: text
+}
+
+class EthicalCommitment {
+  -id: integer
+  -title: string
+  -description: text
+  -category: string
+  -order: integer
+  -is_active: boolean
+}
+
+class InterventionZone {
+  -id: integer
+  -name: string
+  -location: string
+  -coordinates: string
+  -description: text
+  -order: integer
+  -is_active: boolean
+}
+
+class AdvocacyCampaign {
+  -id: integer
+  -title: string
+  -description: text
+  -objective: text
+  -status: enum(planned,ongoing,completed)
+  -start_date: date
+  -end_date: date
+}
+
+' Relations
+User "1" --> "0..*" Comment : "écrit"
+News "1" --> "0..*" Comment : "a"
+Comment "0..1" --> "0..*" Comment : "répond à"
+Domain "1" --> "0..*" Project : "contient"
+Project "0..*" --> "0..1" Domain : "appartient à"
+
+@enduml
+
+' ============================================
+' 3. DIAGRAMME DE SÉQUENCES
+' ============================================
+
+@startuml Sequence_Login
+
+actor "Utilisateur" as User
+participant "Frontend\n(React)" as Frontend
+participant "Backend API\n(Laravel)" as Backend
+participant "Base de données\n(MySQL)" as DB
+participant "Laravel Sanctum" as Auth
+
+User -> Frontend: Saisir email/password
+Frontend -> Backend: POST /api/login\n{email, password}
+activate Backend
+
+Backend -> DB: Vérifier credentials
+activate DB
+DB --> Backend: User data
+deactivate DB
+
+Backend -> Auth: createToken()
+activate Auth
+Auth --> Backend: Token
+deactivate Auth
+
+Backend --> Frontend: Response\n{token, user}
+deactivate Backend
+Frontend -> Frontend: Stocker token
+Frontend --> User: Redirection
+
+@enduml
+
+@startuml Sequence_CreateNews
+
+actor "Administrateur" as Admin
+participant "Admin Dashboard\n(React)" as AdminUI
+participant "Backend API\n(Laravel)" as Backend
+participant "Storage\n(Files)" as Storage
+participant "Base de données\n(MySQL)" as DB
+
+Admin -> AdminUI: Créer nouvelle actualité
+AdminUI -> Backend: POST /api/admin/news\n{title, content, image}
+activate Backend
+
+Backend -> Backend: Valider données
+Backend -> Storage: Upload image
+activate Storage
+Storage --> Backend: Image path
+deactivate Storage
+
+Backend -> DB: INSERT news
+activate DB
+DB --> Backend: News created
+deactivate DB
+
+Backend --> AdminUI: Response\n{news}
+deactivate Backend
+AdminUI --> Admin: Actualité créée
+
+@enduml
+
+@startuml Sequence_Comment
+
+actor "Utilisateur" as User
+participant "Frontend\n(React)" as Frontend
+participant "Backend API\n(Laravel)" as Backend
+participant "Base de données\n(MySQL)" as DB
+
+User -> Frontend: Ajouter commentaire
+Frontend -> Backend: POST /api/news/{id}/comments\n{content}\nAuthorization: Bearer token
+activate Backend
+
+Backend -> Backend: Vérifier token
+Backend -> Backend: Extraire user_id
+
+Backend -> DB: INSERT comment\n{news_id, user_id, content, status: pending}
+activate DB
+DB --> Backend: Comment created
+deactivate DB
+
+Backend --> Frontend: Response\n{comment}
+deactivate Backend
+Frontend --> User: Commentaire ajouté
+
+@enduml
+
+' ============================================
+' 4. DIAGRAMME DE DÉPLOIEMENT
+' ============================================
+
+@startuml DeploymentDiagram
+
+node "Internet" {
+  [Client Browser]
+}
+
+node "Serveur Web" {
+  component "Nginx\nReverse Proxy" as Nginx {
+    port "80 (HTTP)"
+    port "443 (HTTPS)"
+  }
+}
+
+node "Docker Network" {
+  
+  node "Container Frontend" {
+    component "React Application\n(Vite)" as Frontend {
+      port "3000"
+    }
+  }
+  
+  node "Container Admin" {
+    component "React Admin Dashboard\n(Vite)" as Admin {
+      port "3001"
+    }
+  }
+  
+  node "Container Backend" {
+    component "Laravel API\n(PHP)" as Backend {
+      port "8000"
+    }
+    database "Storage\n(Files)" as Storage
+  }
+  
+  node "Container MySQL" {
+    database "MySQL 8.0\nDatabase" as MySQL {
+      port "3306"
+    }
+  }
+  
+  node "Container Redis" {
+    component "Redis Cache" as Redis {
+      port "6379"
+    }
+  }
+  
+  node "Container Mailpit" {
+    component "Mailpit\nEmail Service" as Mailpit {
+      port "1025 (SMTP)"
+      port "8025 (Web UI)"
+    }
+  }
+}
+
+[Client Browser] --> Nginx: HTTP/HTTPS
+Nginx --> Frontend: Proxy
+Nginx --> Admin: Proxy
+Nginx --> Backend: Proxy API
+
+Frontend --> Backend: API Calls\n(/api/v1/*)
+Admin --> Backend: API Calls\n(/api/v1/admin/*)
+
+Backend --> MySQL: Database\nConnection
+Backend --> Redis: Cache\nConnection
+Backend --> Storage: File Storage
+Backend --> Mailpit: Email\nService
+
+@enduml

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
 import styles from './AuthPage.module.css';
 
 export default function RegisterPage() {
@@ -15,6 +16,8 @@ export default function RegisterPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -53,6 +56,14 @@ export default function RegisterPage() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const togglePasswordConfirmationVisibility = () => {
+    setShowPasswordConfirmation((prev) => !prev);
   };
 
   return (
@@ -164,33 +175,53 @@ export default function RegisterPage() {
                 <label htmlFor="password" className={styles.label}>
                   Mot de passe
                 </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  minLength={8}
-                  className={styles.input}
-                  placeholder="Minimum 8 caractères"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
+                <div className={styles.passwordInputWrapper}>
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    minLength={8}
+                    className={styles.input}
+                    placeholder="Minimum 8 caractères"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className={styles.passwordToggle}
+                    aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  >
+                    {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                  </button>
+                </div>
               </div>
 
               <div className={styles.formGroup}>
                 <label htmlFor="password_confirmation" className={styles.label}>
                   Confirmer le mot de passe
                 </label>
-                <input
-                  id="password_confirmation"
-                  name="password_confirmation"
-                  type="password"
-                  required
-                  className={styles.input}
-                  placeholder="Retapez votre mot de passe"
-                  value={formData.password_confirmation}
-                  onChange={handleChange}
-                />
+                <div className={styles.passwordInputWrapper}>
+                  <input
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    type={showPasswordConfirmation ? 'text' : 'password'}
+                    required
+                    className={styles.input}
+                    placeholder="Retapez votre mot de passe"
+                    value={formData.password_confirmation}
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordConfirmationVisibility}
+                    className={styles.passwordToggle}
+                    aria-label={showPasswordConfirmation ? 'Masquer la confirmation' : 'Afficher la confirmation'}
+                  >
+                    {showPasswordConfirmation ? <Eye size={20} /> : <EyeOff size={20} />}
+                  </button>
+                </div>
               </div>
             </div>
 

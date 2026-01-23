@@ -40,9 +40,25 @@ export async function login(payload) {
  * Déconnexion
  */
 export async function logout() {
-  const response = await api.post('/logout');
-  invalidateUserCache();
-  return response.data;
+  // Marquer qu'une déconnexion volontaire est en cours
+  // pour éviter la redirection automatique vers login
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('isLoggingOut', 'true');
+  }
+  
+  try {
+    const response = await api.post('/logout');
+    invalidateUserCache();
+    return response.data;
+  } finally {
+    // Nettoyer le flag après un court délai pour permettre
+    // à toutes les requêtes en cours de se terminer
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        localStorage.removeItem('isLoggingOut');
+      }, 2000);
+    }
+  }
 }
 
 /**

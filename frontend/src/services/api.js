@@ -184,8 +184,30 @@ api.interceptors.response.use(
     // ✅ Erreur 401: Déconnexion automatique
     if (error.response?.status === 401) {
       const isLoginPage = window.location.pathname.includes('/login');
+      const isLoggingOut = localStorage.getItem('isLoggingOut') === 'true';
+      const currentPath = window.location.pathname;
       
-      if (!isLoginPage) {
+      // Routes publiques où on ne doit pas rediriger vers login
+      const publicRoutes = [
+        '/',
+        '/about',
+        '/domains',
+        '/partners',
+        '/team',
+        '/humanitarian',
+        '/contact',
+        '/transparency',
+        '/legal',
+        '/privacy',
+        '/register'
+      ];
+      const isPublicRoute = publicRoutes.some(route => currentPath.startsWith(route));
+      
+      // Ne pas rediriger si :
+      // 1. On est déjà sur la page de login
+      // 2. C'est une déconnexion volontaire
+      // 3. On est sur une route publique
+      if (!isLoginPage && !isLoggingOut && !isPublicRoute) {
         if (import.meta.env.MODE === 'development') {
           console.warn('🔒 Session expirée, nettoyage...');
         }
@@ -195,12 +217,16 @@ api.interceptors.response.use(
         localStorage.removeItem('cachedUserTime');
         clearCache();
         
-        // Rediriger vers login après 1s
+        // Rediriger vers login après 1s seulement si on n'est pas sur une route publique
         setTimeout(() => {
-          if (!window.location.pathname.includes('/login')) {
+          const stillOnPublicRoute = publicRoutes.some(route => window.location.pathname.startsWith(route));
+          if (!window.location.pathname.includes('/login') && !stillOnPublicRoute) {
             window.location.href = '/login?session=expired';
           }
         }, 1000);
+      } else if (isLoggingOut) {
+        // Nettoyer le flag de déconnexion
+        localStorage.removeItem('isLoggingOut');
       }
     }
 
