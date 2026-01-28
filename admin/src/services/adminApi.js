@@ -126,7 +126,7 @@ export const projectsAPI = {
 };
 
 // ============================================================
-// ACTUALITÉS
+// ACTUALITÉS - VERSION CORRIGÉE ✅
 // ============================================================
 export const newsAPI = {
   getAll: (params) => api.get('/admin/news', { params }),
@@ -136,9 +136,23 @@ export const newsAPI = {
   delete: (id) => api.delete(`/admin/news/${id}`),
   publish: (id) => api.post(`/admin/news/${id}/publish`),
   unpublish: (id) => api.post(`/admin/news/${id}/unpublish`),
+  
+  // IMAGE PRINCIPALE
   uploadImage: (id, formData) => 
-    api.post(`/admin/news/${id}/image`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+    api.post(`/admin/news/${id}/upload-image`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+  
+  // GALERIE PHOTOS
+  uploadGallery: (id, formData) => 
+    api.post(`/admin/news/${id}/upload-gallery`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+  
+  // SUPPRIMER IMAGE GALERIE
+  deleteGalleryImage: (id, imagePath) =>
+    api.delete(`/admin/news/${id}/gallery-image`, {
+      data: { image_path: imagePath }
     }),
 };
 
@@ -419,4 +433,18 @@ export const teamAPI = {
   },
   
   deletePhoto: (id) => api.delete(`/admin/team/${id}/photo`)
+};
+
+// ============================================================
+// ZONES D'INTERVENTION
+// ============================================================
+export const interventionZonesAPI = {
+  getAll: (params) => api.get('/admin/intervention-zones', { params }),
+  getById: (id) => api.get(`/admin/intervention-zones/${id}`),
+  getStats: () => api.get('/admin/intervention-zones/stats'),
+  create: (data) => api.post('/admin/intervention-zones', data),
+  update: (id, data) => api.put(`/admin/intervention-zones/${id}`, data),
+  delete: (id) => api.delete(`/admin/intervention-zones/${id}`),
+  toggleStatus: (id) => api.patch(`/admin/intervention-zones/${id}/toggle-status`),
+  reorder: (zones) => api.post('/admin/intervention-zones/reorder', { zones })
 };

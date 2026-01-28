@@ -87,7 +87,6 @@ SiteCongo/
 │   │   │   │
 │   │   │   ├── transparency/
 │   │   │   │   ├── ReportsList.jsx
-│   │   │   │   ├── FinancialSummary.jsx
 │   │   │   │   └── PolicyDocuments.jsx
 │   │   │   │
 │   │   │   ├── news/

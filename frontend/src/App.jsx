@@ -29,6 +29,7 @@ import DonatePage from './pages/DonatePage';
 import TeamPage from './pages/TeamPage'; 
 import HumanitarianSpacePage from './pages/HumanitarianSpacePage'; 
 import InterventionMap from './pages/InterventionMap'; 
+import TransparencyPage from './pages/TransparencyPage';
 
 function App() {
   return (
@@ -65,6 +66,12 @@ function App() {
             <Route path="/humanitarian" element={<HumanitarianSpacePage />} />
 
             <Route path="/about/zones" element={<InterventionMap />} />
+
+            {/* Transparency - Routes multiples */}
+            <Route path="/transparency" element={<TransparencyPage />} />
+            <Route path="/transparency/policies" element={<TransparencyPage />} />
+            <Route path="/transparency/reports" element={<TransparencyPage />} />
+            <Route path="/transparency/certifications" element={<TransparencyPage />} />
 
             {/* Auth */}
             <Route path="/login" element={<LoginPage />} />

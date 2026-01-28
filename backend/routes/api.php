@@ -140,7 +140,11 @@ Route::prefix('admin')->group(function () {
             Route::delete('/{id}', [AdminNewsController::class, 'destroy']);
             Route::post('/{id}/publish', [AdminNewsController::class, 'publish']);
             Route::post('/{id}/unpublish', [AdminNewsController::class, 'unpublish']);
-            Route::post('/{id}/image', [AdminNewsController::class, 'uploadImage']);
+            
+            // 🖼️ GESTION DES IMAGES
+            Route::post('/{id}/upload-image', [AdminNewsController::class, 'uploadImage']);
+            Route::post('/{id}/upload-gallery', [AdminNewsController::class, 'uploadGallery']); // ← NOUVELLE
+            Route::delete('/{id}/gallery-image', [AdminNewsController::class, 'deleteGalleryImage']); // ← NOUVELLE
         });
         
         // ========== GESTION DES PROJETS ==========

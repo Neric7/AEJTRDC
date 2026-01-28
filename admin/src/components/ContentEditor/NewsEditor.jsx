@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { X, Save, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { newsAPI } from '../../services/adminApi';
 import toast from 'react-hot-toast';
@@ -16,10 +16,17 @@ const NewsEditor = ({ item, onSave, onCancel }) => {
     featured: item?.featured || false,
   });
 
-  const [images, setImages] = useState([]);
-  const [imagePreview, setImagePreview] = useState(item?.image_url || null);
+  // État pour l'image principale
+  const [mainImage, setMainImage] = useState(null);
+  const [mainImagePreview, setMainImagePreview] = useState(item?.image_url || null);
+  
+  // État pour la galerie
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [existingGallery, setExistingGallery] = useState(item?.images_urls || []);
+  
   const [loading, setLoading] = useState(false);
-  const fileInputRef = useRef(null);
+  const mainImageInputRef = useRef(null);
+  const galleryInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -29,43 +36,66 @@ const NewsEditor = ({ item, onSave, onCancel }) => {
     });
   };
 
-  const handleImageSelect = (e) => {
+  // Gestion image principale
+  const handleMainImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setMainImage(file);
+    setMainImagePreview(URL.createObjectURL(file));
+  };
+
+  const removeMainImage = () => {
+    if (mainImage && mainImagePreview) {
+      URL.revokeObjectURL(mainImagePreview);
+    }
+    setMainImage(null);
+    setMainImagePreview(item?.image_url || null);
+  };
+
+  // Gestion galerie
+  const handleGallerySelect = (e) => {
     const files = Array.from(e.target.files);
-    
     if (files.length === 0) return;
 
-    // Créer des previews
     const newImages = files.map(file => ({
       file,
       preview: URL.createObjectURL(file),
       name: file.name,
+      isNew: true
     }));
 
-    setImages(prev => [...prev, ...newImages]);
-    
-    // Cacher l'ancienne image dès qu'une nouvelle est sélectionnée
-    if (imagePreview && newImages.length > 0) {
-      setImagePreview(null);
-    }
+    setGalleryImages(prev => [...prev, ...newImages]);
   };
 
-  const removeImage = (index) => {
-    setImages(prev => {
+  const removeGalleryImage = (index) => {
+    setGalleryImages(prev => {
       const newImages = [...prev];
       URL.revokeObjectURL(newImages[index].preview);
       newImages.splice(index, 1);
-      
-      // Si on supprime toutes les nouvelles images, réafficher l'ancienne
-      if (newImages.length === 0 && item?.image_url) {
-        setImagePreview(item.image_url);
-      }
-      
       return newImages;
     });
   };
 
-  const removeCurrentImage = () => {
-    setImagePreview(null);
+  const removeExistingGalleryImage = async (imagePath, index) => {
+    if (!item?.id) {
+      // Juste retirer de l'état si pas encore sauvegardé
+      setExistingGallery(prev => prev.filter((_, i) => i !== index));
+      return;
+    }
+
+    if (!confirm('Voulez-vous vraiment supprimer cette image de la galerie ?')) {
+      return;
+    }
+
+    try {
+      await newsAPI.deleteGalleryImage(item.id, imagePath);
+      setExistingGallery(prev => prev.filter((_, i) => i !== index));
+      toast.success('Image supprimée de la galerie');
+    } catch (error) {
+      console.error('Erreur suppression image galerie:', error);
+      toast.error('Erreur lors de la suppression');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -79,54 +109,65 @@ const NewsEditor = ({ item, onSave, onCancel }) => {
     setLoading(true);
 
     try {
-      // Préparer les données
+      // 1. Créer/Mettre à jour l'actualité
       const dataToSend = {
         ...formData,
         tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : [],
       };
 
       let savedNews;
-
-      // Créer ou mettre à jour l'actualité
       if (item?.id) {
         const response = await newsAPI.update(item.id, dataToSend);
         savedNews = response.data;
-        toast.success('Actualité modifiée avec succès');
+        toast.success('Actualité modifiée');
       } else {
         const response = await newsAPI.create(dataToSend);
         savedNews = response.data;
-        toast.success('Actualité créée avec succès');
+        toast.success('Actualité créée');
       }
 
-      // Upload des images si présentes
-      if (images.length > 0) {
-        await uploadImages(savedNews.id || savedNews.data?.id);
+      const newsId = savedNews.id || savedNews.data?.id;
+
+      // 2. Upload image principale si présente
+      if (mainImage) {
+        const mainFormData = new FormData();
+        mainFormData.append('image', mainImage);
+        await newsAPI.uploadImage(newsId, mainFormData);
+        toast.success('Image principale uploadée');
+      }
+
+      // 3. Upload galerie si présente
+      if (galleryImages.length > 0) {
+        const galleryFormData = new FormData();
+        galleryImages.forEach(img => {
+          galleryFormData.append('images[]', img.file);
+        });
+        await newsAPI.uploadGallery(newsId, galleryFormData);
+        toast.success(`${galleryImages.length} image(s) ajoutée(s) à la galerie`);
       }
 
       onSave();
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error);
+      console.error('Erreur sauvegarde:', error);
       toast.error(error.response?.data?.message || 'Erreur lors de la sauvegarde');
     } finally {
       setLoading(false);
     }
   };
 
-  const uploadImages = async (newsId) => {
-    try {
-      // Pour l'instant, on upload la première image comme image principale
-      if (images.length > 0) {
-        const formData = new FormData();
-        formData.append('image', images[0].file);
-
-        await newsAPI.uploadImage(newsId, formData);
-        toast.success('Image uploadée avec succès');
+  // Cleanup previews on unmount
+  useEffect(() => {
+    return () => {
+      if (mainImage && mainImagePreview && mainImagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(mainImagePreview);
       }
-    } catch (error) {
-      console.error('Erreur upload image:', error);
-      toast.error('Erreur lors de l\'upload de l\'image');
-    }
-  };
+      galleryImages.forEach(img => {
+        if (img.preview.startsWith('blob:')) {
+          URL.revokeObjectURL(img.preview);
+        }
+      });
+    };
+  }, []);
 
   return (
     <div className="editor-container">
@@ -234,7 +275,7 @@ const NewsEditor = ({ item, onSave, onCancel }) => {
             className="form-textarea"
             value={formData.excerpt}
             onChange={handleChange}
-            placeholder="Court résumé de l'actualité (optionnel mais recommandé)"
+            placeholder="Court résumé (recommandé)"
             rows="3"
           />
         </div>
@@ -255,71 +296,130 @@ const NewsEditor = ({ item, onSave, onCancel }) => {
           />
         </div>
 
-        {/* Images */}
+        {/* IMAGE PRINCIPALE */}
         <div className="form-group">
-          <label className="form-label">Images</label>
+          <label className="form-label">Image Principale</label>
           
           <div className="image-upload-area">
             <input
-              ref={fileInputRef}
+              ref={mainImageInputRef}
               type="file"
               accept="image/*"
-              multiple
-              onChange={handleImageSelect}
+              onChange={handleMainImageSelect}
               style={{ display: 'none' }}
             />
             
             <button
               type="button"
               className="upload-btn"
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => mainImageInputRef.current?.click()}
             >
               <Upload size={20} />
-              {images.length > 0 || imagePreview ? 'Remplacer l\'image' : 'Ajouter des images'}
+              {mainImagePreview ? 'Changer l\'image principale' : 'Ajouter une image principale'}
             </button>
           </div>
 
-          {/* Preview de l'image actuelle (seulement si aucune nouvelle image) */}
-          {imagePreview && images.length === 0 && (
+          {mainImagePreview && (
             <div className="image-preview-grid">
               <div className="image-preview-item">
-                <img src={imagePreview} alt="Image actuelle" />
+                <img src={mainImagePreview} alt="Image principale" />
                 <button
                   type="button"
                   className="remove-image-btn"
-                  onClick={removeCurrentImage}
+                  onClick={removeMainImage}
                   title="Supprimer"
                 >
                   <Trash2 size={16} />
                 </button>
-                <p className="image-name">Image actuelle</p>
+                <p className="image-name">
+                  {mainImage ? mainImage.name : 'Image actuelle'}
+                </p>
               </div>
             </div>
           )}
+        </div>
 
-          {/* Preview des nouvelles images */}
-          {images.length > 0 && (
-            <div className="image-preview-grid">
-              {images.map((img, index) => (
-                <div key={index} className="image-preview-item">
-                  <img src={img.preview} alt={img.name} />
-                  <button
-                    type="button"
-                    className="remove-image-btn"
-                    onClick={() => removeImage(index)}
-                    title="Supprimer"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                  <p className="image-name">{img.name}</p>
-                </div>
-              ))}
-            </div>
+        {/* GALERIE PHOTOS */}
+        <div className="form-group">
+          <label className="form-label">Galerie Photos</label>
+          
+          <div className="image-upload-area">
+            <input
+              ref={galleryInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleGallerySelect}
+              style={{ display: 'none' }}
+            />
+            
+            <button
+              type="button"
+              className="upload-btn"
+              onClick={() => galleryInputRef.current?.click()}
+            >
+              <Upload size={20} />
+              Ajouter des photos à la galerie
+            </button>
+          </div>
+
+          {/* Images existantes de la galerie */}
+          {existingGallery.length > 0 && (
+            <>
+              <h4 style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
+                Images existantes ({existingGallery.length})
+              </h4>
+              <div className="image-preview-grid">
+                {existingGallery.map((imageUrl, index) => (
+                  <div key={`existing-${index}`} className="image-preview-item">
+                    <img src={imageUrl} alt={`Galerie ${index + 1}`} />
+                    <button
+                      type="button"
+                      className="remove-image-btn"
+                      onClick={() => {
+                        // Extraire le path de l'URL
+                        const path = imageUrl.split('/storage/')[1];
+                        removeExistingGalleryImage(path, index);
+                      }}
+                      title="Supprimer"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                    <p className="image-name">Image {index + 1}</p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Nouvelles images à ajouter */}
+          {galleryImages.length > 0 && (
+            <>
+              <h4 style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
+                Nouvelles images ({galleryImages.length})
+              </h4>
+              <div className="image-preview-grid">
+                {galleryImages.map((img, index) => (
+                  <div key={`new-${index}`} className="image-preview-item">
+                    <img src={img.preview} alt={img.name} />
+                    <button
+                      type="button"
+                      className="remove-image-btn"
+                      onClick={() => removeGalleryImage(index)}
+                      title="Supprimer"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                    <p className="image-name">{img.name}</p>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
 
           <p className="form-hint">
             <ImageIcon size={16} />
-            Formats acceptés : JPG, PNG, GIF, WebP (max 2MB par image)
+            Formats acceptés : JPG, PNG, GIF, WebP (max 2MB par image, max 10 images)
           </p>
         </div>
 

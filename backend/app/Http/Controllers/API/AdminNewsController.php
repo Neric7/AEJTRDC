@@ -296,4 +296,111 @@ class AdminNewsController extends Controller
             ], 500);
         }
     }
+
+    /**
+ * Upload plusieurs images pour la galerie
+ */
+public function uploadGallery(Request $request, $id)
+{
+    try {
+        $news = News::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'images' => 'required|array|min:1|max:10',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Erreur de validation',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $galleryPaths = [];
+
+        foreach ($request->file('images') as $file) {
+            $filename = time() . '_' . uniqid() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('news/gallery', $filename, 'public');
+            $galleryPaths[] = $path;
+        }
+
+        // Récupérer les images existantes et fusionner
+        $existingImages = $news->images ?? [];
+        $allImages = array_merge($existingImages, $galleryPaths);
+
+        $news->update(['images' => $allImages]);
+
+        Log::info("Gallery uploaded successfully", [
+            'news_id' => $id,
+            'new_images' => count($galleryPaths),
+            'total_images' => count($allImages)
+        ]);
+
+        return response()->json([
+            'message' => count($galleryPaths) . ' image(s) ajoutée(s) à la galerie',
+            'data' => [
+                'images' => $allImages,
+                'images_urls' => $news->images_urls,
+            ]
+        ]);
+    } catch (\Exception $e) {
+        Log::error('AdminNewsController@uploadGallery error: ' . $e->getMessage());
+        return response()->json([
+            'message' => 'Erreur lors de l\'upload de la galerie',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+/**
+ * Supprimer une image de la galerie
+ */
+public function deleteGalleryImage(Request $request, $id)
+{
+    try {
+        $news = News::findOrFail($id);
+        
+        $validator = Validator::make($request->all(), [
+            'image_path' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Erreur de validation',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $imagePath = $request->input('image_path');
+        $images = $news->images ?? [];
+        
+        // Retirer l'image du tableau
+        $images = array_filter($images, function($path) use ($imagePath) {
+            return $path !== $imagePath;
+        });
+        
+        // Supprimer le fichier physique
+        Storage::disk('public')->delete($imagePath);
+        
+        // Réindexer le tableau
+        $images = array_values($images);
+        
+        $news->update(['images' => $images]);
+
+        return response()->json([
+            'message' => 'Image supprimée de la galerie',
+            'data' => [
+                'images' => $images,
+                'images_urls' => $news->images_urls,
+            ]
+        ]);
+    } catch (\Exception $e) {
+        Log::error('AdminNewsController@deleteGalleryImage error: ' . $e->getMessage());
+        return response()->json([
+            'message' => 'Erreur lors de la suppression',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 }

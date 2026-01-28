@@ -11,7 +11,8 @@ import {
   reportsAPI,
   mediaAPI,
   domainsAPI,
-  volunteersAPI
+  volunteersAPI,
+  interventionZonesAPI
 } from '../services/adminApi';
 import toast from 'react-hot-toast';
 import { useAlert } from '../context/AlertProvider';
@@ -24,7 +25,8 @@ import JobEditor from '../components/ContentEditor/JobEditor';
 import DomainEditor from '../components/ContentEditor/DomainEditor';
 import PartnerEditor from '../components/ContentEditor/PartnerEditor';
 import VolunteerExaminer from '../components/ContentEditor/VolunteerExaminer';
-import TeamEditor from '../components/ContentEditor/TeamEditor'; // ← AJOUT
+import TeamEditor from '../components/ContentEditor/TeamEditor';
+import InterventionZoneEditor from '../components/ContentEditor/InterventionZoneEditor';
 
 const ContentPage = () => {
   const { type } = useParams();
@@ -113,6 +115,14 @@ const ContentPage = () => {
       columns: ['Nom complet', 'Email', 'Téléphone', 'Domaine', 'Disponibilité', 'Statut', 'Date', 'Actions'],
       viewUrl: null,
       itemName: (item) => `la candidature de "${item.full_name}"`,
+    },
+    'intervention-zones': {
+      title: 'Zones d\'intervention',
+      api: interventionZonesAPI,
+      editor: InterventionZoneEditor,
+      columns: ['Nom', 'Type', 'Province', 'Année', 'Coordonnées', 'Statut', 'Actions'],
+      viewUrl: (item) => `${FRONTEND_URL}/intervention-map`,
+      itemName: (item) => `la zone "${item.name}"`,
     },
   };
 
@@ -424,6 +434,31 @@ const ContentPage = () => {
             <td>{new Date(item.created_at).toLocaleDateString('fr-FR')}</td>
           </>
         );
+
+        case 'intervention-zones':
+          return (
+            <>
+              <td>{item.name}</td>
+              <td>
+                <span className={`type-badge type-${item.type}`}>
+                  {item.type === 'headquarters' ? '🏢 Siège' : 
+                   item.type === 'branch' ? '🏪 Antenne' : '📍 Extension'}
+                </span>
+              </td>
+              <td>{item.province}</td>
+              <td>{item.year_established}</td>
+              <td>
+                <code style={{ fontSize: '0.85rem' }}>
+                  {parseFloat(item.latitude).toFixed(4)}, {parseFloat(item.longitude).toFixed(4)}
+                </code>
+              </td>
+              <td>
+                <span className={`status-badge status-${item.is_active ? 'published' : 'archived'}`}>
+                  {item.is_active ? 'Actif' : 'Inactif'}
+                </span>
+              </td>
+            </>
+          );
 
       default:
         return (

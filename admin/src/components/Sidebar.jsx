@@ -18,7 +18,8 @@ import {
   Shield,
   Flag,
   Megaphone,
-  ClipboardCheck
+  ClipboardCheck,
+  MapPin
 } from 'lucide-react';
 import { authAPI } from '../services/adminApi';
 import toast from 'react-hot-toast';
@@ -58,6 +59,11 @@ const Sidebar = ({ isOpen, onToggle }) => {
       title: 'Projets',
       icon: <Briefcase size={20} />,
       path: '/content/projects',
+    },
+    {
+      title: 'Zones d\'intervention',
+      icon: <MapPin size={20} />,
+      path: '/content/intervention-zones',
     },
     {
       title: 'Offres d\'emploi',

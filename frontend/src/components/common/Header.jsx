@@ -229,7 +229,6 @@ export default function Header() {
       icon: FaChartLine,
       submenu: [
         { label: t('nav.reports'), href: '/transparency/reports', icon: FaFileAlt },
-        { label: t('nav.financial'), href: '/transparency/financial', icon: FaMoneyBillWave },
         { label: t('nav.policies'), href: '/transparency/policies', icon: FaGavel },
       ]
     },

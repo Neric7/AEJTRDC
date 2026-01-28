@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import api from '../../services/api';
 import { getImageUrl } from '../../utils/imageHelper';
 import styles from './NewsArticle.module.css';
 
@@ -9,6 +10,10 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
   const { user, isAuthenticated } = useAuth();
   const [relatedArticles, setRelatedArticles] = useState([]);
   const [imageError, setImageError] = useState(false);
+  
+  // États pour la galerie lightbox
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   
   // États pour les commentaires
   const [comments, setComments] = useState([]);
@@ -19,7 +24,7 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
     message: ''
   });
   const [submittingComment, setSubmittingComment] = useState(false);
-  const [expandedReplies, setExpandedReplies] = useState({}); // Pour gérer l'affichage des réponses
+  const [expandedReplies, setExpandedReplies] = useState({});
 
   const COMMENTS_PER_PAGE = 5;
   const MAX_RELATED_ARTICLES = 4;
@@ -47,7 +52,7 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
           
           related = articles.filter(item => item.id !== article.id);
         } catch (error) {
-          console.warn('Pas d\'articles avec ce tag, utilisation de tous les articles');
+          console.warn('Pas d\'articles avec ce tag');
         }
       }
       
@@ -68,7 +73,7 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
           
           related = articles.filter(item => item.id !== article.id);
         } catch (error) {
-          console.error('Erreur récupération articles depuis API:', error);
+          console.error('Erreur récupération articles:', error);
         }
       }
       
@@ -93,6 +98,40 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
       setComments([]);
     }
   };
+
+  // Lightbox handlers
+  const openLightbox = (index) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+  };
+
+  const nextImage = () => {
+    setLightboxIndex((prev) => 
+      prev < (article.images_urls?.length || 0) - 1 ? prev + 1 : prev
+    );
+  };
+
+  const prevImage = () => {
+    setLightboxIndex((prev) => prev > 0 ? prev - 1 : prev);
+  };
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (!lightboxOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') prevImage();
+      if (e.key === 'ArrowRight') nextImage();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxOpen]);
 
   const handleLoadMoreComments = () => {
     setDisplayedComments(prev => prev + COMMENTS_PER_PAGE);
@@ -266,7 +305,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
           )}
         </div>
 
-        {/* Formulaire de réponse - apparaît ici */}
         {isReplying && (
           <div className={styles.replyForm}>
             <h4>Répondre à {comment.name || comment.author}</h4>
@@ -303,7 +341,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
           </div>
         )}
 
-        {/* Affichage des réponses */}
         {hasReplies && repliesExpanded && (
           <div className={styles.repliesContainer}>
             {comment.replies.map(reply => (
@@ -347,7 +384,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
 
   return (
     <div className={styles.pageContainer}>
-      {/* Bouton retour */}
       <div className={styles.backButtonContainer}>
         <button onClick={onBack} className={styles.backBtn}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -358,9 +394,7 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
       </div>
 
       <div className={styles.articleLayout}>
-        {/* Contenu principal - Gauche */}
         <main className={styles.mainContent}>
-          {/* Article */}
           <article className={styles.articleCard}>
             {article.image && (
               <div className={styles.imageContainer}>
@@ -423,6 +457,30 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
                 __html: formatContent(article.content) 
               }} />
             </div>
+
+            {/* 🖼️ GALERIE PHOTOS */}
+            {article.images_urls && article.images_urls.length > 0 && (
+              <div className={styles.photoGallery}>
+                <h3 className={styles.galleryTitle}>
+                  Galerie photos ({article.images_urls.length})
+                </h3>
+                <div className={styles.galleryGrid}>
+                  {article.images_urls.map((imageUrl, index) => (
+                    <div
+                      key={index}
+                      className={styles.galleryItem}
+                      onClick={() => openLightbox(index)}
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={`${article.title} - Photo ${index + 1}`}
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </article>
 
           {/* Section Commentaires */}
@@ -455,7 +513,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
               </div>
             )}
 
-            {/* Formulaire commentaire principal (en haut) */}
             {showCommentForm && isAuthenticated && !replyingTo && (
               <div className={styles.commentForm}>
                 <h3>Laisser un commentaire</h3>
@@ -495,7 +552,6 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
               </div>
             )}
 
-            {/* Liste commentaires */}
             <div className={styles.commentsList}>
               {visibleComments.length === 0 ? (
                 <p className={styles.noComments}>
@@ -522,7 +578,7 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
           </section>
         </main>
 
-        {/* Sidebar - Droite */}
+        {/* Sidebar */}
         <aside className={styles.sidebar}>
           <div className={styles.sidebarCard}>
             <h3 className={styles.sidebarTitle}>Autres actualités</h3>
@@ -564,11 +620,48 @@ export default function NewsArticle({ article, onBack, onRelatedArticle, allNews
               Votre don peut changer des vies. Rejoignez-nous dans notre mission.
             </p>
             <Link to="/donate" className={styles.ctaButton}>
-  Faire un don
-</Link>
+              Faire un don
+            </Link>
           </div>
         </aside>
       </div>
+
+      {/* 🔦 LIGHTBOX */}
+      {lightboxOpen && article.images_urls && (
+        <div className={styles.lightbox} onClick={closeLightbox}>
+          <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
+            <button className={styles.lightboxClose} onClick={closeLightbox}>
+              <X size={24} />
+            </button>
+            
+            <button
+              className={`${styles.lightboxNav} ${styles.lightboxPrev}`}
+              onClick={prevImage}
+              disabled={lightboxIndex === 0}
+            >
+              <ChevronLeft size={24} />
+            </button>
+
+            <img
+              src={article.images_urls[lightboxIndex]}
+              alt={`${article.title} - Photo ${lightboxIndex + 1}`}
+              className={styles.lightboxImage}
+            />
+
+            <button
+              className={`${styles.lightboxNav} ${styles.lightboxNext}`}
+              onClick={nextImage}
+              disabled={lightboxIndex === article.images_urls.length - 1}
+            >
+              <ChevronRight size={24} />
+            </button>
+
+            <div className={styles.lightboxCounter}>
+              {lightboxIndex + 1} / {article.images_urls.length}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
